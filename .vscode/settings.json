@@ -1,0 +1,13 @@
+{
+    "java.project.referencedLibraries": [
+        "C:/Users/Celine/openjfx-21.0.6_windows-x64_bin-sdk/javafx-sdk-21.0.6/lib/*.jar",
+        "d:\\jar files\\javafx.base.jar",
+        "d:\\jar files\\javafx.controls.jar",
+        "d:\\jar files\\javafx.fxml.jar",
+        "d:\\jar files\\javafx.graphics.jar",
+        "d:\\jar files\\javafx.media.jar",
+        "d:\\jar files\\javafx.swing.jar",
+        "d:\\jar files\\javafx.web.jar",
+        "d:\\jar files\\javafx-swt.jar"
+    ]
+}

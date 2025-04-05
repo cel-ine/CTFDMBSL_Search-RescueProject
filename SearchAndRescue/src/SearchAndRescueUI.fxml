@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.chart.BarChart?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1366.0" style="-fx-background-color: #003067;" stylesheets="@style.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Label layoutX="429.0" layoutY="14.0" prefHeight="53.0" prefWidth="534.0" text="City of Pasig Search and Rescue Team" textFill="WHITE">
+         <font>
+            <Font name="Segoe UI Bold" size="30.0" />
+         </font>
+      </Label>
+      <Label layoutX="398.0" layoutY="59.0" text="City Of Pasig Rescue Emergency Disaster, 102 C. Raymundo Ave, Pasig, 1600 Kalakhang Maynila" textFill="WHITE">
+         <font>
+            <Font name="Segoe UI Italic" size="14.0" />
+         </font>
+      </Label>
+      <Label layoutX="6.0" layoutY="80.0" textFill="WHITE" />
+      <TabPane layoutX="12.0" layoutY="103.0" prefHeight="654.0" prefWidth="1342.0" style="-fx-background-color: #003067;" tabClosingPolicy="UNAVAILABLE">
+        <tabs>
+          <Tab text="Home">
+               <content>
+                  <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="623.0" prefWidth="1343.0" style="-fx-background-color: #ebebeb;">
+                     <children>
+                        <StackPane fx:id="webViewPane" layoutX="1.0" layoutY="3.0" prefHeight="455.0" prefWidth="842.0" style="-fx-background-color: white; -fx-border-color: grey;">
+                           <children>
+                              <Label text="Map view/radar">
+                                 <font>
+                                    <Font size="34.0" />
+                                 </font>
+                              </Label>
+                           </children></StackPane>
+                        <Label layoutX="971.0" layoutY="6.0" text="Barangay list" textFill="WHITE" />
+                        <Label layoutX="971.0" layoutY="303.0" text="Emergency Type List" textFill="WHITE" />
+                        <AnchorPane fx:id="addRescuePane" layoutX="3.0" layoutY="465.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="155.0" prefWidth="1338.0" style="-fx-background-color: white; -fx-border-color: grey;">
+                           <children>
+                              <BarChart layoutX="1.0" layoutY="-1.0" prefHeight="155.0" prefWidth="1336.0">
+                                <xAxis>
+                                  <CategoryAxis side="BOTTOM" />
+                                </xAxis>
+                                <yAxis>
+                                  <NumberAxis side="LEFT" />
+                                </yAxis>
+                              </BarChart>
+                           </children></AnchorPane>
+                        <TableView fx:id="brgyDescriptionTable" layoutX="847.0" layoutY="5.0" prefHeight="289.0" prefWidth="492.0">
+                          <columns>
+                            <TableColumn prefWidth="124.66668701171875" text="Barangay" />
+                            <TableColumn prefWidth="131.3333740234375" text="Barangay Capt." />
+                              <TableColumn prefWidth="122.3333740234375" text="Hazard Prone" />
+                              <TableColumn prefWidth="111.6666259765625" text="Population" />
+                          </columns>
+                        </TableView>
+                        <Label layoutX="1028.0" layoutY="80.0" text="Brgy. Description + brgy name">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </Label>
+                        <TableView layoutX="848.0" layoutY="299.0" prefHeight="157.0" prefWidth="491.0">
+                          <columns>
+                            <TableColumn prefWidth="152.79998779296875" text="Barangay" />
+                            <TableColumn prefWidth="157.5999755859375" text="Distance" />
+                              <TableColumn prefWidth="180.800048828125" text="Rescue Count" />
+                          </columns>
+                        </TableView>
+                        <Label layoutX="1021.0" layoutY="361.0" text="Barangay Table">
+                           <font>
+                              <Font size="26.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </AnchorPane>
+               </content>
+            </Tab>
+            <Tab text="Active Incidents">
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="626.0" prefWidth="1350.0" style="-fx-background-color: white;">
+                     <children>
+                        <TableView layoutX="1.0" layoutY="122.0" prefHeight="465.0" prefWidth="1342.0">
+                          <columns>
+                            <TableColumn prefWidth="150.39999389648438" text="Rescue ID" />
+                            <TableColumn minWidth="0.0" prefWidth="185.60003662109375" text="Type" />
+                              <TableColumn minWidth="0.0" prefWidth="185.60003662109375" text="Status" />
+                              <TableColumn minWidth="0.0" prefWidth="256.0" text="Location" />
+                              <TableColumn minWidth="0.0" prefWidth="370.4000244140625" text="Reported by (FN - LN)" />
+                              <TableColumn minWidth="0.0" prefWidth="192.7999267578125" text="Number of rescuee" />
+                          </columns>
+                        </TableView>
+                        <HBox prefHeight="53.0" prefWidth="1343.0" style="-fx-border-color: lightgrey;">
+                           <children>
+                              <AnchorPane prefHeight="52.0" prefWidth="447.6">
+                                 <children>
+                                    <Text layoutX="20.0" layoutY="32.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Current Active incidents (Counter)" />
+                                 </children>
+                              </AnchorPane>
+                              <AnchorPane prefHeight="52.0" prefWidth="447.6" style="-fx-background-color: red;">
+                                 <children>
+                                    <Text layoutX="71.0" layoutY="32.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Daily total incidents: (Counter)" />
+                                 </children>
+                              </AnchorPane>
+                              <AnchorPane prefHeight="52.0" prefWidth="447.6" style="-fx-background-color: lightgrey;">
+                                 <children>
+                                    <Text layoutX="175.0" layoutY="31.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Live time" />
+                                 </children>
+                              </AnchorPane>
+                           </children>
+                        </HBox>
+                        <Button layoutX="568.0" layoutY="593.0" mnemonicParsing="false" text="Add Rescue" />
+                        <Button layoutX="675.0" layoutY="591.0" mnemonicParsing="false" text="Dispatch" />
+                        <ComboBox layoutX="65.0" layoutY="92.0" prefHeight="2.0" prefWidth="150.0" promptText="Emergency Type" />
+                        <Label layoutX="13.0" layoutY="98.0" text="Filter by:" />
+                        <ComboBox layoutX="289.0" layoutY="92.0" prefHeight="2.0" prefWidth="150.0" promptText="Location" />
+                        <Label layoutX="237.0" layoutY="98.0" text="Filter by:" />
+                        <Button layoutX="1214.0" layoutY="95.0" mnemonicParsing="false" text="Save Changes" />
+                     </children></AnchorPane>
+              </content>
+            </Tab>
+          <Tab text="Incident Report &amp; History">
+               <content>
+                  <AnchorPane prefHeight="200.0" prefWidth="200.0">
+                     <children>
+                        <AnchorPane prefHeight="625.0" prefWidth="1344.0" style="-fx-background-color: white;" />
+                     </children></AnchorPane>
+               </content>
+            </Tab>
+        </tabs>
+      </TabPane>
+   </children>
+</AnchorPane>
