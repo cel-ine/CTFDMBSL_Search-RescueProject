@@ -18,7 +18,7 @@ public class TabPaneController {
 
     //HOME TAB - BARANGAY DESCRIPTION TABLE
     @FXML TableView <BarangayDescTable> brgyDescriptionTable; 
-    //@FXML TableColumn <BarangayDescTable, String> brgyNameCol2;
+    @FXML TableColumn <BarangayDescTable, String> brgyNameCol2;
     @FXML TableColumn <BarangayDescTable, String> brgyCaptCol;
     @FXML TableColumn <BarangayDescTable, String> brgyHazardCol;
     @FXML TableColumn <BarangayDescTable, Integer> brgyPopulationCol;
@@ -34,11 +34,11 @@ public class TabPaneController {
        
        
         //HOME TAB - BARANGAY DESCRIPTION
-        //brgyNameCol2.setCellValueFactory(new PropertyValueFactory<>("barangayName"));
+        brgyNameCol2.setCellValueFactory(new PropertyValueFactory<>("barangayName"));
         brgyCaptCol.setCellValueFactory(new PropertyValueFactory<>("barangayCaptain"));
         brgyHazardCol.setCellValueFactory(new PropertyValueFactory<>("barangayHazard"));
         brgyPopulationCol.setCellValueFactory(new PropertyValueFactory<>("barangayPopulation"));
-
+        loadBarangayDescTable();
 
         brgyDistanceCol.setCellFactory(column -> new TableCell<BarangayTable, Double>() {
     @Override
@@ -60,5 +60,9 @@ public class TabPaneController {
         barangayList.setAll(DBService.getAllBarangayInfo());
         brgyTable.setItems(barangayList);
         System.out.println("Loaded: " + barangayList.size() + " barangays");
+    }
+    private void loadBarangayDescTable() { 
+        barangayDescList.setAll(DBService.getAllBarangayDescription());
+        brgyDescriptionTable.setItems(barangayDescList);
     }
 }    

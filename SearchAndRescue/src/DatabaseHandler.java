@@ -85,26 +85,36 @@ public class DatabaseHandler {
         }
         return barangayList;
     }
-    //🏠🏠🏠 HOME PAGE - BARANGAY DESCRIPTION 
-    public static ObservableList<BarangayTable> displayBarangayDesc() {
-        ObservableList<BarangayTable> barangayDescList = FXCollections.observableArrayList();
-        String query = "SELECT barangayName, barangayDistance, barangayRescueCount FROM Barangay";
+ 
+    // 🏠 HOME PAGE - BARANGAY DESCRIPTION (Simplified version)
+    public static ObservableList<BarangayDescTable> displayBarangayDesc() {
+        ObservableList<BarangayDescTable> barangayDescList = FXCollections.observableArrayList();
+        String query = "SELECT " +
+                    "Barangay.barangayName, " +
+                    "BarangayDescription.barangayCaptain, " +
+                    "BarangayDescription.barangayHazardProne, " +
+                    "BarangayDescription.barangayPopulation " +
+                    "FROM Barangay " +
+                    "JOIN BarangayDescription ON Barangay.barangayID = BarangayDescription.barangayID";
 
         try (Connection conn = getConnection();
             PreparedStatement pstmt = conn.prepareStatement(query);
             ResultSet result = pstmt.executeQuery()) {
 
             while (result.next()) {
-                String barangayName = result.getString("barangayName");  
-                Double barangayDistance = result.getDouble("barangayDistance");  
-                Integer barangayRescueCount = result.getInt("barangayRescueCount");  
-       
-                barangayDescList.add(new BarangayTable(barangayName, barangayDistance, barangayRescueCount));
+                String barangayName = result.getString("barangayName");
+                String barangayCaptain = result.getString("barangayCaptain");
+                String hazardProne = result.getString("barangayHazardProne");
+                int population = result.getInt("barangayPopulation");
+
+                barangayDescList.add(new BarangayDescTable(barangayName, barangayCaptain, hazardProne, population));
             }
         } catch (SQLException e) {
-            System.err.println("Error fetching accounts: " + e.getMessage());
+            System.err.println("Error fetching barangay descriptions: " + e.getMessage());
             e.printStackTrace();
         }
+
         return barangayDescList;
     }
+
 }
