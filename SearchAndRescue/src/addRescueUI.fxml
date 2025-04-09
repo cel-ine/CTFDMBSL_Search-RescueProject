@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="800.0" style="-fx-background-color: #003067;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <AnchorPane layoutX="10.0" layoutY="78.0" prefHeight="413.0" prefWidth="780.0" style="-fx-background-color: white;">
+         <children>
+            <ComboBox editable="true" layoutX="69.0" layoutY="152.0" prefHeight="30.0" prefWidth="173.0" promptText="Barangay" />
+            <ComboBox editable="true" layoutX="69.0" layoutY="193.0" prefHeight="30.0" prefWidth="173.0" promptText="Emergency Type" />
+            <Slider layoutX="80.0" layoutY="241.0" />
+            <TextField layoutX="491.0" layoutY="80.0" promptText="First Name" />
+            <TextField layoutX="491.0" layoutY="116.0" promptText="Last Name" />
+            <TextField layoutX="491.0" layoutY="223.0" promptText="No. of Children" />
+            <TextField layoutX="491.0" layoutY="263.0" promptText="No. of Adults " />
+            <TextField layoutX="491.0" layoutY="302.0" promptText="No. of Seniors" />
+            <TextField layoutX="491.0" layoutY="194.0" promptText="Number of Rescuee" />
+         </children>
+      </AnchorPane>
+      <Label layoutX="138.0" layoutY="8.0" prefHeight="53.0" prefWidth="534.0" text="City of Pasig Search and Rescue Team" textFill="WHITE">
+         <font>
+            <Font name="Segoe UI Bold" size="30.0" />
+         </font>
+      </Label>
+      <Label layoutX="107.0" layoutY="53.0" text="City Of Pasig Rescue Emergency Disaster, 102 C. Raymundo Ave, Pasig, 1600 Kalakhang Maynila" textFill="WHITE">
+         <font>
+            <Font name="Segoe UI Italic" size="14.0" />
+         </font>
+      </Label>
+   </children>
+</AnchorPane>

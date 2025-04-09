@@ -6,6 +6,7 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TableColumn?>
@@ -16,7 +17,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1366.0" style="-fx-background-color: #003067;" stylesheets="@style.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1366.0" style="-fx-background-color: #003067;" stylesheets="@style.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="TabPaneController">
    <children>
       <Label layoutX="429.0" layoutY="14.0" prefHeight="53.0" prefWidth="534.0" text="City of Pasig Search and Rescue Team" textFill="WHITE">
          <font>
@@ -29,7 +30,7 @@
          </font>
       </Label>
       <Label layoutX="6.0" layoutY="80.0" textFill="WHITE" />
-      <TabPane layoutX="12.0" layoutY="103.0" prefHeight="654.0" prefWidth="1342.0" style="-fx-background-color: #003067;" tabClosingPolicy="UNAVAILABLE">
+      <TabPane fx:id="tabPane" layoutX="12.0" layoutY="103.0" prefHeight="654.0" prefWidth="1342.0" style="-fx-background-color: #003067;" tabClosingPolicy="UNAVAILABLE">
         <tabs>
           <Tab text="Home">
                <content>
@@ -58,10 +59,10 @@
                            </children></AnchorPane>
                         <TableView fx:id="brgyDescriptionTable" layoutX="847.0" layoutY="5.0" prefHeight="289.0" prefWidth="492.0">
                           <columns>
-                            <TableColumn prefWidth="124.66668701171875" text="Barangay" />
-                            <TableColumn prefWidth="131.3333740234375" text="Barangay Capt." />
-                              <TableColumn prefWidth="122.3333740234375" text="Hazard Prone" />
-                              <TableColumn prefWidth="111.6666259765625" text="Population" />
+                            <TableColumn fx:id="brgyNameCol2" prefWidth="124.66668701171875" text="Barangay" />
+                            <TableColumn fx:id="brgyCaptCol" prefWidth="131.3333740234375" text="Barangay Capt." />
+                              <TableColumn fx:id="brgyHazardCol" prefWidth="122.3333740234375" text="Hazard Prone" />
+                              <TableColumn fx:id="brgyPopulationCol" prefWidth="111.6666259765625" text="Population" />
                           </columns>
                         </TableView>
                         <Label layoutX="1028.0" layoutY="80.0" text="Brgy. Description + brgy name">
@@ -69,18 +70,13 @@
                               <Font size="18.0" />
                            </font>
                         </Label>
-                        <TableView layoutX="848.0" layoutY="299.0" prefHeight="157.0" prefWidth="491.0">
+                        <TableView fx:id="brgyTable" layoutX="848.0" layoutY="299.0" prefHeight="157.0" prefWidth="491.0">
                           <columns>
-                            <TableColumn prefWidth="152.79998779296875" text="Barangay" />
-                            <TableColumn prefWidth="157.5999755859375" text="Distance" />
-                              <TableColumn prefWidth="180.800048828125" text="Rescue Count" />
+                            <TableColumn fx:id="brgyNameCol" prefWidth="152.79998779296875" text="Barangay" />
+                            <TableColumn fx:id="brgyDistanceCol" prefWidth="157.5999755859375" text="Distance" />
+                              <TableColumn fx:id="brgyRescueCountCol" prefWidth="180.800048828125" text="Rescue Count" />
                           </columns>
                         </TableView>
-                        <Label layoutX="1021.0" layoutY="361.0" text="Barangay Table">
-                           <font>
-                              <Font size="26.0" />
-                           </font>
-                        </Label>
                      </children>
                   </AnchorPane>
                </content>
@@ -89,7 +85,7 @@
               <content>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="626.0" prefWidth="1350.0" style="-fx-background-color: white;">
                      <children>
-                        <TableView layoutX="1.0" layoutY="122.0" prefHeight="465.0" prefWidth="1342.0">
+                        <TableView fx:id="activeIncidentsTable" layoutX="1.0" layoutY="122.0" prefHeight="449.0" prefWidth="1342.0">
                           <columns>
                             <TableColumn prefWidth="150.39999389648438" text="Rescue ID" />
                             <TableColumn minWidth="0.0" prefWidth="185.60003662109375" text="Type" />
@@ -118,21 +114,24 @@
                               </AnchorPane>
                            </children>
                         </HBox>
-                        <Button layoutX="568.0" layoutY="593.0" mnemonicParsing="false" text="Add Rescue" />
-                        <Button layoutX="675.0" layoutY="591.0" mnemonicParsing="false" text="Dispatch" />
+                        <Button fx:id="addRescueButton" layoutX="585.0" layoutY="583.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="78.0" text="Add Rescue" />
+                        <Button fx:id="dispatchButton" layoutX="684.0" layoutY="583.0" mnemonicParsing="false" text="Dispatch" />
                         <ComboBox layoutX="65.0" layoutY="92.0" prefHeight="2.0" prefWidth="150.0" promptText="Emergency Type" />
                         <Label layoutX="13.0" layoutY="98.0" text="Filter by:" />
                         <ComboBox layoutX="289.0" layoutY="92.0" prefHeight="2.0" prefWidth="150.0" promptText="Location" />
                         <Label layoutX="237.0" layoutY="98.0" text="Filter by:" />
-                        <Button layoutX="1214.0" layoutY="95.0" mnemonicParsing="false" text="Save Changes" />
+                        <Button fx:id="saveButton" layoutX="1245.0" layoutY="92.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="91.0" text="Save Changes" />
                      </children></AnchorPane>
               </content>
             </Tab>
           <Tab text="Incident Report &amp; History">
                <content>
-                  <AnchorPane prefHeight="200.0" prefWidth="200.0">
+                  <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="200.0">
                      <children>
-                        <AnchorPane prefHeight="625.0" prefWidth="1344.0" style="-fx-background-color: white;" />
+                        <AnchorPane layoutY="-1.0" prefHeight="627.0" prefWidth="1344.0" style="-fx-background-color: white;">
+                           <children>
+                              <ListView fx:id="historyList" layoutX="-2.0" layoutY="-1.0" prefHeight="626.0" prefWidth="1347.0" />
+                           </children></AnchorPane>
                      </children></AnchorPane>
                </content>
             </Tab>
