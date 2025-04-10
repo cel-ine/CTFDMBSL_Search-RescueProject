@@ -10,4 +10,8 @@ public class DBService {
     public static ObservableList<BarangayDescTable> getAllBarangayDescription() {
         return DatabaseHandler.displayBarangayDesc();
     }
+    // ADD RESCUE FXML
+    public static ObservableList<String> getAllBarangayName() {
+        return DatabaseHandler.loadBarangays(); 
+    }
 }

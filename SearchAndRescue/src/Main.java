@@ -11,8 +11,6 @@ public class Main extends Application { //THIS SHOULD BE THE LOGIN PAGE!! -- FOR
             FXMLLoader loader = new FXMLLoader(getClass().getResource("SearchAndRescueUI.fxml"));
             Parent root = loader.load();
 
-            System.out.println("SearchAndRescue.fxml loaded!");
-
             Scene scene = new Scene(root, 1366, 768);
             primaryStage.setScene(scene);
             primaryStage.show();
@@ -22,7 +20,6 @@ public class Main extends Application { //THIS SHOULD BE THE LOGIN PAGE!! -- FOR
     }
 
     public static void main(String[] args) {
-        System.out.println("Launching application...");
         launch(args);
     }
 }
