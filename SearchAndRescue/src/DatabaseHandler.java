@@ -3,9 +3,12 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Random;
 
 import javafx.collections.ObservableList;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 
 public class DatabaseHandler {
@@ -86,7 +89,7 @@ public class DatabaseHandler {
         return barangayList;
     }
  
-    // 🏠🏠🏠 HOME PAGE - BARANGAY DESCRIPTION (Simplified version)
+    // 🏠🏠🏠 HOME PAGE - BARANGAY DESCRIPTION 
     public static ObservableList<BarangayDescTable> displayBarangayDesc() {
         ObservableList<BarangayDescTable> barangayDescList = FXCollections.observableArrayList();
         String query = "SELECT " +
@@ -117,45 +120,137 @@ public class DatabaseHandler {
         return barangayDescList;
     }
 
-
-    //➕➕➕ ADD RESCUE FXML 
-    public static ObservableList<String> loadBarangays() {
-        ObservableList<String> barangayList = FXCollections.observableArrayList();
-        String query = "SELECT barangayName FROM Barangay";
-
+    public static ObservableList<ActiveIncidentsTable> getAllActiveIncidents() {
+        ObservableList<ActiveIncidentsTable> incidentList = FXCollections.observableArrayList();
+    
+        String query = """
+            SELECT 
+                e.emergencyType,
+                e.emergencyStatus,
+                e.incidentNumber,
+                e.dateIssued AS timeCreated,
+                b.barangayName AS barangayLocation,
+                CONCAT(p.firstName, ' ', p.lastName) AS rescueeName,
+                (p.numOfChildren + p.numOfAdults + p.numOfSeniors) AS numberOfRescuee
+            FROM Emergency e
+            JOIN Barangay b ON e.barangayID = b.barangayID
+            JOIN PeopleCount p ON e.incidentNumber = p.peopleID
+        """;
+    
         try (Connection conn = getConnection();
-            PreparedStatement pstmt = conn.prepareStatement(query);
-            ResultSet result = pstmt.executeQuery()) {
-
-
-            while (result.next()) {
-                String barangayName = result.getString("barangayName");
-                barangayList.add(barangayName);
+             PreparedStatement stmt = conn.prepareStatement(query);
+             ResultSet rs = stmt.executeQuery()) {
+    
+            while (rs.next()) {
+                String emergencyType = rs.getString("emergencyType");
+                String emergencyStatus = rs.getString("emergencyStatus");
+                Integer incidentNumber = rs.getInt("incidentNumber");
+    
+                LocalDate timeCreated = rs.getDate("timeCreated").toLocalDate();
+                String barangayLocation = rs.getString("barangayLocation");
+                String rescueeName = rs.getString("rescueeName");
+                Integer numberOfRescuee = rs.getInt("numberOfRescuee");
+    
+                // Create object without reportedBy
+                ActiveIncidentsTable incident = new ActiveIncidentsTable(
+                        emergencyType,
+                        emergencyStatus,
+                        incidentNumber,
+                        timeCreated,
+                        barangayLocation,
+                        rescueeName,
+                        numberOfRescuee
+                );
+    
+                incidentList.add(incident);
             }
         } catch (SQLException e) {
-            System.err.println("Error loading account data: " + e.getMessage());
-        }
-        return barangayList;
-    }
-
-    public static boolean addUser(AdminUser newUser) { 
-        String query = "INSERT INTO WazeAccounts (email, username, passwords, birthdate, first_name, last_name) VALUES (?, ?, ?, ?, ?, ?)";
-        try (Connection conn = getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(query)) {
-            pstmt.setString(1, newUser.getEmail());
-            pstmt.setString(2, newUser.getUsername());
-            pstmt.setString(3, newUser.getPassword());
-            pstmt.setString(4, newUser.getBirthDate().toString());
-            pstmt.setString(5, newUser.getFirstName());
-            pstmt.setString(6, newUser.getLastName());
-            int affectedRows = pstmt.executeUpdate();
-            return affectedRows > 0;
-        } catch (SQLException e) {
-            System.err.println("Error adding user: " + e.getMessage());
+            System.err.println("Error fetching active incidents: " + e.getMessage());
             e.printStackTrace();
-            return false;
         }
+    
+        return incidentList;
     }
+    
+    
+    
+    
+
+    //➕➕➕ ADD RESCUE FXML 
+    public static ObservableList<BarangayTable> loadBarangays() {
+    ObservableList<BarangayTable> barangayList = FXCollections.observableArrayList();
+    String query = "SELECT barangayID, barangayName FROM Barangay";
+
+    try (Connection conn = getConnection();
+         PreparedStatement pstmt = conn.prepareStatement(query);
+         ResultSet result = pstmt.executeQuery()) {
+
+        while (result.next()) {
+            int barangayID = result.getInt("barangayID");
+            String barangayName = result.getString("barangayName");
+            barangayList.add(new BarangayTable(barangayID, barangayName)); 
+        }
+    } catch (SQLException e) {
+        System.err.println("Error loading barangays: " + e.getMessage());
+    }
+    return barangayList;  
+}
+
+    //  public static boolean addRoutes(AdminRoutes newRoute, List<String> locationList) {
+    //     try (Connection conn = DatabaseHandler.getNewConnection()) { 
+    //         if (conn == null || conn.isClosed()) {
+    //             System.err.println("Database connection failed!");
+    //             return false;
+    //         }
+    //         conn.setAutoCommit(false); 
+    //         System.out.println("Using connection: " + conn);
+    
+    //         // Insert into WazeRoutes
+    //         try (PreparedStatement pstmtRoutes = conn.prepareStatement(
+    //                 "INSERT INTO WazeRoutes (route_id, account_id, route_startpoint, route_endpoint) VALUES (?, ?, ?, ?)")) {
+    //             pstmtRoutes.setString(1, newRoute.getRouteID());
+    //             pstmtRoutes.setInt(2, newRoute.getAccountID());
+    //             pstmtRoutes.setString(3, newRoute.getRoute_startpoint());
+    //             pstmtRoutes.setString(4, newRoute.getRoute_endpoint());
+    //             pstmtRoutes.executeUpdate();
+    //             System.out.println("Route inserted successfully.");
+    //         }
+    
+    //         String altRouteID = RouteIDGenerator.generateAltRouteID();
+    //         String alternativeRoute = RouteIDGenerator.generateRandomAlternativeRoute(
+    //                 newRoute.getRoute_startpoint(), newRoute.getRoute_endpoint(), locationList);
+ 
+    //         String stopover = (newRoute.getStopOver() == null || newRoute.getStopOver().isEmpty()) 
+    //                         ? "No Stopover" : newRoute.getStopOver();
+
+    //         try (PreparedStatement pstmtAltRoutes = conn.prepareStatement(
+    //                 "INSERT INTO WazeAltRoutes (alt_route_id, route_id, alt_routes, stop_overloc) VALUES (?, ?, ?, ?)")) {
+    //             pstmtAltRoutes.setString(1, altRouteID);
+    //             pstmtAltRoutes.setString(2, newRoute.getRouteID());
+    //             pstmtAltRoutes.setString(3, alternativeRoute);
+    //             pstmtAltRoutes.setString(4, stopover);
+    //             pstmtAltRoutes.executeUpdate();
+    //             System.out.println("Alternative route inserted successfully.");
+    //         }
+
+    //         try (PreparedStatement pstmtTravelTime = conn.prepareStatement(
+    //                 "INSERT INTO WazeTravelTime (traveltime_id, route_id, est_time) VALUES (?, ?, ?)")) {
+    //             pstmtTravelTime.setString(1, "T_T-" + String.format("%03d", new Random().nextInt(999)));
+    //             pstmtTravelTime.setString(2, newRoute.getRouteID());
+    //             pstmtTravelTime.setString(3, RouteIDGenerator.generateRandomEstTime());
+    //             pstmtTravelTime.executeUpdate();
+    //             System.out.println("Travel time inserted successfully.");
+    //         }
+    
+    //         conn.commit(); 
+    //         System.out.println("Transaction committed successfully.");
+    //         return true;
+    
+    //     } catch (SQLException e) {
+    //         System.err.println("Error adding route: " + e.getMessage());
+    //         return false;
+    //     }
+    // }
 
 
     

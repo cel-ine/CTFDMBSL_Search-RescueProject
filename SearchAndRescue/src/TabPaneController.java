@@ -1,5 +1,6 @@
 
 import java.io.IOException;
+import java.time.LocalDate;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -35,11 +36,11 @@ public class TabPaneController {
     @FXML TableView <ActiveIncidentsTable> activeIncidentsTable;
     @FXML TableColumn <ActiveIncidentsTable, String> emergencyTypeCol;
     @FXML TableColumn <ActiveIncidentsTable, String> emergencyStatusCol;
-    @FXML TableColumn <ActiveIncidentsTable, String> incidentNumCol;
-    @FXML TableColumn <ActiveIncidentsTable, String> timeCreatedCol;
+    @FXML TableColumn <ActiveIncidentsTable, Integer> incidentNumCol;
+    @FXML TableColumn <ActiveIncidentsTable, LocalDate> timeCreatedCol;
     @FXML TableColumn <ActiveIncidentsTable, String> locationCol;
     @FXML TableColumn <ActiveIncidentsTable, String> rescueeNameCol;
-    @FXML TableColumn <ActiveIncidentsTable, String> numOfRescueeCol;
+    @FXML TableColumn <ActiveIncidentsTable, Integer> numOfRescueeCol;
 
     public void initialize() {
         System.out.println("Initialize is running");
@@ -55,6 +56,27 @@ public class TabPaneController {
         brgyHazardCol.setCellValueFactory(new PropertyValueFactory<>("barangayHazard"));
         brgyPopulationCol.setCellValueFactory(new PropertyValueFactory<>("barangayPopulation"));
         loadBarangayDescTable();
+
+        //ACTIVE INCIDENTS TAB 
+        emergencyTypeCol.setCellValueFactory(new PropertyValueFactory<>("emergencyType"));
+        emergencyStatusCol.setCellValueFactory(new PropertyValueFactory<>("emergencyStatus"));
+        incidentNumCol.setCellValueFactory(new PropertyValueFactory<>("incidentNumber"));
+        timeCreatedCol.setCellValueFactory(new PropertyValueFactory<>("timeCreated"));
+        locationCol.setCellValueFactory(new PropertyValueFactory<>("barangayLocation"));
+        rescueeNameCol.setCellValueFactory(new PropertyValueFactory<>("rescueeName"));
+        numOfRescueeCol.setCellValueFactory(new PropertyValueFactory<>("numOfRescuee"));
+    
+
+         // Example mock data
+         ObservableList<ActiveIncidentsTable> incidentsList = FXCollections.observableArrayList();
+         incidentsList.add(new ActiveIncidentsTable("Flood", "ENROUTE", 1001, LocalDate.of(2025, 4, 13), "Dela Paz", "John Doe", 10));
+         incidentsList.add(new ActiveIncidentsTable("Fire", "ON SCENE", 1002, LocalDate.of(2025, 4, 13), "Santolan", "Jane Smith", 8));
+         incidentsList.add(new ActiveIncidentsTable("Earthquake", "DISPATCHED", 1003, LocalDate.of(2025, 4, 12), "San Antonio", "Robert Johnson", 12));
+         
+         // Set the table items
+         activeIncidentsTable.setItems(incidentsList);
+         
+
 
         brgyDistanceCol.setCellFactory(column -> new TableCell<BarangayTable, Double>() {
         @Override

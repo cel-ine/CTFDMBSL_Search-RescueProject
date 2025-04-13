@@ -18,7 +18,8 @@ public class addRescueController {
     @FXML TextField numOfRescueeTF, numOfChildTF, numOfAdultsTF, numOfSeniorsTF;
 
     private TabPaneController tabPaneController; 
-    private ObservableList<String> barangayList = FXCollections.observableArrayList();
+   
+   // private ObservableList<String> barangayList = FXCollections.observableArrayList();
 
     public void setTabPaneController(TabPaneController tabPaneController) {
         this.tabPaneController = tabPaneController;
@@ -26,26 +27,32 @@ public class addRescueController {
 
     @FXML 
     public void initialize() {
-        barangayList = DBService.getAllBarangayName();
-        barangayLocationCombo.setItems(barangayList);   
+        ObservableList<BarangayTable> barangayList = DBService.getAllBarangayName();
+        ObservableList<String> barangayNames = FXCollections.observableArrayList();
+        for (BarangayTable barangay : barangayList) {
+            barangayNames.add(barangay.getBarangayName());
+        }
+        barangayLocationCombo.setItems(barangayNames);
         emergencyTypeCombo.getItems().addAll("Flood", "Fire", "Earthquake", "Landslide");
     }
 
     @FXML
     private void handleAddRescue() {
-        String firstName = firstNameTF.getText();
-        String lastname = lastNameTF.getText(); 
-        LocalDate date = (dateDP.getValue() != null) ? dateDP.getValue() : null;
-        String barangay = barangayLocationCombo.getValue();
-        String type = emergencyTypeCombo.getValue();
+        String selectedFN = firstNameTF.getText();
+        String selectedLN = lastNameTF.getText(); 
+        LocalDate selectedDate = (dateDP.getValue() != null) ? dateDP.getValue() : null;
+        
+        String selectedBarangay = barangayLocationCombo.getValue();
 
+        String selectedEmergencyType = emergencyTypeCombo.getValue();
         double sliderVal = severitySlider.getValue();
-        String severity = mapSeverity(sliderVal);
+        String selectedSeverity = mapSeverity(sliderVal);
 
         int rescueeCount = Integer.parseInt(numOfRescueeTF.getText());
         int childrenCount = Integer.parseInt(numOfChildTF.getText());
         int adultCount = Integer.parseInt(numOfAdultsTF.getText());
         int seniorsCount = Integer.parseInt(numOfSeniorsTF.getText());
+
 
     }
 
