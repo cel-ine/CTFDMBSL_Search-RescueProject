@@ -3,6 +3,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Random;
@@ -120,57 +121,50 @@ public class DatabaseHandler {
         return barangayDescList;
     }
 
-    public static ObservableList<ActiveIncidentsTable> getAllActiveIncidents() {
+    // Method to fetch active incidents and return as ObservableList
+    public static ObservableList<ActiveIncidentsTable> displayAllActiveIncidents() {
         ObservableList<ActiveIncidentsTable> incidentList = FXCollections.observableArrayList();
-    
+        
         String query = """
-            SELECT 
-                e.emergencyType,
-                e.emergencyStatus,
-                e.incidentNumber,
-                e.dateIssued AS timeCreated,
-                b.barangayName AS barangayLocation,
-                CONCAT(p.firstName, ' ', p.lastName) AS rescueeName,
-                (p.numOfChildren + p.numOfAdults + p.numOfSeniors) AS numberOfRescuee
+            SELECT e.incidentNumber, e.emergencyType, e.emergencyStatus, 
+                   e.dateIssued, b.barangayName, 
+                   p.firstName, p.lastName,
+                   (p.numOfChildren + p.numOfAdults + p.numOfSeniors) AS totalRescuees
             FROM Emergency e
+            JOIN PeopleCount p ON e.peopleID = p.peopleID
             JOIN Barangay b ON e.barangayID = b.barangayID
-            JOIN PeopleCount p ON e.incidentNumber = p.peopleID
+            ORDER BY e.dateIssued DESC
         """;
-    
+
         try (Connection conn = getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query);
-             ResultSet rs = stmt.executeQuery()) {
-    
+            Statement statement = conn.createStatement();
+            ResultSet rs = statement.executeQuery(query)) {
+            
             while (rs.next()) {
                 String emergencyType = rs.getString("emergencyType");
                 String emergencyStatus = rs.getString("emergencyStatus");
-                Integer incidentNumber = rs.getInt("incidentNumber");
-    
-                LocalDate timeCreated = rs.getDate("timeCreated").toLocalDate();
-                String barangayLocation = rs.getString("barangayLocation");
-                String rescueeName = rs.getString("rescueeName");
-                Integer numberOfRescuee = rs.getInt("numberOfRescuee");
-    
-                // Create object without reportedBy
+                String incidentNumber = rs.getString("incidentNumber");
+                LocalDate dateIssued = rs.getDate("dateIssued").toLocalDate();
+                String barangayLocation = rs.getString("barangayName");
+                String rescueeName = rs.getString("firstName") + " " + rs.getString("lastName");
+                int totalRescuees = rs.getInt("totalRescuees");
+
                 ActiveIncidentsTable incident = new ActiveIncidentsTable(
-                        emergencyType,
-                        emergencyStatus,
-                        incidentNumber,
-                        timeCreated,
-                        barangayLocation,
-                        rescueeName,
-                        numberOfRescuee
+                    emergencyType, emergencyStatus, incidentNumber, dateIssued,
+                    barangayLocation, rescueeName, totalRescuees
                 );
-    
+
                 incidentList.add(incident);
             }
+
         } catch (SQLException e) {
-            System.err.println("Error fetching active incidents: " + e.getMessage());
             e.printStackTrace();
         }
-    
+
         return incidentList;
     }
+
+
     
     
     
@@ -196,83 +190,70 @@ public class DatabaseHandler {
     return barangayList;  
 }
 
-    //  public static boolean addRoutes(AdminRoutes newRoute, List<String> locationList) {
-    //     try (Connection conn = DatabaseHandler.getNewConnection()) { 
-    //         if (conn == null || conn.isClosed()) {
-    //             System.err.println("Database connection failed!");
-    //             return false;
-    //         }
-    //         conn.setAutoCommit(false); 
-    //         System.out.println("Using connection: " + conn);
-    
-    //         // Insert into WazeRoutes
-    //         try (PreparedStatement pstmtRoutes = conn.prepareStatement(
-    //                 "INSERT INTO WazeRoutes (route_id, account_id, route_startpoint, route_endpoint) VALUES (?, ?, ?, ?)")) {
-    //             pstmtRoutes.setString(1, newRoute.getRouteID());
-    //             pstmtRoutes.setInt(2, newRoute.getAccountID());
-    //             pstmtRoutes.setString(3, newRoute.getRoute_startpoint());
-    //             pstmtRoutes.setString(4, newRoute.getRoute_endpoint());
-    //             pstmtRoutes.executeUpdate();
-    //             System.out.println("Route inserted successfully.");
-    //         }
-    
-    //         String altRouteID = RouteIDGenerator.generateAltRouteID();
-    //         String alternativeRoute = RouteIDGenerator.generateRandomAlternativeRoute(
-    //                 newRoute.getRoute_startpoint(), newRoute.getRoute_endpoint(), locationList);
- 
-    //         String stopover = (newRoute.getStopOver() == null || newRoute.getStopOver().isEmpty()) 
-    //                         ? "No Stopover" : newRoute.getStopOver();
+    //ADD RESCUE - this part is to add it sa database
+    public static boolean insertEmergency(Emergency emergency) {
+        String sql = "INSERT INTO Emergency (incidentNumber, barangayID, emergencyType, emergencySeverity, emergencyRescueCount, emergencyStatus, dateIssued, peopleID) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        try (Connection conn = getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setString(1, emergency.getIncidentNumber());
+                stmt.setInt(2, emergency.getBarangayID());
+                stmt.setString(3, emergency.getEmergencyType());
+                stmt.setString(4, emergency.getSeverity());
+                stmt.setInt(5, emergency.getRescueCount());
+                stmt.setString(6, emergency.getStatus());
+                stmt.setDate(7, java.sql.Date.valueOf(emergency.getDateIssued()));
+                stmt.setInt(8, emergency.getPeopleID());
 
-    //         try (PreparedStatement pstmtAltRoutes = conn.prepareStatement(
-    //                 "INSERT INTO WazeAltRoutes (alt_route_id, route_id, alt_routes, stop_overloc) VALUES (?, ?, ?, ?)")) {
-    //             pstmtAltRoutes.setString(1, altRouteID);
-    //             pstmtAltRoutes.setString(2, newRoute.getRouteID());
-    //             pstmtAltRoutes.setString(3, alternativeRoute);
-    //             pstmtAltRoutes.setString(4, stopover);
-    //             pstmtAltRoutes.executeUpdate();
-    //             System.out.println("Alternative route inserted successfully.");
-    //         }
+            return stmt.executeUpdate() > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 
-    //         try (PreparedStatement pstmtTravelTime = conn.prepareStatement(
-    //                 "INSERT INTO WazeTravelTime (traveltime_id, route_id, est_time) VALUES (?, ?, ?)")) {
-    //             pstmtTravelTime.setString(1, "T_T-" + String.format("%03d", new Random().nextInt(999)));
-    //             pstmtTravelTime.setString(2, newRoute.getRouteID());
-    //             pstmtTravelTime.setString(3, RouteIDGenerator.generateRandomEstTime());
-    //             pstmtTravelTime.executeUpdate();
-    //             System.out.println("Travel time inserted successfully.");
-    //         }
+    public static int insertPeople(PeopleCount person) {
+        String sql = "INSERT INTO PeopleCount (peopleMemberCount, firstName, lastName, numOfChildren, numOfAdults, numOfSeniors) VALUES (?, ?, ?, ?, ?, ?)";
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            stmt.setInt(1, person.getMemberCount());
+            stmt.setString(2, person.getFirstName());
+            stmt.setString(3, person.getLastName());
+            stmt.setInt(4, person.getNumOfChildren());
+            stmt.setInt(5, person.getNumOfAdults());
+            stmt.setInt(6, person.getNumOfSeniors());
     
-    //         conn.commit(); 
-    //         System.out.println("Transaction committed successfully.");
-    //         return true;
+            stmt.executeUpdate();
+            ResultSet rs = stmt.getGeneratedKeys();
+            if (rs.next()) {
+                return rs.getInt(1); // peopleID
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
     
-    //     } catch (SQLException e) {
-    //         System.err.println("Error adding route: " + e.getMessage());
-    //         return false;
-    //     }
-    // }
-
-
     
-    public static String generateIncidentNumber() {
+   public static String generateIncidentNumber() {
         String date = java.time.LocalDate.now().toString().replaceAll("-", "");
         int random = (int)(Math.random() * 90000) + 10000; // 5-digit random number
         return "Incident#" + date + "-" + random;
     }
-    public static int getBarangayIDByName(String barangayName) {
-        int barangayID = -1;
+    public static int getBarangayIDFromName(String name) {
+        String sql = "SELECT barangayID FROM Barangay WHERE barangayName = ?";
         try (Connection conn = getConnection();
-             PreparedStatement stmt = conn.prepareStatement("SELECT barangayID FROM Barangay WHERE barangayName = ?")) {
-            stmt.setString(1, barangayName);
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, name);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
-                barangayID = rs.getInt("barangayID");
+                return rs.getInt("barangayID");
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        return barangayID;
+        return -1;
     }
+    
         
 
 

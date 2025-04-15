@@ -41,6 +41,7 @@ public class TabPaneController {
     @FXML TableColumn <ActiveIncidentsTable, String> locationCol;
     @FXML TableColumn <ActiveIncidentsTable, String> rescueeNameCol;
     @FXML TableColumn <ActiveIncidentsTable, Integer> numOfRescueeCol;
+    private ObservableList<ActiveIncidentsTable> incidentsList = FXCollections.observableArrayList();
 
     public void initialize() {
         System.out.println("Initialize is running");
@@ -61,22 +62,11 @@ public class TabPaneController {
         emergencyTypeCol.setCellValueFactory(new PropertyValueFactory<>("emergencyType"));
         emergencyStatusCol.setCellValueFactory(new PropertyValueFactory<>("emergencyStatus"));
         incidentNumCol.setCellValueFactory(new PropertyValueFactory<>("incidentNumber"));
-        timeCreatedCol.setCellValueFactory(new PropertyValueFactory<>("timeCreated"));
+        timeCreatedCol.setCellValueFactory(new PropertyValueFactory<>("dateIssued"));
         locationCol.setCellValueFactory(new PropertyValueFactory<>("barangayLocation"));
         rescueeNameCol.setCellValueFactory(new PropertyValueFactory<>("rescueeName"));
         numOfRescueeCol.setCellValueFactory(new PropertyValueFactory<>("numOfRescuee"));
-    
-
-         // Example mock data
-         ObservableList<ActiveIncidentsTable> incidentsList = FXCollections.observableArrayList();
-         incidentsList.add(new ActiveIncidentsTable("Flood", "ENROUTE", 1001, LocalDate.of(2025, 4, 13), "Dela Paz", "John Doe", 10));
-         incidentsList.add(new ActiveIncidentsTable("Fire", "ON SCENE", 1002, LocalDate.of(2025, 4, 13), "Santolan", "Jane Smith", 8));
-         incidentsList.add(new ActiveIncidentsTable("Earthquake", "DISPATCHED", 1003, LocalDate.of(2025, 4, 12), "San Antonio", "Robert Johnson", 12));
-         
-         // Set the table items
-         activeIncidentsTable.setItems(incidentsList);
-         
-
+        refreshIncidentsTable();
 
         brgyDistanceCol.setCellFactory(column -> new TableCell<BarangayTable, Double>() {
         @Override
@@ -122,10 +112,13 @@ public class TabPaneController {
     private void loadBarangayTable() { 
         barangayList.setAll(DBService.getAllBarangayInfo());
         brgyTable.setItems(barangayList);
-        System.out.println("Loaded: " + barangayList.size() + " barangays");
     }
     private void loadBarangayDescTable() { 
         barangayDescList.setAll(DBService.getAllBarangayDescription());
         brgyDescriptionTable.setItems(barangayDescList);
+    }
+    public void refreshIncidentsTable() {
+        ObservableList<ActiveIncidentsTable> data = DBService.getActiveIncidents();
+        activeIncidentsTable.setItems(data);
     }
 }    

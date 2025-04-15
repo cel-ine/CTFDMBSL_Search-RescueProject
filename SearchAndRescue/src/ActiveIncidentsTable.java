@@ -5,20 +5,20 @@ public class ActiveIncidentsTable {
 
     private StringProperty emergencyType;
     private StringProperty emergencyStatus;
-    private IntegerProperty incidentNumber;
-    private ObjectProperty<LocalDate> timeCreated;
+    private StringProperty incidentNumber;  // Change to StringProperty
+    private ObjectProperty<LocalDate> dateIssued;
     private StringProperty barangayLocation;
     private StringProperty rescueeName;  // Rescuee name (first + last)
     private IntegerProperty numOfRescuee;
 
     // Constructor
-    public ActiveIncidentsTable(String emergencyType, String emergencyStatus, Integer incidentNumber,
-                                LocalDate timeCreated, String barangayLocation, String rescueeName, 
+    public ActiveIncidentsTable(String emergencyType, String emergencyStatus, String incidentNumber,  // Change to String
+                                LocalDate dateIssued, String barangayLocation, String rescueeName, 
                                 Integer numOfRescuee) {
         this.emergencyType = new SimpleStringProperty(emergencyType);
         this.emergencyStatus = new SimpleStringProperty(emergencyStatus);
-        this.incidentNumber = new SimpleIntegerProperty(incidentNumber);
-        this.timeCreated = new SimpleObjectProperty<>(timeCreated);
+        this.incidentNumber = new SimpleStringProperty(incidentNumber);  // Store as StringProperty
+        this.dateIssued = new SimpleObjectProperty<>(dateIssued);
         this.barangayLocation = new SimpleStringProperty(barangayLocation);
         this.rescueeName = new SimpleStringProperty(rescueeName);  // Use for rescuee name
         this.numOfRescuee = new SimpleIntegerProperty(numOfRescuee);
@@ -49,30 +49,30 @@ public class ActiveIncidentsTable {
         return emergencyStatus;
     }
 
-    public int getIncidentNumber() {
+    public String getIncidentNumber() {  // Change to return String
         return incidentNumber.get();
     }
 
-    public void setIncidentNumber(int incidentNumber) {
+    public void setIncidentNumber(String incidentNumber) {  // Change to set String
         this.incidentNumber.set(incidentNumber);
     }
 
-    public IntegerProperty incidentNumberProperty() {
+    public StringProperty incidentNumberProperty() {
         return incidentNumber;
     }
 
-    public LocalDate getTimeCreated() {
-        return timeCreated.get();
+    public LocalDate getDateIssued() {
+        return dateIssued.get();
     }
-
-    public void setTimeCreated(LocalDate timeCreated) {
-        this.timeCreated.set(timeCreated);
+    
+    public void setDateIssued(LocalDate dateIssued) {
+        this.dateIssued.set(dateIssued);
     }
-
-    public ObjectProperty<LocalDate> timeCreatedProperty() {
-        return timeCreated;
-    }
-
+    
+    public ObjectProperty<LocalDate> dateIssuedProperty() {
+        return dateIssued;
+    }    
+    
     public String getBarangayLocation() {
         return barangayLocation.get();
     }

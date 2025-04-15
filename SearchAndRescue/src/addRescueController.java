@@ -10,13 +10,13 @@ import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 
 public class addRescueController {
-    @FXML Button addRescueBTN;
     @FXML TextField firstNameTF, lastNameTF;
     @FXML DatePicker dateDP;
     @FXML ComboBox<String> barangayLocationCombo, emergencyTypeCombo;
     @FXML Slider severitySlider;
     @FXML TextField numOfRescueeTF, numOfChildTF, numOfAdultsTF, numOfSeniorsTF;
-
+    @FXML Button addRescueBTN;
+    
     private TabPaneController tabPaneController; 
    
    // private ObservableList<String> barangayList = FXCollections.observableArrayList();
@@ -37,24 +37,41 @@ public class addRescueController {
     }
 
     @FXML
-    private void handleAddRescue() {
-        String selectedFN = firstNameTF.getText();
-        String selectedLN = lastNameTF.getText(); 
-        LocalDate selectedDate = (dateDP.getValue() != null) ? dateDP.getValue() : null;
+private void handleAddRescue() {
+    String firstName = firstNameTF.getText();
+    String lastName = lastNameTF.getText();
+    LocalDate date = dateDP.getValue();
+
+    String type = emergencyTypeCombo.getValue();
+    String severity = mapSeverity(severitySlider.getValue());
+    String status = "QUEUED"; // default status
+    int barangayID = DatabaseHandler.getBarangayIDFromName(barangayLocationCombo.getValue());
+    int children = Integer.parseInt(numOfChildTF.getText());
+    int adults = Integer.parseInt(numOfAdultsTF.getText());
+    int seniors = Integer.parseInt(numOfSeniorsTF.getText());
+
+    PeopleCount person = new PeopleCount(firstName, lastName, children, adults, seniors);
+    int peopleID = DatabaseHandler.insertPeople(person);
+
+    if (peopleID != -1) {
+        String incidentNumber = DatabaseHandler.generateIncidentNumber(); 
         
-        String selectedBarangay = barangayLocationCombo.getValue();
+        Emergency emergency = new Emergency(incidentNumber, barangayID, type, severity, person.getMemberCount(), status, date, peopleID);
 
-        String selectedEmergencyType = emergencyTypeCombo.getValue();
-        double sliderVal = severitySlider.getValue();
-        String selectedSeverity = mapSeverity(sliderVal);
-
-        int rescueeCount = Integer.parseInt(numOfRescueeTF.getText());
-        int childrenCount = Integer.parseInt(numOfChildTF.getText());
-        int adultCount = Integer.parseInt(numOfAdultsTF.getText());
-        int seniorsCount = Integer.parseInt(numOfSeniorsTF.getText());
-
-
+        boolean success = DatabaseHandler.insertEmergency(emergency);
+        if (success) {
+            System.out.println("Rescue successfully recorded.");
+            if (tabPaneController != null) {
+                tabPaneController.refreshIncidentsTable(); 
+            }            
+        } else {
+            System.out.println("Failed to insert emergency.");
+        }
+    } else {
+        System.out.println("Failed to insert people data.");
     }
+}
+
 
     private String mapSeverity(double value) {
         int rounded = (int) Math.round(value);
