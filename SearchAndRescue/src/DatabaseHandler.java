@@ -121,7 +121,8 @@ public class DatabaseHandler {
         return barangayDescList;
     }
 
-    // Method to fetch active incidents and return as ObservableList
+
+    //🚨🚨🚨 ACTIVE INCIDENTS TAB 
     public static ObservableList<ActiveIncidentsTable> displayAllActiveIncidents() {
         ObservableList<ActiveIncidentsTable> incidentList = FXCollections.observableArrayList();
         
@@ -165,12 +166,6 @@ public class DatabaseHandler {
 
         return incidentList;
     }
-
-
-    
-    
-    
-    
 
     //➕➕➕ ADD RESCUE FXML 
     public static ObservableList<BarangayTable> loadBarangays() {
@@ -250,6 +245,76 @@ public class DatabaseHandler {
         }
         return -1;
     }
+
+    // UPDATE ACTIVE INCIDENT
+    public static void updateActiveIncident(
+        String incidentNumber,
+        String emergencyType,
+        String emergencyStatus,
+        String emergencySeverity,
+        String barangayLocation, // This is barangayName
+        String firstName,
+        String lastName,
+        int totalRescuees
+    ) {
+        String getBarangayIDQuery = "SELECT barangayID FROM Barangay WHERE barangayName = ?";
+        String updateQuery = """
+            UPDATE Emergency e
+            JOIN PeopleCount p ON e.peopleID = p.peopleID
+            SET e.emergencyType = ?, 
+                e.emergencyStatus = ?, 
+                e.emergencySeverity = ?, 
+                e.barangayID = ?, 
+                p.firstName = ?, 
+                p.lastName = ?, 
+                p.numOfChildren = ?, 
+                p.numOfAdults = ?, 
+                p.numOfSeniors = ?
+            WHERE e.incidentNumber = ?
+        """;
+
+        try (Connection conn = getConnection()) {
+            int barangayID = -1;
+
+            // Get the correct barangayID from the barangay name
+            try (PreparedStatement getBarangayIDStmt = conn.prepareStatement(getBarangayIDQuery)) {
+                getBarangayIDStmt.setString(1, barangayLocation);
+                ResultSet rs = getBarangayIDStmt.executeQuery();
+                if (rs.next()) {
+                    barangayID = rs.getInt("barangayID");
+                } else {
+                    System.err.println("Barangay not found: " + barangayLocation);
+                    return;
+                }
+            }
+
+            try (PreparedStatement stmt = conn.prepareStatement(updateQuery)) {
+                stmt.setString(1, emergencyType);
+                stmt.setString(2, emergencyStatus);
+                stmt.setString(3, emergencySeverity);
+                stmt.setInt(4, barangayID);
+                stmt.setString(5, firstName);
+                stmt.setString(6, lastName);
+                stmt.setInt(7, totalRescuees); // still placeholder; adjust later
+                stmt.setInt(8, totalRescuees);
+                stmt.setInt(9, totalRescuees);
+                stmt.setString(10, incidentNumber);
+
+                stmt.executeUpdate();
+                System.out.println("Database updated successfully!");
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
+
+
+
+
 
     public static String generateIncidentNumberFromDB() {
         String date = java.time.LocalDate.now().toString().replaceAll("-", "");

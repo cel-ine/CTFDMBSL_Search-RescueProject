@@ -23,4 +23,28 @@ public class DBService {
         return DatabaseHandler.loadBarangays(); 
     }
     
+
+    public static void updateIncidentAndRescuee(
+        String incidentNumber,
+        String emergencyType,
+        String emergencyStatus,
+        String emergencySeverity,
+        String barangayLocation,
+        String firstName,
+        String lastName,
+        int totalRescuees
+    ) {
+        DatabaseHandler.updateActiveIncident(
+            incidentNumber,
+            emergencyType,
+            emergencyStatus,
+            emergencySeverity,
+            barangayLocation,
+            firstName,
+            lastName,
+            totalRescuees
+        );
+    }
+    
+
 }

@@ -3,6 +3,8 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Set;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -11,14 +13,20 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 public class TabPaneController {
+    @FXML
+    private AnchorPane rootPane;
     //🏠🏠🏠 HOME TAB - BARANGAY TABLE
     @FXML TableView <BarangayTable> brgyTable; 
     @FXML TableColumn <BarangayTable, String> brgyNameCol;
@@ -86,18 +94,9 @@ public class TabPaneController {
     });    
         loadBarangayTable();
 
-    editButton.setOnAction(e -> {
-    activeIncidentsTable.setEditable(true);
-    TableEditor.makeActiveIncidentsTableEditable(
-        emergencyTypeCol,
-        emergencyStatusCol,
-        locationCol,
-        rescueeNameCol,
-        numOfRescueeCol
-            );
-        });
     }
 
+    //🚨🚨🚨 ACTIVE INCIDENTS TAB
     @FXML
     private void openAddRescuePopUp(ActionEvent event) { 
         try {
@@ -115,7 +114,76 @@ public class TabPaneController {
             e.printStackTrace();
         }
     }
-   
+
+    @FXML
+    private void handleEditButtonClick() {
+        Label messageLabel = new Label("You are now in editing mode. Click the cells you want to modify except for Severity, Incident#, Date Issued.");
+        messageLabel.setStyle("-fx-background-color: rgba(0, 0, 0, 0.7); -fx-text-fill: white; -fx-padding: 10px;");
+        
+        messageLabel.setMaxWidth(800);  
+        messageLabel.setMaxHeight(50);  
+
+        messageLabel.setTranslateX(400);
+        messageLabel.setTranslateY(400);
+
+        rootPane.getChildren().add(messageLabel);
+
+        Timeline timeline = new Timeline(
+            new KeyFrame(Duration.seconds(3), event -> {
+                rootPane.getChildren().remove(messageLabel);
+            })
+        );
+        timeline.play();
+
+        activeIncidentsTable.setEditable(true);
+        TableEditor.makeActiveIncidentsTableEditable(
+            emergencyTypeCol,
+            emergencyStatusCol,
+            locationCol,
+            rescueeNameCol,
+            numOfRescueeCol
+        );
+    }
+
+    
+    @FXML 
+    private void handleSaveButton() {
+        // Iterate through the table rows and update the edited incidents in the database
+        for (ActiveIncidentsTable incident : activeIncidentsTable.getItems()) {
+            // Get the updated values from the table columns
+            String emergencyType = incident.getEmergencyType();
+            String emergencyStatus = incident.getEmergencyStatus();
+            String emergencySeverity = incident.getEmergencySeverity();
+            String incidentNumber = incident.getIncidentNumber();
+            String barangayLocation = incident.getBarangayLocation();
+            String[] rescueeNameParts = incident.getRescueeName().split(" ", 2); // Split the name into first and last
+            String firstName = rescueeNameParts.length > 0 ? rescueeNameParts[0] : "";
+            String lastName = rescueeNameParts.length > 1 ? rescueeNameParts[1] : "";
+            int totalRescuees = incident.getNumOfRescuee();
+
+            // Call the method to update the database with the edited incident data
+            DBService.updateIncidentAndRescuee(
+                incidentNumber, // Use incident number to identify the record
+                emergencyType,
+                emergencyStatus,
+                emergencySeverity, // updated severity value
+                barangayLocation,
+                firstName,
+                lastName,
+                totalRescuees // Total number of people
+            );
+        }
+
+        System.out.println("Updated incidents successfully!");
+    }
+
+
+
+
+
+
+
+
     //LOAD INFORMATIONS 
     private void loadBarangayTable() { 
         barangayList.setAll(DBService.getAllBarangayInfo());
