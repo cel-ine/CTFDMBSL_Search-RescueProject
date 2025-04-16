@@ -1,6 +1,7 @@
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.Set;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -9,6 +10,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -34,8 +36,10 @@ public class TabPaneController {
     
     //🚨🚨🚨 ACTIVE INCIDENTS TAB 
     @FXML TableView <ActiveIncidentsTable> activeIncidentsTable;
+    @FXML Button editButton, saveButton, addRescueButton, dispatchButton;
     @FXML TableColumn <ActiveIncidentsTable, String> emergencyTypeCol;
     @FXML TableColumn <ActiveIncidentsTable, String> emergencyStatusCol;
+    @FXML TableColumn <ActiveIncidentsTable, String> emergencySeverityCol;
     @FXML TableColumn <ActiveIncidentsTable, Integer> incidentNumCol;
     @FXML TableColumn <ActiveIncidentsTable, LocalDate> timeCreatedCol;
     @FXML TableColumn <ActiveIncidentsTable, String> locationCol;
@@ -61,6 +65,7 @@ public class TabPaneController {
         //ACTIVE INCIDENTS TAB 
         emergencyTypeCol.setCellValueFactory(new PropertyValueFactory<>("emergencyType"));
         emergencyStatusCol.setCellValueFactory(new PropertyValueFactory<>("emergencyStatus"));
+        emergencySeverityCol.setCellValueFactory(new PropertyValueFactory<>("emergencySeverity"));
         incidentNumCol.setCellValueFactory(new PropertyValueFactory<>("incidentNumber"));
         timeCreatedCol.setCellValueFactory(new PropertyValueFactory<>("dateIssued"));
         locationCol.setCellValueFactory(new PropertyValueFactory<>("barangayLocation"));
@@ -81,7 +86,17 @@ public class TabPaneController {
     });    
         loadBarangayTable();
 
-        }
+    editButton.setOnAction(e -> {
+    activeIncidentsTable.setEditable(true);
+    TableEditor.makeActiveIncidentsTableEditable(
+        emergencyTypeCol,
+        emergencyStatusCol,
+        locationCol,
+        rescueeNameCol,
+        numOfRescueeCol
+            );
+        });
+    }
 
     @FXML
     private void openAddRescuePopUp(ActionEvent event) { 
@@ -100,14 +115,7 @@ public class TabPaneController {
             e.printStackTrace();
         }
     }
-  
-
-
-
-
-
-
-    
+   
     //LOAD INFORMATIONS 
     private void loadBarangayTable() { 
         barangayList.setAll(DBService.getAllBarangayInfo());
@@ -121,4 +129,16 @@ public class TabPaneController {
         ObservableList<ActiveIncidentsTable> data = DBService.getActiveIncidents();
         activeIncidentsTable.setItems(data);
     }
-}    
+
+    
+    // saveBtn.setOnAction(e -> {
+    //     Set<ActiveIncidentsTable> editedRows = TableEditor.getEditedRows();
+    //     for (ActiveIncidentsTable incident : editedRows) {
+    //         DBService.updateIncident(incident);
+    //     }
+    //     TableEditor.clearEditedRows();
+    //     refreshIncidentsTable();
+    // });    
+}
+
+    

@@ -5,6 +5,7 @@ public class ActiveIncidentsTable {
 
     private StringProperty emergencyType;
     private StringProperty emergencyStatus;
+    private StringProperty emergencySeverity;
     private StringProperty incidentNumber;  // Change to StringProperty
     private ObjectProperty<LocalDate> dateIssued;
     private StringProperty barangayLocation;
@@ -12,11 +13,12 @@ public class ActiveIncidentsTable {
     private IntegerProperty numOfRescuee;
 
     // Constructor
-    public ActiveIncidentsTable(String emergencyType, String emergencyStatus, String incidentNumber,  // Change to String
+    public ActiveIncidentsTable(String emergencyType, String emergencyStatus, String emergencySeverity, String incidentNumber,  // Change to String
                                 LocalDate dateIssued, String barangayLocation, String rescueeName, 
                                 Integer numOfRescuee) {
         this.emergencyType = new SimpleStringProperty(emergencyType);
         this.emergencyStatus = new SimpleStringProperty(emergencyStatus);
+        this.emergencySeverity = new SimpleStringProperty(emergencySeverity);  // Default value for severity
         this.incidentNumber = new SimpleStringProperty(incidentNumber);  // Store as StringProperty
         this.dateIssued = new SimpleObjectProperty<>(dateIssued);
         this.barangayLocation = new SimpleStringProperty(barangayLocation);
@@ -37,6 +39,8 @@ public class ActiveIncidentsTable {
         return emergencyType;
     }
 
+
+
     public String getEmergencyStatus() {
         return emergencyStatus.get();
     }
@@ -48,6 +52,21 @@ public class ActiveIncidentsTable {
     public StringProperty emergencyStatusProperty() {
         return emergencyStatus;
     }
+
+
+
+    public String getEmergencySeverity() {
+        return emergencySeverity.get();
+    }
+
+    public void setEmergencySeverity(String emergencySeverity) {
+        this.emergencySeverity.set(emergencySeverity);
+    }
+
+    public StringProperty emergencySeverityProperty() {
+        return emergencySeverity;
+    }
+
 
     public String getIncidentNumber() {  // Change to return String
         return incidentNumber.get();

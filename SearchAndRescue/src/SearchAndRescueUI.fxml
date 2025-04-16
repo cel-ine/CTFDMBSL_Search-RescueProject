@@ -80,15 +80,16 @@
               <content>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="626.0" prefWidth="1350.0" style="-fx-background-color: white;">
                      <children>
-                        <TableView fx:id="activeIncidentsTable" layoutX="1.0" layoutY="122.0" prefHeight="449.0" prefWidth="1342.0">
+                        <TableView fx:id="activeIncidentsTable" layoutX="1.0" layoutY="122.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="449.0" prefWidth="1342.0">
                           <columns>
-                            <TableColumn fx:id="emergencyTypeCol" prefWidth="150.39999389648438" text="Type" />
-                            <TableColumn fx:id="emergencyStatusCol" minWidth="0.0" prefWidth="185.60003662109375" text="Status" />
-                              <TableColumn fx:id="incidentNumCol" minWidth="0.0" prefWidth="185.60003662109375" text="Incident Number" />
-                              <TableColumn fx:id="timeCreatedCol" minWidth="0.0" prefWidth="199.0" text="Time Created" />
-                              <TableColumn fx:id="locationCol" minWidth="0.0" prefWidth="188.0" text="Location" />
-                              <TableColumn fx:id="rescueeNameCol" minWidth="0.0" prefWidth="214.0" text="Reported by (FN - LN)" />
-                              <TableColumn fx:id="numOfRescueeCol" minWidth="0.0" prefWidth="217.0" text="Number of rescuee" />
+                            <TableColumn fx:id="emergencyTypeCol" prefWidth="137.0" text="Type" />
+                            <TableColumn fx:id="emergencyStatusCol" minWidth="0.0" prefWidth="167.0" text="Status" />
+                              <TableColumn fx:id="emergencySeverityCol" prefWidth="162.0" text="Severity" />
+                              <TableColumn fx:id="incidentNumCol" minWidth="0.0" prefWidth="170.0" text="Incident Number" />
+                              <TableColumn fx:id="timeCreatedCol" minWidth="0.0" prefWidth="191.0" text="Date Issued" />
+                              <TableColumn fx:id="locationCol" minWidth="0.0" prefWidth="180.0" text="Location" />
+                              <TableColumn fx:id="rescueeNameCol" minWidth="0.0" prefWidth="194.0" text="Reported by (FN - LN)" />
+                              <TableColumn fx:id="numOfRescueeCol" minWidth="0.0" prefWidth="140.0" text="Number of rescuee" />
                           </columns>
                         </TableView>
                         <HBox prefHeight="53.0" prefWidth="1343.0" style="-fx-border-color: lightgrey;">
@@ -117,6 +118,7 @@
                         <ComboBox layoutX="289.0" layoutY="92.0" prefHeight="2.0" prefWidth="150.0" promptText="Location" />
                         <Label layoutX="237.0" layoutY="98.0" text="Filter by:" />
                         <Button fx:id="saveButton" layoutX="1245.0" layoutY="92.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="91.0" text="Save Changes" />
+                        <Button fx:id="editButton" layoutX="1145.0" layoutY="92.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="91.0" text="Edit" />
                      </children></AnchorPane>
               </content>
             </Tab>

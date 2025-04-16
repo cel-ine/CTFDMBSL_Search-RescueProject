@@ -37,40 +37,40 @@ public class addRescueController {
     }
 
     @FXML
-private void handleAddRescue() {
-    String firstName = firstNameTF.getText();
-    String lastName = lastNameTF.getText();
-    LocalDate date = dateDP.getValue();
+    private void handleAddRescue() {
+        String firstName = firstNameTF.getText();
+        String lastName = lastNameTF.getText();
+        LocalDate date = dateDP.getValue();
 
-    String type = emergencyTypeCombo.getValue();
-    String severity = mapSeverity(severitySlider.getValue());
-    String status = "QUEUED"; // default status
-    int barangayID = DatabaseHandler.getBarangayIDFromName(barangayLocationCombo.getValue());
-    int children = Integer.parseInt(numOfChildTF.getText());
-    int adults = Integer.parseInt(numOfAdultsTF.getText());
-    int seniors = Integer.parseInt(numOfSeniorsTF.getText());
+        String type = emergencyTypeCombo.getValue();
+        String severity = mapSeverity(severitySlider.getValue());
+        String status = "QUEUED"; // default status
+        int barangayID = DatabaseHandler.getBarangayIDFromName(barangayLocationCombo.getValue());
+        int children = Integer.parseInt(numOfChildTF.getText());
+        int adults = Integer.parseInt(numOfAdultsTF.getText());
+        int seniors = Integer.parseInt(numOfSeniorsTF.getText());
 
-    PeopleCount person = new PeopleCount(firstName, lastName, children, adults, seniors);
-    int peopleID = DatabaseHandler.insertPeople(person);
+        PeopleCount person = new PeopleCount(firstName, lastName, children, adults, seniors);
+        int peopleID = DatabaseHandler.insertPeople(person);
 
-    if (peopleID != -1) {
-        String incidentNumber = DatabaseHandler.generateIncidentNumber(); 
-        
-        Emergency emergency = new Emergency(incidentNumber, barangayID, type, severity, person.getMemberCount(), status, date, peopleID);
+        if (peopleID != -1) {
+            String incidentNumber = DatabaseHandler.generateIncidentNumberFromDB(); 
+            
+            Emergency emergency = new Emergency(incidentNumber, barangayID, type, severity, person.getMemberCount(), status, date, peopleID);
 
-        boolean success = DatabaseHandler.insertEmergency(emergency);
-        if (success) {
-            System.out.println("Rescue successfully recorded.");
-            if (tabPaneController != null) {
-                tabPaneController.refreshIncidentsTable(); 
-            }            
+            boolean success = DatabaseHandler.insertEmergency(emergency);
+            if (success) {
+                System.out.println("Rescue successfully recorded.");
+                if (tabPaneController != null) {
+                    tabPaneController.refreshIncidentsTable(); 
+                }            
+            } else {
+                System.out.println("Failed to insert emergency.");
+            }
         } else {
-            System.out.println("Failed to insert emergency.");
+            System.out.println("Failed to insert people data.");
         }
-    } else {
-        System.out.println("Failed to insert people data.");
     }
-}
 
 
     private String mapSeverity(double value) {

@@ -129,7 +129,8 @@ public class DatabaseHandler {
             SELECT e.incidentNumber, e.emergencyType, e.emergencyStatus, 
                    e.dateIssued, b.barangayName, 
                    p.firstName, p.lastName,
-                   (p.numOfChildren + p.numOfAdults + p.numOfSeniors) AS totalRescuees
+                   (p.numOfChildren + p.numOfAdults + p.numOfSeniors) AS totalRescuees,
+                   e.emergencySeverity  -- Fetch the emergencySeverity directly from the database
             FROM Emergency e
             JOIN PeopleCount p ON e.peopleID = p.peopleID
             JOIN Barangay b ON e.barangayID = b.barangayID
@@ -143,6 +144,7 @@ public class DatabaseHandler {
             while (rs.next()) {
                 String emergencyType = rs.getString("emergencyType");
                 String emergencyStatus = rs.getString("emergencyStatus");
+                String emergencySeverity = rs.getString("emergencySeverity"); 
                 String incidentNumber = rs.getString("incidentNumber");
                 LocalDate dateIssued = rs.getDate("dateIssued").toLocalDate();
                 String barangayLocation = rs.getString("barangayName");
@@ -150,7 +152,7 @@ public class DatabaseHandler {
                 int totalRescuees = rs.getInt("totalRescuees");
 
                 ActiveIncidentsTable incident = new ActiveIncidentsTable(
-                    emergencyType, emergencyStatus, incidentNumber, dateIssued,
+                    emergencyType, emergencyStatus, emergencySeverity, incidentNumber, dateIssued,
                     barangayLocation, rescueeName, totalRescuees
                 );
 
@@ -233,12 +235,7 @@ public class DatabaseHandler {
         return -1;
     }
     
-    
-   public static String generateIncidentNumber() {
-        String date = java.time.LocalDate.now().toString().replaceAll("-", "");
-        int random = (int)(Math.random() * 90000) + 10000; // 5-digit random number
-        return "Incident#" + date + "-" + random;
-    }
+
     public static int getBarangayIDFromName(String name) {
         String sql = "SELECT barangayID FROM Barangay WHERE barangayName = ?";
         try (Connection conn = getConnection();
@@ -253,8 +250,37 @@ public class DatabaseHandler {
         }
         return -1;
     }
-    
-        
 
+    public static String generateIncidentNumberFromDB() {
+        String date = java.time.LocalDate.now().toString().replaceAll("-", "");
+        String prefix = "Incident#" + date + "-";
+        String latest = ""; // will store the last incident number like Incident#20250415-00004
+    
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(
+                 "SELECT incidentNumber FROM Emergency WHERE incidentNumber LIKE ? ORDER BY incidentNumber DESC LIMIT 1")) {
+            
+            stmt.setString(1, prefix + "%");
+            ResultSet rs = stmt.executeQuery();
+    
+            if (rs.next()) {
+                latest = rs.getString("incidentNumber");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    
+        // Get last number or start from 0
+        int lastNumber = 0;
+        if (!latest.isEmpty()) {
+            String[] parts = latest.split("-");
+            lastNumber = Integer.parseInt(parts[1]);
+        }
+    
+        int newNumber = lastNumber + 1;
+        String formatted = String.format("%05d", newNumber);
+    
+        return prefix + formatted;
+    }
 
 }
