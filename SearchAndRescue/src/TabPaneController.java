@@ -1,5 +1,6 @@
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.Set;
 
@@ -80,7 +81,31 @@ public class TabPaneController {
         rescueeNameCol.setCellValueFactory(new PropertyValueFactory<>("rescueeName"));
         numOfRescueeCol.setCellValueFactory(new PropertyValueFactory<>("numOfRescuee"));
         refreshIncidentsTable();
-
+       
+       
+        numOfRescueeCol.setCellFactory(column -> {
+            TableCell<ActiveIncidentsTable, Integer> cell = new TableCell<>() {
+                @Override
+                protected void updateItem(Integer item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (empty || item == null) {
+                        setText(null);
+                    } else {
+                        setText(item.toString());
+                    }
+                }
+            };
+        
+            cell.setOnMouseClicked(event -> {
+                if (!cell.isEmpty() && event.getClickCount() == 1) {
+                    ActiveIncidentsTable selectedIncident = activeIncidentsTable.getItems().get(cell.getIndex());
+                    openRescueePopup(selectedIncident);
+                }
+            });
+        
+            return cell;
+        });  
+       
         brgyDistanceCol.setCellFactory(column -> new TableCell<BarangayTable, Double>() {
         @Override
         protected void updateItem(Double item, boolean empty) {
@@ -95,6 +120,8 @@ public class TabPaneController {
         loadBarangayTable();
 
     }
+   
+   
 
     //🚨🚨🚨 ACTIVE INCIDENTS TAB
     @FXML
@@ -114,7 +141,7 @@ public class TabPaneController {
             e.printStackTrace();
         }
     }
-
+    //🚨🚨🚨 EDIT BUTTON - FOR ACTIVE INCIDENTS TABLE. ONCE CLICKED, SOME OF THE CELLS BECOME EDITABLE
     @FXML
     private void handleEditButtonClick() {
         Label messageLabel = new Label("You are now in editing mode. Click the cells you want to modify except for Severity, Incident#, Date Issued.");
@@ -145,37 +172,88 @@ public class TabPaneController {
         );
     }
 
-    
-    @FXML 
+    //🚨🚨🚨 SAVE BUTTON - ONCE CLICKED, THE VALUES ARE EDITED NOW IN THE DATABASE 
+    @FXML
     private void handleSaveButton() {
-        // Iterate through the table rows and update the edited incidents in the database
         for (ActiveIncidentsTable incident : activeIncidentsTable.getItems()) {
-            // Get the updated values from the table columns
+            String incidentNumber = incident.getIncidentNumber();
             String emergencyType = incident.getEmergencyType();
             String emergencyStatus = incident.getEmergencyStatus();
             String emergencySeverity = incident.getEmergencySeverity();
-            String incidentNumber = incident.getIncidentNumber();
             String barangayLocation = incident.getBarangayLocation();
-            String[] rescueeNameParts = incident.getRescueeName().split(" ", 2); // Split the name into first and last
-            String firstName = rescueeNameParts.length > 0 ? rescueeNameParts[0] : "";
-            String lastName = rescueeNameParts.length > 1 ? rescueeNameParts[1] : "";
-            int totalRescuees = incident.getNumOfRescuee();
-
-            // Call the method to update the database with the edited incident data
+    
+            int children = incident.getChildren();
+            int adults = incident.getAdults();
+            int seniors = incident.getSeniors();
+    
+            if (children == 0 && adults == 0 && seniors == 0) {
+                int[] previousCounts = DBService.getPeopleCountsByIncidentNumber(incidentNumber);
+                children = previousCounts[0];
+                adults = previousCounts[1];
+                seniors = previousCounts[2];
+            }
+    
+            String[] nameParts = incident.getRescueeName().split(" ", 2);
+            String firstName = nameParts.length > 0 ? nameParts[0] : "";
+            String lastName = nameParts.length > 1 ? nameParts[1] : "";
+    
+            int numOfRescuee = children + adults + seniors;
+    
             DBService.updateIncidentAndRescuee(
-                incidentNumber, // Use incident number to identify the record
+                incidentNumber,
                 emergencyType,
                 emergencyStatus,
-                emergencySeverity, // updated severity value
+                emergencySeverity,
                 barangayLocation,
                 firstName,
                 lastName,
-                totalRescuees // Total number of people
+                numOfRescuee,
+                children,
+                adults,
+                seniors
             );
+            System.out.println("Incident updated successfully for " + incidentNumber);
+        }
+    
+        activeIncidentsTable.refresh();
+        System.out.println("All incidents updated in table!");
+    }
+    
+    //🚨🚨🚨 FOR INPUTTING THE DETAILED NUMBER OF RESCUEE (# of children, adults, seniors)
+    private void openRescueePopup(ActiveIncidentsTable selectedIncident) {
+    try {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("S&RRescueeCountPopUp.fxml"));
+        AnchorPane page = loader.load();
+
+        Stage dialogStage = new Stage();
+        dialogStage.setTitle("Rescuee Breakdown");
+        dialogStage.initModality(Modality.APPLICATION_MODAL);
+        dialogStage.initOwner(rootPane.getScene().getWindow());
+        dialogStage.setScene(new Scene(page));
+
+        RescueeCountPopUpController controller = loader.getController();
+        controller.setDialogStage(dialogStage);
+
+        dialogStage.showAndWait();
+
+        if (controller.isSaveClicked()) {
+            int children = controller.getChildren();
+            int adults = controller.getAdults();
+            int seniors = controller.getSeniors();
+
+            selectedIncident.setChildren(children);
+            selectedIncident.setAdults(adults);
+            selectedIncident.setSeniors(seniors);
+            selectedIncident.setNumOfRescuee(children + adults + seniors);
+
+            activeIncidentsTable.refresh();
         }
 
-        System.out.println("Updated incidents successfully!");
+    } catch (IOException e) {
+        e.printStackTrace();
     }
+}
+
 
 
 

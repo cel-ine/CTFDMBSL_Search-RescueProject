@@ -1,4 +1,6 @@
 
+import java.sql.SQLException;
+
 import javafx.collections.ObservableList;
 
 
@@ -32,19 +34,37 @@ public class DBService {
         String barangayLocation,
         String firstName,
         String lastName,
-        int totalRescuees
+        int numOfRescuee,
+        int children,
+        int adults,
+        int seniors
     ) {
-        DatabaseHandler.updateActiveIncident(
-            incidentNumber,
-            emergencyType,
-            emergencyStatus,
-            emergencySeverity,
-            barangayLocation,
-            firstName,
-            lastName,
-            totalRescuees
-        );
+        try {
+            DatabaseHandler.updateActiveIncident(
+                incidentNumber,
+                emergencyType,
+                emergencyStatus,
+                emergencySeverity,
+                barangayLocation,
+                firstName,
+                lastName,
+                numOfRescuee,
+                children,
+                adults,
+                seniors
+            );
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static int[] getPeopleCountsByIncidentNumber(String incidentNumber) {
+        try {
+            return DatabaseHandler.getPeopleCountsByIncidentNumber(incidentNumber);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return new int[]{0, 0, 0};
+        }
     }
     
-
 }

@@ -122,7 +122,6 @@ public class DatabaseHandler {
     }
 
 
-    //🚨🚨🚨 ACTIVE INCIDENTS TAB 
     public static ObservableList<ActiveIncidentsTable> displayAllActiveIncidents() {
         ObservableList<ActiveIncidentsTable> incidentList = FXCollections.observableArrayList();
         
@@ -137,7 +136,7 @@ public class DatabaseHandler {
             JOIN Barangay b ON e.barangayID = b.barangayID
             ORDER BY e.dateIssued DESC
         """;
-
+    
         try (Connection conn = getConnection();
             Statement statement = conn.createStatement();
             ResultSet rs = statement.executeQuery(query)) {
@@ -151,21 +150,24 @@ public class DatabaseHandler {
                 String barangayLocation = rs.getString("barangayName");
                 String rescueeName = rs.getString("firstName") + " " + rs.getString("lastName");
                 int totalRescuees = rs.getInt("totalRescuees");
-
+    
+                // Create the ActiveIncidentsTable object
                 ActiveIncidentsTable incident = new ActiveIncidentsTable(
                     emergencyType, emergencyStatus, emergencySeverity, incidentNumber, dateIssued,
                     barangayLocation, rescueeName, totalRescuees
                 );
-
+    
+                // Add to the list of incidents
                 incidentList.add(incident);
             }
-
+    
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
+    
         return incidentList;
     }
+    
 
     //➕➕➕ ADD RESCUE FXML 
     public static ObservableList<BarangayTable> loadBarangays() {
@@ -189,19 +191,19 @@ public class DatabaseHandler {
 
     //ADD RESCUE - this part is to add it sa database
     public static boolean insertEmergency(Emergency emergency) {
-        String sql = "INSERT INTO Emergency (incidentNumber, barangayID, emergencyType, emergencySeverity, emergencyRescueCount, emergencyStatus, dateIssued, peopleID) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String query = "INSERT INTO Emergency (incidentNumber, barangayID, emergencyType, emergencySeverity, emergencyRescueCount, emergencyStatus, dateIssued, peopleID) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = getConnection();
-            PreparedStatement stmt = conn.prepareStatement(sql)) {
-                stmt.setString(1, emergency.getIncidentNumber());
-                stmt.setInt(2, emergency.getBarangayID());
-                stmt.setString(3, emergency.getEmergencyType());
-                stmt.setString(4, emergency.getSeverity());
-                stmt.setInt(5, emergency.getRescueCount());
-                stmt.setString(6, emergency.getStatus());
-                stmt.setDate(7, java.sql.Date.valueOf(emergency.getDateIssued()));
-                stmt.setInt(8, emergency.getPeopleID());
+            PreparedStatement pstmt = conn.prepareStatement(query)) {
+                pstmt.setString(1, emergency.getIncidentNumber());
+                pstmt.setInt(2, emergency.getBarangayID());
+                pstmt.setString(3, emergency.getEmergencyType());
+                pstmt.setString(4, emergency.getSeverity());
+                pstmt.setInt(5, emergency.getRescueCount());
+                pstmt.setString(6, emergency.getStatus());
+                pstmt.setDate(7, java.sql.Date.valueOf(emergency.getDateIssued()));
+                pstmt.setInt(8, emergency.getPeopleID());
 
-            return stmt.executeUpdate() > 0;
+            return pstmt.executeUpdate() > 0;
         } catch (Exception e) {
             e.printStackTrace();
             return false;
@@ -209,18 +211,18 @@ public class DatabaseHandler {
     }
 
     public static int insertPeople(PeopleCount person) {
-        String sql = "INSERT INTO PeopleCount (peopleMemberCount, firstName, lastName, numOfChildren, numOfAdults, numOfSeniors) VALUES (?, ?, ?, ?, ?, ?)";
+        String query = "INSERT INTO PeopleCount (peopleMemberCount, firstName, lastName, numOfChildren, numOfAdults, numOfSeniors) VALUES (?, ?, ?, ?, ?, ?)";
         try (Connection conn = getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            stmt.setInt(1, person.getMemberCount());
-            stmt.setString(2, person.getFirstName());
-            stmt.setString(3, person.getLastName());
-            stmt.setInt(4, person.getNumOfChildren());
-            stmt.setInt(5, person.getNumOfAdults());
-            stmt.setInt(6, person.getNumOfSeniors());
+             PreparedStatement pstmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+            pstmt.setInt(1, person.getMemberCount());
+            pstmt.setString(2, person.getFirstName());
+            pstmt.setString(3, person.getLastName());
+            pstmt.setInt(4, person.getNumOfChildren());
+            pstmt.setInt(5, person.getNumOfAdults());
+            pstmt.setInt(6, person.getNumOfSeniors());
     
-            stmt.executeUpdate();
-            ResultSet rs = stmt.getGeneratedKeys();
+            pstmt.executeUpdate();
+            ResultSet rs = pstmt.getGeneratedKeys();
             if (rs.next()) {
                 return rs.getInt(1); // peopleID
             }
@@ -232,11 +234,11 @@ public class DatabaseHandler {
     
 
     public static int getBarangayIDFromName(String name) {
-        String sql = "SELECT barangayID FROM Barangay WHERE barangayName = ?";
+        String query = "SELECT barangayID FROM Barangay WHERE barangayName = ?";
         try (Connection conn = getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, name);
-            ResultSet rs = stmt.executeQuery();
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setString(1, name);
+            ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
                 return rs.getInt("barangayID");
             }
@@ -246,18 +248,20 @@ public class DatabaseHandler {
         return -1;
     }
 
-    // UPDATE ACTIVE INCIDENT
+    // ⚔️⚔️⚔️ UPDATE ACTIVE INCIDENT
     public static void updateActiveIncident(
         String incidentNumber,
         String emergencyType,
         String emergencyStatus,
         String emergencySeverity,
-        String barangayLocation, // This is barangayName
+        String barangayLocation,
         String firstName,
         String lastName,
-        int totalRescuees
-    ) {
+        int numOfRescuee,
+        int children, int adults, int seniors
+    ) throws SQLException {
         String getBarangayIDQuery = "SELECT barangayID FROM Barangay WHERE barangayName = ?";
+        
         String updateQuery = """
             UPDATE Emergency e
             JOIN PeopleCount p ON e.peopleID = p.peopleID
@@ -269,53 +273,79 @@ public class DatabaseHandler {
                 p.lastName = ?, 
                 p.numOfChildren = ?, 
                 p.numOfAdults = ?, 
-                p.numOfSeniors = ?
-            WHERE e.incidentNumber = ?
+                p.numOfSeniors = ?, 
+                e.emergencyRescueCount = ?  -- Set the total rescue count (sum of children, adults, and seniors)
+            WHERE e.incidentNumber = ?;
         """;
 
         try (Connection conn = getConnection()) {
             int barangayID = -1;
 
-            // Get the correct barangayID from the barangay name
             try (PreparedStatement getBarangayIDStmt = conn.prepareStatement(getBarangayIDQuery)) {
                 getBarangayIDStmt.setString(1, barangayLocation);
-                ResultSet rs = getBarangayIDStmt.executeQuery();
-                if (rs.next()) {
-                    barangayID = rs.getInt("barangayID");
-                } else {
-                    System.err.println("Barangay not found: " + barangayLocation);
-                    return;
+                try (ResultSet rs = getBarangayIDStmt.executeQuery()) {
+                    if (rs.next()) {
+                        barangayID = rs.getInt("barangayID");  
+                    } else {
+                        System.err.println("Barangay not found: " + barangayLocation);
+                        return;  
+                    }
                 }
             }
 
-            try (PreparedStatement stmt = conn.prepareStatement(updateQuery)) {
-                stmt.setString(1, emergencyType);
-                stmt.setString(2, emergencyStatus);
-                stmt.setString(3, emergencySeverity);
-                stmt.setInt(4, barangayID);
-                stmt.setString(5, firstName);
-                stmt.setString(6, lastName);
-                stmt.setInt(7, totalRescuees); // still placeholder; adjust later
-                stmt.setInt(8, totalRescuees);
-                stmt.setInt(9, totalRescuees);
-                stmt.setString(10, incidentNumber);
-
-                stmt.executeUpdate();
-                System.out.println("Database updated successfully!");
+            try (PreparedStatement pstmt = conn.prepareStatement(updateQuery)) {
+                pstmt.setString(1, emergencyType);  
+                pstmt.setString(2, emergencyStatus);  
+                pstmt.setString(3, emergencySeverity);  
+                pstmt.setInt(4, barangayID);  
+                pstmt.setString(5, firstName); 
+                pstmt.setString(6, lastName);  
+                pstmt.setInt(7, children);  
+                pstmt.setInt(8, adults);  
+                pstmt.setInt(9, seniors);  
+                pstmt.setInt(10, children + adults + seniors);  
+                pstmt.setString(11, incidentNumber); 
+                int affectedRows = pstmt.executeUpdate();  
+                if (affectedRows > 0) {
+                    System.out.println("Database updated successfully!");
+                } else {
+                    System.err.println("No matching incident found with incidentNumber: " + incidentNumber);
+                }
             }
-
         } catch (SQLException e) {
             e.printStackTrace();
+            System.err.println("Error updating database.");
+            throw e;  
         }
     }
 
+    public static int[] getPeopleCountsByIncidentNumber(String incidentNumber) throws SQLException {
+        String query = """
+            SELECT p.numOfChildren, p.numOfAdults, p.numOfSeniors
+            FROM Emergency e
+            JOIN PeopleCount p ON e.peopleID = p.peopleID
+            WHERE e.incidentNumber = ?
+        """;
 
+        try (Connection conn = getConnection();
+            PreparedStatement stmt = conn.prepareStatement(query)) {
 
+            stmt.setString(1, incidentNumber);
 
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    int children = rs.getInt("numOfChildren");
+                    int adults = rs.getInt("numOfAdults");
+                    int seniors = rs.getInt("numOfSeniors");
+                    return new int[]{children, adults, seniors};
+                }
+            }
+        }
 
+        return new int[]{0, 0, 0}; 
+    }
 
-
-
+    //incident number generator
     public static String generateIncidentNumberFromDB() {
         String date = java.time.LocalDate.now().toString().replaceAll("-", "");
         String prefix = "Incident#" + date + "-";
@@ -335,7 +365,7 @@ public class DatabaseHandler {
             e.printStackTrace();
         }
     
-        // Get last number or start from 0
+    
         int lastNumber = 0;
         if (!latest.isEmpty()) {
             String[] parts = latest.split("-");

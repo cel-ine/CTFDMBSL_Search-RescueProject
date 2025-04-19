@@ -50,6 +50,6 @@ public class BarangayTable{
 
     @Override
     public String toString() {
-        return barangayName;  // This ensures that only barangayName is shown in the ComboBox.
+        return barangayName;  
     }
 }
