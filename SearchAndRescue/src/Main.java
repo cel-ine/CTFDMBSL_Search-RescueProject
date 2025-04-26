@@ -4,11 +4,11 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-public class Main extends Application { //THIS SHOULD BE THE LOGIN PAGE!! -- FOR TRIAL LANG MUNA KAYA HOMEPAGE 
+public class Main extends Application { 
     @Override
     public void start(Stage primaryStage) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("SearchAndRescueUI.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("S&RLogin.fxml"));
             Parent root = loader.load();
 
             Scene scene = new Scene(root, 1366, 768);

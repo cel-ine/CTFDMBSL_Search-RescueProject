@@ -6,6 +6,10 @@ import javafx.collections.ObservableList;
 
 //class to handle all datas and interact with the database
 public class DBService {
+    //login
+    public static boolean login(String username, Integer pin) {
+        return DatabaseHandler.validateLogin(username, pin);
+    }
     //HOMEPAGE
     public static ObservableList<BarangayTable> getAllBarangayInfo() {
         return DatabaseHandler.displayBarangay();
@@ -18,7 +22,6 @@ public class DBService {
     public static ObservableList<ActiveIncidentsTable> getActiveIncidents(){
         return DatabaseHandler.displayAllActiveIncidents();
     }
-
 
     // ADD RESCUE FXML
     public static ObservableList<BarangayTable> getAllBarangayName() {

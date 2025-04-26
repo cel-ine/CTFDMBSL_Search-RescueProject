@@ -175,6 +175,23 @@ public class TabPaneController {
     //🚨🚨🚨 SAVE BUTTON - ONCE CLICKED, THE VALUES ARE EDITED NOW IN THE DATABASE 
     @FXML
     private void handleSaveButton() {
+        Label messageLabel = new Label("Changes have been saved successfully!");
+        messageLabel.setStyle("-fx-background-color: rgba(0, 0, 0, 0.7); -fx-text-fill: white; -fx-padding: 10px;");
+        
+        messageLabel.setMaxWidth(800);  
+        messageLabel.setMaxHeight(50);  
+
+        messageLabel.setTranslateX(400);
+        messageLabel.setTranslateY(400);
+
+        rootPane.getChildren().add(messageLabel);
+
+        Timeline timeline = new Timeline(
+            new KeyFrame(Duration.seconds(3), event -> {
+                rootPane.getChildren().remove(messageLabel);
+            })
+        );
+        timeline.play();
         for (ActiveIncidentsTable incident : activeIncidentsTable.getItems()) {
             String incidentNumber = incident.getIncidentNumber();
             String emergencyType = incident.getEmergencyType();
@@ -212,7 +229,6 @@ public class TabPaneController {
                 adults,
                 seniors
             );
-            System.out.println("Incident updated successfully for " + incidentNumber);
         }
     
         activeIncidentsTable.refresh();

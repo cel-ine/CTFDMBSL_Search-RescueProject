@@ -36,8 +36,7 @@ public class DatabaseHandler {
             if (connection == null || connection.isClosed()) {
                 Class.forName("com.mysql.cj.jdbc.Driver"); // Load MySQL Driver
                 connection = DriverManager.getConnection(DB_URL, USER, PASSWORD);
-                System.out.println("Connected to database!");
-            }
+                        }
         } catch (ClassNotFoundException e) {
             System.err.println("JDBC Driver not found!");
             e.printStackTrace();
@@ -65,6 +64,25 @@ public class DatabaseHandler {
         } catch (SQLException e) {
             return true;
         }
+    }
+
+    public static boolean validateLogin(String username, Integer pin) { 
+        Connection conn = getConnection();
+        if (conn == null) {
+            System.err.println("No database connection. Cannot validate login.");
+            return false;
+        } 
+        String query = "SELECT * FROM AdminAccount WHERE username = ? AND adminPin = ?";
+        try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setString(1, username);
+            pstmt.setInt(2, pin);
+            try (ResultSet result = pstmt.executeQuery()) {
+                return result.next();
+            }
+        } catch (SQLException e) {
+            System.err.println("Error validating login: " + e.getMessage());
+        }
+        return false;
     }
 
     //🏠🏠🏠 HOME PAGE - BARANGAY TABLE
@@ -211,15 +229,14 @@ public class DatabaseHandler {
     }
 
     public static int insertPeople(PeopleCount person) {
-        String query = "INSERT INTO PeopleCount (peopleMemberCount, firstName, lastName, numOfChildren, numOfAdults, numOfSeniors) VALUES (?, ?, ?, ?, ?, ?)";
+        String query = "INSERT INTO PeopleCount (firstName, lastName, numOfChildren, numOfAdults, numOfSeniors) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = getConnection();
              PreparedStatement pstmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
-            pstmt.setInt(1, person.getMemberCount());
-            pstmt.setString(2, person.getFirstName());
-            pstmt.setString(3, person.getLastName());
-            pstmt.setInt(4, person.getNumOfChildren());
-            pstmt.setInt(5, person.getNumOfAdults());
-            pstmt.setInt(6, person.getNumOfSeniors());
+            pstmt.setString(1, person.getFirstName());
+            pstmt.setString(2, person.getLastName());
+            pstmt.setInt(3, person.getNumOfChildren());
+            pstmt.setInt(4, person.getNumOfAdults());
+            pstmt.setInt(5, person.getNumOfSeniors());
     
             pstmt.executeUpdate();
             ResultSet rs = pstmt.getGeneratedKeys();
@@ -231,6 +248,7 @@ public class DatabaseHandler {
         }
         return -1;
     }
+    
     
 
     public static int getBarangayIDFromName(String name) {
