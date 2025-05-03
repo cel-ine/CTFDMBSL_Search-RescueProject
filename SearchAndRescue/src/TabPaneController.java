@@ -56,6 +56,21 @@ public class TabPaneController {
     @FXML TableColumn <ActiveIncidentsTable, Integer> numOfRescueeCol;
     private ObservableList<ActiveIncidentsTable> incidentsList = FXCollections.observableArrayList();
 
+    //🗂️🗂️🗂️ INCIDENT REPORT & HISTORY TAB
+    @FXML TableView <HistoryTable> historyTable;
+    @FXML TableColumn <HistoryTable, String> emergencyTypeCol1;
+    @FXML TableColumn <HistoryTable, String> emTypeCol;
+    @FXML TableColumn <HistoryTable, String> emSevCol;
+    @FXML TableColumn <HistoryTable, String> incidentNumHCol;
+    @FXML TableColumn <HistoryTable, Integer> dispatchedTimeCol;
+    @FXML TableColumn <HistoryTable, String> brgyLocCol;
+    @FXML TableColumn <HistoryTable, String> nameCol;
+    @FXML TableColumn <HistoryTable, String> numOfRescueeHCol;
+    @FXML TableColumn <HistoryTable, String> incidentReport;
+    private ObservableList<HistoryTable> historyList = FXCollections.observableArrayList();
+
+
+
     public void initialize() {
         System.out.println("Initialize is running");
         //HOME TAB - BARANGAY TABLE
@@ -82,7 +97,18 @@ public class TabPaneController {
         numOfRescueeCol.setCellValueFactory(new PropertyValueFactory<>("numOfRescuee"));
         refreshIncidentsTable();
        
-       
+        //HISTORY TAB
+        emergencyTypeCol1.setCellValueFactory(new PropertyValueFactory<>("emergencyType1"));
+        emTypeCol.setCellValueFactory(new PropertyValueFactory<>("emType"));
+        emSevCol.setCellValueFactory(new PropertyValueFactory<>("emSeverity"));
+        incidentNumHCol.setCellValueFactory(new PropertyValueFactory<>("incidentNumHistory"));
+        dispatchedTimeCol.setCellValueFactory(new PropertyValueFactory<>("dispatchedTime"));
+        brgyLocCol.setCellValueFactory(new PropertyValueFactory<>("barangayName"));
+        nameCol.setCellValueFactory(new PropertyValueFactory<>("rescueeNameHistory"));
+        numOfRescueeHCol.setCellValueFactory(new PropertyValueFactory<>("numOfRescueeHistory"));
+        incidentReport.setCellValueFactory(new PropertyValueFactory<>("incidentReport"));
+
+
         numOfRescueeCol.setCellFactory(column -> {
             TableCell<ActiveIncidentsTable, Integer> cell = new TableCell<>() {
                 @Override
@@ -122,7 +148,6 @@ public class TabPaneController {
     }
    
    
-
     //🚨🚨🚨 ACTIVE INCIDENTS TAB
     @FXML
     private void openAddRescuePopUp(ActionEvent event) { 
@@ -291,16 +316,6 @@ public class TabPaneController {
         ObservableList<ActiveIncidentsTable> data = DBService.getActiveIncidents();
         activeIncidentsTable.setItems(data);
     }
-
-    
-    // saveBtn.setOnAction(e -> {
-    //     Set<ActiveIncidentsTable> editedRows = TableEditor.getEditedRows();
-    //     for (ActiveIncidentsTable incident : editedRows) {
-    //         DBService.updateIncident(incident);
-    //     }
-    //     TableEditor.clearEditedRows();
-    //     refreshIncidentsTable();
-    // });    
 }
 
     

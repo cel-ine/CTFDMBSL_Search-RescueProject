@@ -139,7 +139,7 @@ public class DatabaseHandler {
         return barangayDescList;
     }
 
-
+    //🚨🚨🚨 ACTIVE INCIDENTS TABLE 
     public static ObservableList<ActiveIncidentsTable> displayAllActiveIncidents() {
         ObservableList<ActiveIncidentsTable> incidentList = FXCollections.observableArrayList();
         
@@ -186,7 +186,6 @@ public class DatabaseHandler {
         return incidentList;
     }
     
-
     //➕➕➕ ADD RESCUE FXML 
     public static ObservableList<BarangayTable> loadBarangays() {
     ObservableList<BarangayTable> barangayList = FXCollections.observableArrayList();
@@ -207,7 +206,7 @@ public class DatabaseHandler {
     return barangayList;  
 }
 
-    //ADD RESCUE - this part is to add it sa database
+    //➕➕➕ ADD RESCUE - this part is to add it sa database
     public static boolean insertEmergency(Emergency emergency) {
         String query = "INSERT INTO Emergency (incidentNumber, barangayID, emergencyType, emergencySeverity, emergencyRescueCount, emergencyStatus, dateIssued, peopleID) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = getConnection();
@@ -382,8 +381,6 @@ public class DatabaseHandler {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-    
-    
         int lastNumber = 0;
         if (!latest.isEmpty()) {
             String[] parts = latest.split("-");
