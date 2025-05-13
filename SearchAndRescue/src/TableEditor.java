@@ -19,8 +19,7 @@ public class TableEditor {
         TableColumn <ActiveIncidentsTable, String> emergencyTypeCol, //combobox
         TableColumn <ActiveIncidentsTable, String> emergencyStatusCol, //combobox
         TableColumn <ActiveIncidentsTable, String> locationCol, //combobox
-        TableColumn <ActiveIncidentsTable, String> rescueeNameCol, //textfield
-        TableColumn <ActiveIncidentsTable, Integer> numOfRescueeCol) {
+        TableColumn <ActiveIncidentsTable, String> rescueeNameCol) {
     
     ObservableList<BarangayTable> barangayTableList = DBService.getAllBarangayName();
 
@@ -63,13 +62,13 @@ public class TableEditor {
          editedIncidentTable.add(incident);   
      });
 
-    numOfRescueeCol.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
-    numOfRescueeCol.setOnEditCommit(event -> {
-        ActiveIncidentsTable incident = event.getRowValue();
-        Integer newNumOfRescuee = event.getNewValue(); // Now it's an Integer
-        incident.setNumOfRescuee(newNumOfRescuee); 
-        editedIncidentTable.add(incident);   
-    });
+    // numOfRescueeCol.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
+    // numOfRescueeCol.setOnEditCommit(event -> {
+    //     ActiveIncidentsTable incident = event.getRowValue();
+    //     Integer newNumOfRescuee = event.getNewValue(); // Now it's an Integer
+    //     incident.setNumOfRescuee(newNumOfRescuee); 
+    //     editedIncidentTable.add(incident);   
+    // });
 
 
     }

@@ -109,7 +109,7 @@
                            </children>
                         </HBox>
                         <Button fx:id="addRescueButton" layoutX="581.0" layoutY="583.0" mnemonicParsing="false" onAction="#openAddRescuePopUp" prefHeight="26.0" prefWidth="78.0" text="Add Rescue" />
-                        <Button fx:id="dispatchButton" layoutX="680.0" layoutY="583.0" mnemonicParsing="false" text="Dispatch" />
+                        <Button fx:id="dispatchButton" layoutX="680.0" layoutY="583.0" mnemonicParsing="false" onAction="#handleDispatchButtonClick" text="Dispatch" />
                         <ComboBox layoutX="63.0" layoutY="83.0" prefHeight="2.0" prefWidth="150.0" promptText="Emergency Type" />
                         <Label layoutX="11.0" layoutY="89.0" text="Filter by:" />
                         <ComboBox layoutX="287.0" layoutY="83.0" prefHeight="2.0" prefWidth="150.0" promptText="Location" />

@@ -1,7 +1,11 @@
 
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 import javafx.animation.KeyFrame;
@@ -13,6 +17,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
@@ -58,15 +63,14 @@ public class TabPaneController {
 
     //🗂️🗂️🗂️ INCIDENT REPORT & HISTORY TAB
     @FXML TableView <HistoryTable> historyTable;
-    @FXML TableColumn <HistoryTable, String> emergencyTypeCol1;
+    @FXML TableColumn <HistoryTable, String> incidentReport;
     @FXML TableColumn <HistoryTable, String> emTypeCol;
     @FXML TableColumn <HistoryTable, String> emSevCol;
     @FXML TableColumn <HistoryTable, String> incidentNumHCol;
-    @FXML TableColumn <HistoryTable, Integer> dispatchedTimeCol;
+    @FXML TableColumn <HistoryTable, LocalDateTime> dispatchedTimeCol;
     @FXML TableColumn <HistoryTable, String> brgyLocCol;
     @FXML TableColumn <HistoryTable, String> nameCol;
     @FXML TableColumn <HistoryTable, String> numOfRescueeHCol;
-    @FXML TableColumn <HistoryTable, String> incidentReport;
     private ObservableList<HistoryTable> historyList = FXCollections.observableArrayList();
 
 
@@ -98,7 +102,7 @@ public class TabPaneController {
         refreshIncidentsTable();
        
         //HISTORY TAB
-        emergencyTypeCol1.setCellValueFactory(new PropertyValueFactory<>("emergencyType1"));
+        incidentReport.setCellValueFactory(new PropertyValueFactory<>("incidentReport"));
         emTypeCol.setCellValueFactory(new PropertyValueFactory<>("emType"));
         emSevCol.setCellValueFactory(new PropertyValueFactory<>("emSeverity"));
         incidentNumHCol.setCellValueFactory(new PropertyValueFactory<>("incidentNumHistory"));
@@ -107,7 +111,7 @@ public class TabPaneController {
         nameCol.setCellValueFactory(new PropertyValueFactory<>("rescueeNameHistory"));
         numOfRescueeHCol.setCellValueFactory(new PropertyValueFactory<>("numOfRescueeHistory"));
         incidentReport.setCellValueFactory(new PropertyValueFactory<>("incidentReport"));
-
+        loadHistoryTable();
 
         numOfRescueeCol.setCellFactory(column -> {
             TableCell<ActiveIncidentsTable, Integer> cell = new TableCell<>() {
@@ -192,8 +196,7 @@ public class TabPaneController {
             emergencyTypeCol,
             emergencyStatusCol,
             locationCol,
-            rescueeNameCol,
-            numOfRescueeCol
+            rescueeNameCol
         );
     }
 
@@ -295,13 +298,53 @@ public class TabPaneController {
     }
 }
 
+    
+    //🚨🚨🚨 DISPATCH BUTTON
+    @FXML
+    private void handleDispatchButtonClick() {
+        ActiveIncidentsTable selectedIncident = activeIncidentsTable.getSelectionModel().getSelectedItem();
+
+        if (selectedIncident == null) {
+            showAlert("No Incident Selected", "Please select an incident to dispatch.");
+            return;
+        }
+
+        String incidentNumber = selectedIncident.getIncidentNumber();
+        String barangayName = selectedIncident.getBarangayLocation();
+
+        int barangayID = DatabaseHandler.getBarangayIDFromName(barangayName);
+        if (barangayID == -1) {
+            showAlert("Invalid Barangay", "The selected Barangay could not be found.");
+            return;
+        }
+
+        boolean success = DatabaseHandler.insertToHistory(incidentNumber, barangayID);
+
+        if (success) {
+            selectedIncident.setEmergencyStatus("Dispatched");
+            activeIncidentsTable.refresh();
+            activeIncidentsTable.getItems().sort((a, b) ->
+                Boolean.compare(
+                    a.getEmergencyStatus().equalsIgnoreCase("Dispatched"),
+                    b.getEmergencyStatus().equalsIgnoreCase("Dispatched")
+                )
+            );
+
+            showAlert("Dispatch Successful", "Incident dispatched and recorded in history.");
+        } else {
+            showAlert("Dispatch Failed", "An error occurred while dispatching the incident.");
+        }
+    }
 
 
 
-
-
-
-
+    private void showAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
 
     //LOAD INFORMATIONS 
     private void loadBarangayTable() { 
@@ -312,6 +355,13 @@ public class TabPaneController {
         barangayDescList.setAll(DBService.getAllBarangayDescription());
         brgyDescriptionTable.setItems(barangayDescList);
     }
+    private void loadHistoryTable() { 
+    List<HistoryTable> data = DBService.getHistory();
+    System.out.println("Fetched history count: " + data.size()); // DEBUG: check if data is retrieved
+    historyList.setAll(data);
+    historyTable.setItems(historyList);
+}
+
     public void refreshIncidentsTable() {
         ObservableList<ActiveIncidentsTable> data = DBService.getActiveIncidents();
         activeIncidentsTable.setItems(data);

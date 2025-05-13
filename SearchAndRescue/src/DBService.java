@@ -27,6 +27,9 @@ public class DBService {
     public static ObservableList<BarangayTable> getAllBarangayName() {
         return DatabaseHandler.loadBarangays(); 
     }
+     public static ObservableList<HistoryTable> getHistory() {
+        return DatabaseHandler.loadHistory(); 
+    }
     
 
     public static void updateIncidentAndRescuee(
@@ -69,5 +72,5 @@ public class DBService {
             return new int[]{0, 0, 0};
         }
     }
-    
 }
+

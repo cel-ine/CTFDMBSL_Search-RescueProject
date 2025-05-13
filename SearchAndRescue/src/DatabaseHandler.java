@@ -5,6 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Random;
 
@@ -362,35 +363,133 @@ public class DatabaseHandler {
         return new int[]{0, 0, 0}; 
     }
 
-    //incident number generator
-    public static String generateIncidentNumberFromDB() {
-        String date = java.time.LocalDate.now().toString().replaceAll("-", "");
-        String prefix = "Incident#" + date + "-";
-        String latest = ""; // will store the last incident number like Incident#20250415-00004
-    
+    public static boolean insertToHistory(String incidentNumber, int barangayID) {
+        String updateStatusQuery = "UPDATE Emergency SET emergencyStatus = 'Dispatched' WHERE incidentNumber = ?";
+        String insertHistoryQuery = "INSERT INTO History (incidentNumber, barangayID, dispatchTimestamp) VALUES (?, ?, NOW())";
+
         try (Connection conn = getConnection();
-             PreparedStatement stmt = conn.prepareStatement(
-                 "SELECT incidentNumber FROM Emergency WHERE incidentNumber LIKE ? ORDER BY incidentNumber DESC LIMIT 1")) {
-            
-            stmt.setString(1, prefix + "%");
-            ResultSet rs = stmt.executeQuery();
-    
-            if (rs.next()) {
-                latest = rs.getString("incidentNumber");
-            }
+            PreparedStatement pstmtUpdate = conn.prepareStatement(updateStatusQuery);
+            PreparedStatement pstmtInsert = conn.prepareStatement(insertHistoryQuery)) {
+
+            // 1. Update status to "Dispatched"
+            pstmtUpdate.setString(1, incidentNumber);
+            pstmtUpdate.executeUpdate();
+
+            // 2. Insert into History
+            pstmtInsert.setString(1, incidentNumber);
+            pstmtInsert.setInt(2, barangayID);
+
+            return pstmtInsert.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
+            return false;
         }
-        int lastNumber = 0;
-        if (!latest.isEmpty()) {
-            String[] parts = latest.split("-");
-            lastNumber = Integer.parseInt(parts[1]);
-        }
-    
-        int newNumber = lastNumber + 1;
-        String formatted = String.format("%05d", newNumber);
-    
-        return prefix + formatted;
     }
 
+    public static ObservableList<HistoryTable> loadHistory() {
+    ObservableList<HistoryTable> historyList = FXCollections.observableArrayList();
+    
+    // Updated query to join EmergencyReport
+    String query = "SELECT er.reportRemarks AS incidentReport, e.emergencyType, e.emergencySeverity, " +
+                    "e.incidentNumber, h.dispatchTimestamp, b.barangayName, " +
+                    "CONCAT(p.lastName, ', ', p.firstName) AS rescueeName, " +
+                    "(p.numOfChildren + p.numOfAdults + p.numOfSeniors) AS totalRescuees " +
+                    "FROM History h " +
+                    "JOIN Emergency e ON h.incidentNumber = e.incidentNumber " +
+                    "JOIN PeopleCount p ON e.peopleID = p.peopleID " +
+                    "JOIN Barangay b ON h.barangayID = b.barangayID " +
+                    "LEFT JOIN EmergencyReport er ON h.historyID = er.historyID " +
+                    "ORDER BY h.dispatchTimestamp DESC";
+    
+    try (Connection conn = getConnection();
+         PreparedStatement pstmt = conn.prepareStatement(query);
+         ResultSet result = pstmt.executeQuery()) {
+
+        while (result.next()) {
+            String incidentReport = result.getString("incidentReport");
+            String emType = result.getString("emergencyType");
+            String emSeverity = result.getString("emergencySeverity");
+            String incidentNum = result.getString("incidentNumber");
+            LocalDateTime dispatchedTime = result.getTimestamp("dispatchTimestamp").toLocalDateTime();
+            String barangayName = result.getString("barangayName");
+            String rescueeName = result.getString("rescueeName");
+            String totalRescuees = String.valueOf(result.getInt("totalRescuees"));
+
+            historyList.add(new HistoryTable(
+                incidentReport, emType, emSeverity, incidentNum,
+                dispatchedTime, barangayName, rescueeName, totalRescuees
+            ));
+        }
+
+    } catch (SQLException e) {
+        System.err.println("Error loading history: " + e.getMessage());
+    }
+
+    return historyList;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    //incident number generator
+    public static String generateIncidentNumberFromDB() {
+    String date = java.time.LocalDate.now().toString().replaceAll("-", "");
+    String prefix = "Incident#" + date + "-";
+    String latest = ""; // will store the last incident number like Incident#20250415-00004
+
+    try (Connection conn = getConnection();
+         PreparedStatement stmt = conn.prepareStatement(
+             "SELECT incidentNumber FROM Emergency WHERE incidentNumber LIKE ? ORDER BY incidentNumber DESC LIMIT 1")) {
+        
+        stmt.setString(1, prefix + "%");
+        ResultSet rs = stmt.executeQuery();
+
+        if (rs.next()) {
+            latest = rs.getString("incidentNumber");
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    
+    int lastNumber = 0;
+    if (!latest.isEmpty()) {
+        String[] parts = latest.split("-");
+        if (parts.length > 1) {
+            try {
+                lastNumber = Integer.parseInt(parts[1]); // parse the numeric part
+            } catch (NumberFormatException e) {
+                // Handle any cases where the part is not a valid number
+                System.err.println("Error parsing number from incident: " + latest);
+            }
+        }
+    }
+
+    int newNumber = lastNumber + 1;
+    String formatted = String.format("%05d", newNumber); // Ensure it's 5 digits
+
+    return prefix + formatted;
+}
 }
