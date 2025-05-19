@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Reach?</title>
+
+    <!-- Include Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css" />
+
+    <!-- Include Leaflet JavaScript -->
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
+
+    <style>
+        #mapArea {
+            width: 100%;
+            height: 600px;
+        }
+        #suggestions {
+            border: 1px solid #ddd;
+            max-height: 150px;
+            overflow-y: auto;
+            list-style-type: none;
+            padding: 0;
+        }
+        #suggestions li {
+            padding: 5px;
+            cursor: pointer;
+        }
+        #suggestions li:hover {
+            background-color: #f1f1f1;
+        }
+        .marker-label {
+            background-color: white;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-size: 12px;
+            color: black;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h2>Enter Destination Barangays</h2>
+    Destination (separate multiple barangays with commas): 
+    <input type="text" id="destination" oninput="showSuggestions()" />
+
+
+    
+    <!-- Suggestions List -->
+    <ul id="suggestions"></ul>
+
+    <div id="mapArea"></div>
+
+    <script type="text/javascript">
+        var map;
+        var routeControl;
+        var markers = [];
+        var waypoints = [];
+        var count = 1;
+
+        // Start location: City of Pasig Rescue Emergency Disaster
+        var startLocation = {
+            name: "City of Pasig Rescue Emergency Disaster",
+            lat: 14.5774,
+            lng: 121.0845
+        };
+
+        // Hardcoded list of barangays
+        
+        var barangays = {
+            "Dela Paz": { lat: 14.5774, lng: 121.0884 },
+            "Santolan": { lat: 14.5841, lng: 121.0563 },
+            "San Antonio": { lat: 14.5760, lng: 121.0512 },
+            "Manggahan": { lat: 14.5875, lng: 121.0843 },
+            "Oranbo": { lat: 14.5704, lng: 121.0566 },
+            "Kalawaan": { lat: 14.5898, lng: 121.0882 },
+            "Ugong": { lat: 14.5656, lng: 121.0784 },
+            "Buting": { lat: 14.5679, lng: 121.0500 },
+            "Pineda": { lat: 14.5827, lng: 121.0522 }
+        };
+
+        // Initialize the map
+        function initializeMap() {
+            map = L.map('mapArea').setView([startLocation.lat, startLocation.lng], 13);
+
+            // Add OpenStreetMap tile layer
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+
+            // Add marker for the start location
+            L.marker([startLocation.lat, startLocation.lng]).addTo(map)
+                .bindPopup("Start: " + startLocation.name)
+                .openPopup();
+
+            // Add the start location as the first waypoint
+            waypoints.push(L.latLng(startLocation.lat, startLocation.lng));
+        }
+
+        // Function to update the map with markers, lines, and labels
+        function updateMap(destinationName) {
+            if (barangays[destinationName]) {
+                var destination = barangays[destinationName];
+
+                // Add marker for the destination
+                var marker = L.marker([destination.lat, destination.lng]).addTo(map)
+                    .bindPopup(destinationName + " - City Hall")
+                    .openPopup();
+
+                // Add label with the order number
+                var label = L.divIcon({
+                    className: 'marker-label',
+                    html: count + '. ' + destinationName,
+                    iconSize: [50, 20]
+                });
+                L.marker([destination.lat, destination.lng], { icon: label }).addTo(map);
+
+                // Add the destination to the waypoints
+                waypoints.push(L.latLng(destination.lat, destination.lng));
+
+                // Update the route
+                if (routeControl) {
+                    map.removeControl(routeControl);
+                }
+                routeControl = L.Routing.control({
+                    waypoints: waypoints,
+                    lineOptions: {
+                        styles: [{ color: 'blue', weight: 5 }]
+                    },
+                    routeWhileDragging: true,
+                    createMarker: function() { return null; } // Disable default markers
+                }).addTo(map);
+
+                // Increment the count for the next marker
+                count++;
+            } else {
+                alert("Barangay " + destinationName + " not found!");
+            }
+        }
+
+        // Function to handle user input and update the map
+        function findPath() {
+            var destinationNames = document.getElementById("destination").value.split(',');
+
+            destinationNames.forEach(function(destinationName) {
+                destinationName = destinationName.trim(); // Remove leading/trailing spaces
+                updateMap(destinationName);
+            });
+        }
+
+        // Function to show suggestions from the barangay list
+        function showSuggestions() {
+            var destinationAddress = document.getElementById("destination").value;
+            var suggestionList = document.getElementById("suggestions");
+            suggestionList.innerHTML = ""; // Clear previous suggestions
+
+            if (destinationAddress.length > 2) {
+                var filteredDestinations = Object.keys(barangays).filter(function(dest) {
+                    return dest.toLowerCase().includes(destinationAddress.toLowerCase());
+                });
+
+                filteredDestinations.forEach(function(destination) {
+                    var suggestionItem = document.createElement("li");
+                    suggestionItem.textContent = destination;
+                    suggestionItem.onclick = function() {
+                        document.getElementById("destination").value = destination;
+                        suggestionList.innerHTML = "";
+                        updateMap(destination);
+                    };
+                    suggestionList.appendChild(suggestionItem);
+                });
+            }
+        }
+
+        // Initialize the map on page load
+        window.onload = initializeMap;
+    </script>
+
+</body>
+
+</html>
+ 

@@ -8,7 +8,7 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("S&RLogin.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("SearchAndRescueUI.fxml"));
             Parent root = loader.load();
 
             Scene scene = new Scene(root, 1366, 768);

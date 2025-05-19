@@ -45,3 +45,12 @@
     -fx-background-radius: 8px;      
     -fx-padding: 4px;                
 }
+
+.table-row-cell {
+    -fx-cell-size: 25px;           /* Sets uniform height */
+}
+
+.table-cell {
+    -fx-font-size: 12px;
+    -fx-padding: 10px 5px 10px 5px; /* Top, Right, Bottom, Left */
+}

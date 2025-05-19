@@ -6,20 +6,16 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Random;
-
 import javafx.collections.ObservableList;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 
 public class DatabaseHandler {
     private static DatabaseHandler handler = null;
     private static Connection connection = null;
 
-    private static final String DB_URL = "jdbc:mysql://127.0.0.1:3306/SearchAndRescue?useSSL=false&serverTimezone=Asia/Manila";
+    private static final String DB_URL = "jdbc:mysql://127.0.0.1:3306/FinalSearchAndRescue?useSSL=false&serverTimezone=Asia/Manila";
     private static final String USER = "root";
-    private static final String PASSWORD = "ilovecompsci"; // Change if needed
+    private static final String PASSWORD = "ilovecompsci"; 
 
     private DatabaseHandler() {
         connectToDB();
@@ -89,7 +85,10 @@ public class DatabaseHandler {
     //🏠🏠🏠 HOME PAGE - BARANGAY TABLE
     public static ObservableList<BarangayTable> displayBarangay() {
         ObservableList<BarangayTable> barangayList = FXCollections.observableArrayList();
-        String query = "SELECT barangayName, barangayDistance, barangayRescueCount FROM Barangay";
+        String query = "SELECT b.barangayName, b.barangayDistance, COUNT(e.incidentNumber) AS emergencyCount " +
+                   "FROM Barangay b " +
+                   "LEFT JOIN Emergency e ON b.barangayID = e.barangayID " +
+                   "GROUP BY b.barangayID, b.barangayName, b.barangayDistance";
 
         try (Connection conn = getConnection();
             PreparedStatement pstmt = conn.prepareStatement(query);
@@ -98,7 +97,7 @@ public class DatabaseHandler {
             while (result.next()) {
                 String barangayName = result.getString("barangayName");  
                 Double barangayDistance = result.getDouble("barangayDistance");  
-                Integer barangayRescueCount = result.getInt("barangayRescueCount");  
+                Integer barangayRescueCount = result.getInt("emergencyCount");  
        
                 barangayList.add(new BarangayTable(barangayName, barangayDistance, barangayRescueCount));
             }
@@ -109,7 +108,7 @@ public class DatabaseHandler {
         return barangayList;
     }
  
-    // 🏠🏠🏠 HOME PAGE - BARANGAY DESCRIPTION 
+    //BARANGAY DESCRIPTION 
     public static ObservableList<BarangayDescTable> displayBarangayDesc() {
         ObservableList<BarangayDescTable> barangayDescList = FXCollections.observableArrayList();
         String query = "SELECT " +
@@ -139,6 +138,27 @@ public class DatabaseHandler {
 
         return barangayDescList;
     }
+    //COUNTER
+    public static int getActiveIncidentCountByStatusAndDate(String status, LocalDate date) {
+    int count = 0;
+    String query = "SELECT COUNT(*) FROM Emergency WHERE emergencyStatus = ? AND dateIssued = ?";
+    
+    try (Connection conn =  getConnection();
+         PreparedStatement stmt = conn.prepareStatement(query)) {
+         
+        stmt.setString(1, status);  
+        stmt.setDate(2, java.sql.Date.valueOf(date)); 
+        
+        ResultSet rs = stmt.executeQuery();
+        if (rs.next()) {
+            count = rs.getInt(1);
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+
+    return count;
+}
 
     //🚨🚨🚨 ACTIVE INCIDENTS TABLE 
     public static ObservableList<ActiveIncidentsTable> displayAllActiveIncidents() {
@@ -149,6 +169,7 @@ public class DatabaseHandler {
                    e.dateIssued, b.barangayName, 
                    p.firstName, p.lastName,
                    (p.numOfChildren + p.numOfAdults + p.numOfSeniors) AS totalRescuees,
+                   p.numOfChildren, p.numOfAdults, p.numOfSeniors,
                    e.emergencySeverity  -- Fetch the emergencySeverity directly from the database
             FROM Emergency e
             JOIN PeopleCount p ON e.peopleID = p.peopleID
@@ -168,12 +189,15 @@ public class DatabaseHandler {
                 LocalDate dateIssued = rs.getDate("dateIssued").toLocalDate();
                 String barangayLocation = rs.getString("barangayName");
                 String rescueeName = rs.getString("firstName") + " " + rs.getString("lastName");
+                int children = rs.getInt("numOfChildren");
+                int adults = rs.getInt("numOfAdults");
+                int seniors = rs.getInt("numOfSeniors");
                 int totalRescuees = rs.getInt("totalRescuees");
     
                 // Create the ActiveIncidentsTable object
                 ActiveIncidentsTable incident = new ActiveIncidentsTable(
                     emergencyType, emergencyStatus, emergencySeverity, incidentNumber, dateIssued,
-                    barangayLocation, rescueeName, totalRescuees
+                    barangayLocation, rescueeName, totalRescuees, children, adults, seniors
                 );
     
                 // Add to the list of incidents
@@ -363,49 +387,136 @@ public class DatabaseHandler {
         return new int[]{0, 0, 0}; 
     }
 
-    public static boolean insertToHistory(String incidentNumber, int barangayID) {
-        String updateStatusQuery = "UPDATE Emergency SET emergencyStatus = 'Dispatched' WHERE incidentNumber = ?";
-        String insertHistoryQuery = "INSERT INTO History (incidentNumber, barangayID, dispatchTimestamp) VALUES (?, ?, NOW())";
+    // HISTORY TABLE
+    public static Integer insertToHistory(String incidentNumber, int barangayID) {
+    String updateStatusQuery = "UPDATE Emergency SET emergencyStatus = 'DISPATCHED' WHERE incidentNumber = ?";
+    String insertHistoryQuery = "INSERT INTO History (incidentNumber, barangayID, dispatchTimestamp) VALUES (?, ?, NOW())";
 
+    try (Connection conn = getConnection();
+         PreparedStatement pstmtUpdate = conn.prepareStatement(updateStatusQuery);
+         PreparedStatement pstmtInsert = conn.prepareStatement(insertHistoryQuery, Statement.RETURN_GENERATED_KEYS)) {
+
+        pstmtUpdate.setString(1, incidentNumber);
+        pstmtUpdate.executeUpdate();
+
+        pstmtInsert.setString(1, incidentNumber);
+        pstmtInsert.setInt(2, barangayID);
+        int rowsInserted = pstmtInsert.executeUpdate();
+
+        if (rowsInserted > 0) {
+            ResultSet rs = pstmtInsert.getGeneratedKeys();
+            if (rs.next()) {
+                return rs.getInt(1);  // This is your historyID
+            }
+        }
+
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return null;
+}
+
+
+    // VALIDATION TO AVOID DISPATCHING THE SAME INCIDENT
+    public static boolean isAlreadyDispatched(String incidentNumber) {
+    String query = "SELECT emergencyStatus FROM Emergency WHERE incidentNumber = ?";
+    try (Connection conn = getConnection();
+         PreparedStatement stmt = conn.prepareStatement(query)) {
+
+        stmt.setString(1, incidentNumber);
+        ResultSet rs = stmt.executeQuery();
+
+        if (rs.next()) {
+            String status = rs.getString("emergencyStatus");
+            return "DISPATCHED".equalsIgnoreCase(status);
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return false;
+}
+    //WHEN THE TABLE (emergency status col) IS UPDATED TO DISPATCHED, IT WILL BE ADDED TO HISTORY TABLE
+    public static boolean isAlreadyInHistory(String incidentNumber) {
+        String query = "SELECT COUNT(*) FROM History WHERE incidentNumber = ?";
         try (Connection conn = getConnection();
-            PreparedStatement pstmtUpdate = conn.prepareStatement(updateStatusQuery);
-            PreparedStatement pstmtInsert = conn.prepareStatement(insertHistoryQuery)) {
-
-            // 1. Update status to "Dispatched"
-            pstmtUpdate.setString(1, incidentNumber);
-            pstmtUpdate.executeUpdate();
-
-            // 2. Insert into History
-            pstmtInsert.setString(1, incidentNumber);
-            pstmtInsert.setInt(2, barangayID);
-
-            return pstmtInsert.executeUpdate() > 0;
+            PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, incidentNumber);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
         } catch (SQLException e) {
             e.printStackTrace();
-            return false;
         }
+        return false;
     }
+
+    public static boolean removeFromHistory(String incidentNumber) { //REMOVE FROM HISTORY IF IT'S UPDATED IN THE ACTIVE INCIDENTS AND DOESNT HAVE REPORT YET
+    String query = "DELETE FROM History WHERE incidentNumber = ?";
+    try (Connection conn = getConnection();
+         PreparedStatement stmt = conn.prepareStatement(query)) {
+        
+        stmt.setString(1, incidentNumber);
+        int affectedRows = stmt.executeUpdate();  
+        
+        return affectedRows > 0;  
+    
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return false;
+}
+
+    public static boolean deleteFromHistory (String incidentNumber) {
+    String getHistoryIdQuery = "SELECT historyID FROM History WHERE incidentNumber = ?";
+    String deleteReportQuery = "DELETE FROM EmergencyReport WHERE historyID = ?";
+    String deleteHistoryQuery = "DELETE FROM History WHERE incidentNumber = ?";
+
+    try (Connection conn = getConnection();
+         PreparedStatement getIdStmt = conn.prepareStatement(getHistoryIdQuery)) {
+
+        getIdStmt.setString(1, incidentNumber);
+        ResultSet rs = getIdStmt.executeQuery();
+        if (rs.next()) {
+            int historyID = rs.getInt("historyID");
+
+            try (PreparedStatement deleteReportStmt = conn.prepareStatement(deleteReportQuery)) {
+                deleteReportStmt.setInt(1, historyID);
+                deleteReportStmt.executeUpdate();
+            }
+        }
+
+        try (PreparedStatement deleteHistoryStmt = conn.prepareStatement(deleteHistoryQuery)) {
+            deleteHistoryStmt.setString(1, incidentNumber);
+            int affectedRows = deleteHistoryStmt.executeUpdate();
+            return affectedRows > 0;
+        }
+
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return false;
+}
 
     public static ObservableList<HistoryTable> loadHistory() {
     ObservableList<HistoryTable> historyList = FXCollections.observableArrayList();
-    
-    // Updated query to join EmergencyReport
-    String query = "SELECT er.reportRemarks AS incidentReport, e.emergencyType, e.emergencySeverity, " +
-                    "e.incidentNumber, h.dispatchTimestamp, b.barangayName, " +
-                    "CONCAT(p.lastName, ', ', p.firstName) AS rescueeName, " +
-                    "(p.numOfChildren + p.numOfAdults + p.numOfSeniors) AS totalRescuees " +
-                    "FROM History h " +
-                    "JOIN Emergency e ON h.incidentNumber = e.incidentNumber " +
-                    "JOIN PeopleCount p ON e.peopleID = p.peopleID " +
-                    "JOIN Barangay b ON h.barangayID = b.barangayID " +
-                    "LEFT JOIN EmergencyReport er ON h.historyID = er.historyID " +
-                    "ORDER BY h.dispatchTimestamp DESC";
+    String query = "SELECT h.historyID, er.reportRemarks AS incidentReport, e.emergencyType, e.emergencySeverity, " +
+               "e.incidentNumber, h.dispatchTimestamp, b.barangayName, " +
+               "CONCAT(p.lastName, ', ', p.firstName) AS rescueeName, " +
+               "(p.numOfChildren + p.numOfAdults + p.numOfSeniors) AS totalRescuees " +
+               "FROM History h " +
+               "JOIN Emergency e ON h.incidentNumber = e.incidentNumber " +
+               "JOIN PeopleCount p ON e.peopleID = p.peopleID " +
+               "JOIN Barangay b ON h.barangayID = b.barangayID " +
+               "LEFT JOIN EmergencyReport er ON h.historyID = er.historyID " +
+               "ORDER BY h.dispatchTimestamp DESC";
     
     try (Connection conn = getConnection();
          PreparedStatement pstmt = conn.prepareStatement(query);
          ResultSet result = pstmt.executeQuery()) {
 
         while (result.next()) {
+            int historyID = result.getInt("historyID");
             String incidentReport = result.getString("incidentReport");
             String emType = result.getString("emergencyType");
             String emSeverity = result.getString("emergencySeverity");
@@ -416,7 +527,7 @@ public class DatabaseHandler {
             String totalRescuees = String.valueOf(result.getInt("totalRescuees"));
 
             historyList.add(new HistoryTable(
-                incidentReport, emType, emSeverity, incidentNum,
+                historyID, incidentReport, emType, emSeverity, incidentNum,
                 dispatchedTime, barangayName, rescueeName, totalRescuees
             ));
         }
@@ -427,10 +538,73 @@ public class DatabaseHandler {
 
     return historyList;
 }
+    public static EmergencyReport getReportByHistoryID(int historyID) {
+        String sql = "SELECT reportWriter, reportRemarks, emergencyActionTaken FROM EmergencyReport WHERE historyID = ?";
+        try (Connection conn = getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, historyID);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return new EmergencyReport(
+                    rs.getString("reportWriter"),
+                    rs.getString("reportRemarks"),
+                    rs.getString("emergencyActionTaken")
+                );
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
+    public static void submitReport(int historyID, String writer, String remarks, String action) {
+    String sql = """
+        INSERT INTO EmergencyReport (historyID, reportWriter, reportRemarks, emergencyActionTaken)
+        VALUES (?, ?, ?, ?)
+        ON DUPLICATE KEY UPDATE
+            reportWriter = VALUES(reportWriter),
+            reportRemarks = VALUES(reportRemarks),
+            emergencyActionTaken = VALUES(emergencyActionTaken)
+        """;
+    try (Connection conn = getConnection();
+         PreparedStatement stmt = conn.prepareStatement(sql)) {
+        stmt.setInt(1, historyID);
+        stmt.setString(2, writer);
+        stmt.setString(3, remarks);
+        stmt.setString(4, action);
+        stmt.executeUpdate();
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+}
 
+    public static boolean historyIDExists(int historyID) {
+        String sql = "SELECT 1 FROM History WHERE historyID = ?";
+        try (Connection conn = getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, historyID);
+            ResultSet rs = stmt.executeQuery();
+            return rs.next();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 
-
+    public static int getHistoryIDByIncidentNumber(String incidentNumber) {
+        String sql = "SELECT historyID FROM History WHERE incidentNumber = ?";
+        try (Connection conn = getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, incidentNumber);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("historyID");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return -1; // Not found
+    }
 
 
 

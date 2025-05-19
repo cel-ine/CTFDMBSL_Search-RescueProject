@@ -1,6 +1,7 @@
 import java.time.LocalDateTime;
 
 public class HistoryTable {
+    private int historyID;
     private String incidentReport;
     private String emType;
     private String emSeverity;
@@ -24,11 +25,32 @@ public class HistoryTable {
         this.numOfRescueeHistory = numOfRescueeHistory;
         
     }
+    public HistoryTable(Integer historyID, String incidentReport, String emType, String emSeverity, String incidentNumHistory,
+                        LocalDateTime dispatchedTime, String barangayName, String rescueeNameHistory,
+                        String numOfRescueeHistory) {
+        this.historyID = historyID;
+        this.incidentReport = incidentReport;
+        this.emType = emType;
+        this.emSeverity = emSeverity;
+        this.incidentNumHistory = incidentNumHistory;
+        this.dispatchedTime = dispatchedTime;
+        this.barangayName = barangayName;
+        this.rescueeNameHistory = rescueeNameHistory;
+        this.numOfRescueeHistory = numOfRescueeHistory;
+        
+    }
+
 
     public HistoryTable() {
         //TODO Auto-generated constructor stub
     }
 
+    public Integer getHistoryID() {
+        return historyID;
+    }
+    public void setHistoryID(Integer historyID) {
+        this.historyID = historyID;
+    }
     public String getIncidentReport() {
         return incidentReport;
     }
