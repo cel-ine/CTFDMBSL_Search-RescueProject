@@ -38,7 +38,7 @@ public class TableEditor {
 
      });
 
-     emergencyStatusCol.setCellFactory(ComboBoxTableCell.forTableColumn("ENROUTE", "ON SCENE", "QUEUED", "DISPATCHED"));
+     emergencyStatusCol.setCellFactory(ComboBoxTableCell.forTableColumn("ENROUTE", "ON SCENE", "QUEUED"));
      emergencyStatusCol.setOnEditCommit(event -> {
         ActiveIncidentsTable incident = event.getRowValue();
         String newEmergencyStatus = event.getNewValue();
@@ -49,7 +49,7 @@ public class TableEditor {
      locationCol.setCellFactory(ComboBoxTableCell.forTableColumn(barangayNames));
      locationCol.setOnEditCommit(event -> {
          ActiveIncidentsTable incident = event.getRowValue();
-         String newBarangayName = event.getNewValue(); // now it's just a String
+         String newBarangayName = event.getNewValue();
          incident.setBarangayLocation(newBarangayName);
          editedIncidentTable.add(incident);
      });

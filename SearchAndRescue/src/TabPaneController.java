@@ -26,6 +26,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
 import javafx.scene.web.WebView;
@@ -147,9 +148,9 @@ public class TabPaneController {
                         
                         boolean hasReport = history.getIncidentReport() != null && !history.getIncidentReport().isEmpty();
                         if (hasReport) {
-                            setText("        📝"); 
+                            setText("     📝"); 
                         } else {
-                            setText("        ➕"); 
+                            setText("     ➕"); 
                         }
                     }
                 }
@@ -215,18 +216,18 @@ public class TabPaneController {
     //🏠🏠🏠 HOME TAB
     private void updateDate() {
         LocalDate currentDate = LocalDate.now(ZoneId.of("Asia/Manila"));
-        txtDate.setText("📆 " + currentDate.format(DateTimeFormatter.ofPattern("EEEE, MMMM d, yyyy")));
+        txtDate.setText(currentDate.format(DateTimeFormatter.ofPattern("EEEE, MMMM d, yyyy")));
     }
 
     private void updateTime() {
         LocalTime currentTimePH = LocalTime.now(ZoneId.of("Asia/Manila"));
-        txtTime.setText("⏰ " + currentTimePH.format(DateTimeFormatter.ofPattern("hh:mm:ss a")));
+        txtTime.setText(currentTimePH.format(DateTimeFormatter.ofPattern("hh:mm:ss a")));
     }
     
     private void Counter() {
         LocalDate today = LocalDate.now();
         int count = DatabaseHandler.getActiveIncidentCountByStatusAndDate("QUEUED", today);
-        counterText.setText("Total Active Incidents: " + count);
+        counterText.setText("Daily Total Active Incidents: " + count);
 
     }
 
@@ -254,10 +255,25 @@ public class TabPaneController {
             Stage stage = new Stage();
             stage.setScene(new Scene(root));
             stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setTitle("Add new rescue");
+            stage.getIcons().add(new Image(getClass().getResourceAsStream("pasigLogo.jpg")));
             stage.showAndWait();
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+    public void addIncidentMarkerToMap(String incidentNumber, String barangayName, String status, int totalPeople,
+            String emergencyType) {
+        Platform.runLater(() -> {
+            String script = String.format(
+                    "addIncidentMarker('%s', '%s', '%s', %d, '%s');",
+                    incidentNumber.replace("'", "\\'"),
+                    barangayName.replace("'", "\\'"),
+                    status.replace("'", "\\'"),
+                    totalPeople,
+                    emergencyType.replace("'", "\\'"));
+            emergencyLocationMap.getEngine().executeScript(script);
+        });
     }
 
     @FXML
@@ -292,41 +308,22 @@ public class TabPaneController {
     //🚨🚨🚨 SAVE BUTTON - ONCE CLICKED, THE VALUES ARE EDITED NOW IN THE DATABASE 
     @FXML
     private void handleSaveButton() {
-        for (ActiveIncidentsTable incident : activeIncidentsTable.getItems()) {
+        StringBuilder blockedIncidents = new StringBuilder();
+        boolean anySaved = false;
+        int totalToSave = TableEditor.getEditedRows().size();
+        int blockedCount = 0;
+
+        for (ActiveIncidentsTable incident : TableEditor.getEditedRows()) {
             String incidentNumber = incident.getIncidentNumber();
             String emergencyStatus = incident.getEmergencyStatus();
 
-            if ("DISPATCHED".equalsIgnoreCase(emergencyStatus)) {
-                int historyID = DatabaseHandler.getHistoryIDByIncidentNumber(incidentNumber);
-                if (historyID != -1) {
-                    EmergencyReport report = DatabaseHandler.getReportByHistoryID(historyID);
-                    if (report != null) {
-                        showAlert("Save Not Allowed", "You cannot change the status of a dispatched emergency that already has an incident report.");
-                        return; // Block saving all changes
-                    }
-                }
+            if ("DISPATCHED".equalsIgnoreCase(emergencyStatus) && DatabaseHandler.isAlreadyInHistory(incidentNumber)) {
+                blockedIncidents.append(incidentNumber).append("\n");
+                blockedCount++;
+                continue;
             }
-        }
 
-        Label messageLabel = new Label("Changes have been saved successfully!");
-        messageLabel.setStyle("-fx-background-color: rgba(0, 0, 0, 0.7); -fx-text-fill: white; -fx-padding: 10px;");
-        messageLabel.setMaxWidth(800);
-        messageLabel.setMaxHeight(50);
-        messageLabel.setTranslateX(400);
-        messageLabel.setTranslateY(400);
-        rootPane.getChildren().add(messageLabel);
-
-        activeIncidentsTable.setEditable(false);
-
-        Timeline timeline = new Timeline(
-            new KeyFrame(Duration.seconds(3), event -> rootPane.getChildren().remove(messageLabel))
-        );
-        timeline.play();
-
-        for (ActiveIncidentsTable incident : activeIncidentsTable.getItems()) {
-            String incidentNumber = incident.getIncidentNumber();
             String emergencyType = incident.getEmergencyType();
-            String emergencyStatus = incident.getEmergencyStatus();
             String emergencySeverity = incident.getEmergencySeverity();
             String barangayLocation = incident.getBarangayLocation();
 
@@ -376,17 +373,54 @@ public class TabPaneController {
                     loadHistoryTable();
                 }
             }
+            anySaved = true;
         }
 
-    activeIncidentsTable.refresh();
-    applyUrgentRowHighlighting();
-    loadHistoryTable();
-}
+        if (blockedCount == totalToSave) {
+            showAlert(
+                "Edit Not Allowed",
+                "You cannot edit any information for the following emergencies that are already DISPATCHED and in the history:\n\n" + blockedIncidents
+            );
+            TableEditor.getEditedRows().clear();
+            return;
+        }
+
+        if (blockedIncidents.length() > 0) {
+            showAlert(
+                "Edit Not Allowed",
+                "You cannot edit any information for the following emergencies that are already DISPATCHED and in the history:\n\n" + blockedIncidents
+            );
+        }
+
+        if (anySaved) {
+            Label messageLabel = new Label("Changes have been saved successfully!");
+            messageLabel.setStyle("-fx-background-color: rgba(0, 0, 0, 0.7); -fx-text-fill: white; -fx-padding: 10px;");
+            messageLabel.setMaxWidth(800);
+            messageLabel.setMaxHeight(50);
+            messageLabel.setTranslateX(600);
+            messageLabel.setTranslateY(400);
+            rootPane.getChildren().add(messageLabel);
+
+            activeIncidentsTable.setEditable(false);
+
+            Timeline timeline = new Timeline(
+                new KeyFrame(Duration.seconds(3), event -> rootPane.getChildren().remove(messageLabel))
+            );
+            timeline.play();
+
+            activeIncidentsTable.refresh();
+            applyUrgentRowHighlighting();
+            loadHistoryTable();
+        }
+        TableEditor.getEditedRows().clear();
+    }
+
     @FXML
     private void handleCancelButton() {
         activeIncidentsTable.setEditable(false);
         activeIncidentsTable.refresh();
-        applyUrgentRowHighlighting();
+        activeIncidentsTable.getItems();
+        refreshIncidentsTable();
     }
     
     //🚨🚨🚨 FOR INPUTTING THE DETAILED NUMBER OF RESCUEE (# of children, adults, seniors)
@@ -394,7 +428,7 @@ public class TabPaneController {
     try {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("S&RRescueeCountPopUp.fxml"));
         AnchorPane page = loader.load();
-
+    
         Stage dialogStage = new Stage();
         dialogStage.setTitle("Rescuee Breakdown");
         dialogStage.initModality(Modality.APPLICATION_MODAL);
@@ -403,7 +437,8 @@ public class TabPaneController {
 
         RescueeCountPopUpController controller = loader.getController();
         controller.setDialogStage(dialogStage);
-
+        dialogStage.setTitle("Update Rescuee Count");
+        dialogStage.getIcons().add(new Image(getClass().getResourceAsStream("pasigLogo.jpg")));
         dialogStage.showAndWait();
 
         if (controller.isSaveClicked()) {
@@ -433,6 +468,15 @@ public class TabPaneController {
             showAlert("No Incident Selected", "Please select an incident to dispatch.");
             return;
         }
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+        confirm.setTitle("Confirm Dispatch");
+        confirm.setHeaderText(null);
+        confirm.setContentText("Are you sure you want to dispatch this incident?");
+        Stage alertStage = (Stage) confirm.getDialogPane().getScene().getWindow();
+        alertStage.getIcons().add(new javafx.scene.image.Image(getClass().getResourceAsStream("pasigLogo.jpg")));
+        if (confirm.showAndWait().orElse(ButtonType.CANCEL) != ButtonType.OK) {
+            return;
+        } 
 
         String incidentNumber = selectedIncident.getIncidentNumber();
         String barangayName = selectedIncident.getBarangayLocation();
@@ -453,13 +497,21 @@ public class TabPaneController {
             activeIncidentsTable.getItems().remove(selectedIncident);
             showAlert("Dispatch Successful", "Incident dispatched and recorded in history.");
             loadHistoryTable();
-
             refreshIncidentsTable();
+            removeIncidentFromMap(incidentNumber); // MAP dispatch
+
         } else {
             showAlert("Dispatch Failed", "An error occurred while dispatching the incident.");
         }
     }
-
+    public void removeIncidentFromMap(String incidentNumber) {
+        Platform.runLater(() -> {
+            String script = String.format(
+                    "removeIncidentFromMap('%s');",
+                    incidentNumber.replace("'", "\\'"));
+            emergencyLocationMap.getEngine().executeScript(script);
+        });
+    }
     ///🥀🥀🥀 HISTORY TAB
     private void filterHistoryTable (String searchHistory) { // 🔍 SEARCH FUNCTION ACTIVE INCIDENTS TABLE
         ObservableList<HistoryTable> filteredList = historyList.filtered(history ->
@@ -483,6 +535,7 @@ public class TabPaneController {
             stage.setScene(new Scene(root));
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.initOwner(rootPane.getScene().getWindow());
+            stage.getIcons().add(new Image(getClass().getResourceAsStream("pasigLogo.jpg")));
             stage.showAndWait();
             loadHistoryTable();
         } catch (IOException e) {
@@ -502,6 +555,8 @@ public class TabPaneController {
     confirm.setTitle("Delete Confirmation");
     confirm.setHeaderText(null);
     confirm.setContentText("Are you sure you want to delete this history record?");
+    Stage alertStage = (Stage) confirm.getDialogPane().getScene().getWindow();
+    alertStage.getIcons().add(new Image(getClass().getResourceAsStream("pasigLogo.jpg")));
     if (confirm.showAndWait().orElse(ButtonType.CANCEL) != ButtonType.OK) {
         return;
     }
@@ -515,12 +570,13 @@ public class TabPaneController {
     }
 } 
 
-    // ALERT POP-UP
     private void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(message);
+        Stage alertStage = (Stage) alert.getDialogPane().getScene().getWindow();
+        alertStage.getIcons().add(new javafx.scene.image.Image(getClass().getResourceAsStream("pasigLogo.jpg")));
         alert.showAndWait();
     }
 

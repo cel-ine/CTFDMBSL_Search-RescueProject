@@ -1,4 +1,5 @@
 public class EmergencyReport {
+    private Integer reportId;
     private String reportWriter;
     private String reportRemarks;
     private String emergencyActionTaken;
@@ -8,7 +9,19 @@ public class EmergencyReport {
         this.reportRemarks = reportRemarks;
         this.emergencyActionTaken = emergencyActionTaken;
     }
+    public EmergencyReport(Integer reportId, String reportWriter, String reportRemarks, String emergencyActionTaken) {
+        this.reportId = reportId;
+        this.reportWriter = reportWriter;
+        this.reportRemarks = reportRemarks;
+        this.emergencyActionTaken = emergencyActionTaken;
+    }
 
+    public Integer getReportId () {
+        return reportId; 
+    }
+    public void setReportId (Integer reportId) {
+        this.reportId = reportId;
+    }
     public String getReportWriter() {
         return reportWriter;
     }

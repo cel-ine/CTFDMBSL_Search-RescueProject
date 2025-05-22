@@ -3,6 +3,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 public class AddReportController {
@@ -78,6 +79,9 @@ public class AddReportController {
             alert.setTitle("Report Exists");
             alert.setHeaderText("A report for this incident already exists.");
             alert.setContentText("You cannot submit another report for this incident.");
+            alert.setTitle("Pasig SaR System");
+            Stage alertStage = (Stage) alert.getDialogPane().getScene().getWindow();
+            alertStage.getIcons().add(new Image(getClass().getResourceAsStream("pasigLogo.jpg")));
             alert.showAndWait();
             return; 
         }
@@ -96,6 +100,8 @@ public class AddReportController {
             alert.setTitle("Report Submission");
             alert.setHeaderText("Report Submitted Successfully");
             alert.setContentText("The report has been submitted successfully.");
+            Stage alertStage = (Stage) alert.getDialogPane().getScene().getWindow();
+            alertStage.getIcons().add(new Image(getClass().getResourceAsStream("pasigLogo.jpg")));
             alert.showAndWait();
 
             if (dialogStage != null) {

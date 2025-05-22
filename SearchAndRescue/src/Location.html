@@ -1,18 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
 
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>How to Reach?</title>
+    <title>Search&Rescue</title>
+
 
     <!-- Include Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css" />
 
+
     <!-- Include Leaflet JavaScript -->
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
+
 
     <style>
         #mapArea {
@@ -44,18 +48,16 @@
     </style>
 </head>
 
+
 <body>
 
-    <h2>Enter Destination Barangays</h2>
-    Destination (separate multiple barangays with commas): 
-    <input type="text" id="destination" oninput="showSuggestions()" />
 
 
-    
-    <!-- Suggestions List -->
-    <ul id="suggestions"></ul>
 
-    <div id="mapArea"></div>
+
+
+    <div id="mapArea"></div> // container
+
 
     <script type="text/javascript">
         var map;
@@ -64,6 +66,21 @@
         var waypoints = [];
         var count = 1;
 
+
+        var statusColors = {
+            "QUEUED": "#ba0f0f",      // Red
+            "ENROUTE": "#FFA500",     // Orange
+            "ON SCENE": "#1368bd",    // Blue
+            "DISPATCHED": "#21b111"   // Green
+        };
+
+
+        var incidentMarkers = {}; // Store markers by incident number
+        var barangayIncidents = {};
+
+
+
+
         // Start location: City of Pasig Rescue Emergency Disaster
         var startLocation = {
             name: "City of Pasig Rescue Emergency Disaster",
@@ -71,47 +88,237 @@
             lng: 121.0845
         };
 
-        // Hardcoded list of barangays
-        
+
+        // Hardcoded list of barangays' main city hall locations
+       
         var barangays = {
-            "Dela Paz": { lat: 14.5774, lng: 121.0884 },
-            "Santolan": { lat: 14.5841, lng: 121.0563 },
-            "San Antonio": { lat: 14.5760, lng: 121.0512 },
-            "Manggahan": { lat: 14.5875, lng: 121.0843 },
-            "Oranbo": { lat: 14.5704, lng: 121.0566 },
-            "Kalawaan": { lat: 14.5898, lng: 121.0882 },
-            "Ugong": { lat: 14.5656, lng: 121.0784 },
-            "Buting": { lat: 14.5679, lng: 121.0500 },
-            "Pineda": { lat: 14.5827, lng: 121.0522 }
+            "Dela Paz": { lat: 14.589426693493694, lng: 121.17407571253594 },
+            "Santolan": { lat: 14.612217331358986, lng: 121.08678300918422 },
+            "San Antonio": { lat: 14.582498480885365, lng: 121.05995472415732 },
+            "Manggahan": { lat: 14.599099841817795, lng: 121.09184652449504 },
+            "Santa Lucia": { lat: 14.588201983614708, lng: 121.09958626685466},
+            "Pinagbuhatan": { lat: 14.55732487885717, lng: 121.0909063179579},
+            "San Joaquin": { lat: 14.552431055900467, lng: 121.07972105154057},
+            "Kapitolyo": { lat: 14.571616590734257, lng: 121.05943941103185 },
+            "Rosario": { lat: 14.586293264605578, lng: 121.08473100918363},
+            "Kalawaan": { lat: 14.551483157149423, lng: 121.08677805151179},
+            "Ugong": { lat: 14.579398320056223, lng: 121.07845976315716},
+            "Oranbo": { lat:14.573803176781409, lng: 121.0640404343214},
+            "Buting": { lat: 14.55336916014744, lng: 121.06903372369611},
+            "Pineda": { lat: 14.566344516991217, lng: 121.05641279967178},
+            "Malinao": { lat: 14.557654529847825, lng: 121.07899927609742},
+            "Bambang": { lat: 14.55483917759908, lng: 121.07851013616983},
+            "Sumilang": { lat: 14.55756902068385, lng: 121.0750681361698},
+            "Santa Rosa": { lat: 14.533916044633308, lng: 121.05340313198643},
+            "Santo Tomas": { lat: 14.56344855726321, lng: 121.07868569264292},
+            "Bagong Katipunan": { lat: 14.559007277910865, lng: 121.07516253775184},
+            "Palatiw": { lat: 14.56323178441706, lng: 121.08496148034753},
+            "Bagong Ilog": { lat: 14.564869719187636, lng: 121.07115736685408},
+            "San Jose": { lat: 14.561555754347602, lng: 121.07351352267641},
+            "Santa Cruz": { lat: 14.566827251929695, lng: 121.08002438280522},
+            "Maybunga": { lat: 14.578659170594916, lng: 121.08159502452557},
+            "Caniogan": { lat: 14.572194242885267, lng: 121.08053909553497},
+            "Kapasigan": { lat: 14.564752230865915, lng: 121.07425473616996},
+            "San Miguel": { lat: 14.565764110034802, lng: 121.0855045245252},
+            "Sagad": { lat: 14.566492686131475, lng: 121.07941462022704},
+            "San Nicolas": { lat: 14.563177795511116, lng: 121.07833989753836}
         };
 
-        // Initialize the map
+
+          var incidentRoutes = {}; // Store routes by incident number
+
+
+             // Initialize the map
         function initializeMap() {
             map = L.map('mapArea').setView([startLocation.lat, startLocation.lng], 13);
+
 
             // Add OpenStreetMap tile layer
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             }).addTo(map);
 
+
             // Add marker for the start location
+            //&&&&&
             L.marker([startLocation.lat, startLocation.lng]).addTo(map)
                 .bindPopup("Start: " + startLocation.name)
                 .openPopup();
 
+
             // Add the start location as the first waypoint
             waypoints.push(L.latLng(startLocation.lat, startLocation.lng));
+            loadIncidentsFromStorage();
         }
 
-        // Function to update the map with markers, lines, and labels
+
+ 
+        function addIncidentMarker(incidentNumber, barangayName, status, totalPeople, emergencyType) {
+            if (!barangayIncidents[barangayName]) {
+                barangayIncidents[barangayName] = [];
+            }
+
+
+            // Remove previous entry for this incident if it exists (prevents duplicates)
+            barangayIncidents[barangayName] = barangayIncidents[barangayName].filter(
+                inc => inc.incidentNumber !== incidentNumber
+            );
+
+
+            // Add new incident at the start (most recent on top)
+            barangayIncidents[barangayName].unshift({
+                incidentNumber: incidentNumber,
+                totalPeople: totalPeople,
+                emergencyType: emergencyType
+            });
+
+
+            // Remove previous marker and route for this barangay
+            if (incidentMarkers[barangayName]) {
+                map.removeLayer(incidentMarkers[barangayName]);
+                delete incidentMarkers[barangayName];
+            }
+            if (incidentRoutes[barangayName]) {
+                map.removeControl(incidentRoutes[barangayName]);
+                delete incidentRoutes[barangayName];
+            }
+
+
+            var barangay = barangays[barangayName];
+            if (!barangay) return;
+
+
+            // Build popup text using an unordered list
+            var popupText = "<strong>" + barangayName + "</strong><br><ul>" +
+                barangayIncidents[barangayName].map(function(inc, idx) {
+                    return "<li><strong>#" + (barangayIncidents[barangayName].length - idx) + "</strong> - " +
+                        "Total People: " + inc.totalPeople + ", Emergency: " + inc.emergencyType + "</li>";
+                }).join("") + "</ul>";
+
+
+            // Add marker with popup
+            var marker = L.marker([barangay.lat, barangay.lng], {
+                icon: L.icon({
+                    iconUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png',
+                    iconSize: [25, 41],
+                    iconAnchor: [12, 41],
+                    popupAnchor: [1, -34]
+                })
+            }).addTo(map).bindPopup(popupText, { closeOnClick: false, autoClose: false }).openPopup();
+
+
+            // Store marker
+            incidentMarkers[barangayName] = marker;
+
+
+            // Draw route line from startLocation to this barangay
+            var routeWaypoints = [
+                L.latLng(startLocation.lat, startLocation.lng),
+                L.latLng(barangay.lat, barangay.lng)
+            ];
+
+
+            var route = L.Routing.control({
+                waypoints: routeWaypoints,
+                lineOptions: {
+                    styles: [{ color: 'blue', weight: 5 }]
+                },
+                routeWhileDragging: false,
+                createMarker: function () { return null; }
+            }).addTo(map);
+
+
+            // Store route control
+            incidentRoutes[barangayName] = route;
+            saveIncidentsToStorage();
+        }
+
+
+
+
+ 
+    function removeIncidentFromMap(incidentNumber) {
+            console.log("Removing incident:", incidentNumber);
+           
+            for (const barangay in barangayIncidents) {
+                const incidents = barangayIncidents[barangay];
+                const index = incidents.findIndex(inc => inc.incidentNumber === incidentNumber);
+
+
+                if (index !== -1) {
+                    // Remove the incident from the array
+                    incidents.splice(index, 1);
+
+
+                    // If no more incidents, remove marker and route
+                    if (incidents.length === 0) {
+                        if (incidentMarkers[barangay]) {
+                            map.removeLayer(incidentMarkers[barangay]);
+                            delete incidentMarkers[barangay];
+                        }
+                        if (incidentRoutes[barangay]) {
+                            map.removeControl(incidentRoutes[barangay]);
+                            delete incidentRoutes[barangay];
+                        }
+                    } else {
+                        // Update the marker popup with the remaining incidents (as HTML list)
+                        var popupText = "<strong>" + barangay + "</strong><br><ul>" +
+                            incidents.map(function (inc, idx) {
+                                return "<li><strong>#" + (incidents.length - idx) + "</strong> - " +
+                                    "Total People: " + inc.totalPeople + ", Emergency: " + inc.emergencyType + "</li>";
+                            }).join("") + "</ul>";
+
+
+                        if (incidentMarkers[barangay]) {
+                            incidentMarkers[barangay].setPopupContent(popupText).openPopup();
+                        }
+                    }
+
+
+                    map.invalidateSize();
+                    saveIncidentsToStorage();
+                    break;
+                }
+            }
+        }
+       
+ 
+
+
+        //^^^^^^^^
+        //  let markers = {};
+
+
+            function updateRescueMarker(lat, lng, popupText) {
+                const key = lat + "," + lng;
+               
+                // If marker already exists, update the popup
+                if (markers[key]) {
+                    markers[key].setPopupContent(popupText).openPopup();
+                } else {
+                    const marker = L.marker([lat, lng])
+                        .addTo(map)
+                        .bindPopup(popupText)
+                        .openPopup();
+                    markers[key] = marker;
+                }
+            }
+
+
+     
+
+
+        // ^^^^Function to update the map with markers, lines, and labels
         function updateMap(destinationName) {
             if (barangays[destinationName]) {
                 var destination = barangays[destinationName];
+
 
                 // Add marker for the destination
                 var marker = L.marker([destination.lat, destination.lng]).addTo(map)
                     .bindPopup(destinationName + " - City Hall")
                     .openPopup();
+
 
                 // Add label with the order number
                 var label = L.divIcon({
@@ -121,8 +328,10 @@
                 });
                 L.marker([destination.lat, destination.lng], { icon: label }).addTo(map);
 
+
                 // Add the destination to the waypoints
                 waypoints.push(L.latLng(destination.lat, destination.lng));
+
 
                 // Update the route
                 if (routeControl) {
@@ -137,6 +346,7 @@
                     createMarker: function() { return null; } // Disable default markers
                 }).addTo(map);
 
+
                 // Increment the count for the next marker
                 count++;
             } else {
@@ -144,45 +354,43 @@
             }
         }
 
-        // Function to handle user input and update the map
-        function findPath() {
-            var destinationNames = document.getElementById("destination").value.split(',');
 
-            destinationNames.forEach(function(destinationName) {
-                destinationName = destinationName.trim(); // Remove leading/trailing spaces
-                updateMap(destinationName);
-            });
-        }
 
-        // Function to show suggestions from the barangay list
-        function showSuggestions() {
-            var destinationAddress = document.getElementById("destination").value;
-            var suggestionList = document.getElementById("suggestions");
-            suggestionList.innerHTML = ""; // Clear previous suggestions
 
-            if (destinationAddress.length > 2) {
-                var filteredDestinations = Object.keys(barangays).filter(function(dest) {
-                    return dest.toLowerCase().includes(destinationAddress.toLowerCase());
-                });
+        // Save incidents to localStorage
+    function saveIncidentsToStorage() {
+        localStorage.setItem('barangayIncidents', JSON.stringify(barangayIncidents));
+    }
 
-                filteredDestinations.forEach(function(destination) {
-                    var suggestionItem = document.createElement("li");
-                    suggestionItem.textContent = destination;
-                    suggestionItem.onclick = function() {
-                        document.getElementById("destination").value = destination;
-                        suggestionList.innerHTML = "";
-                        updateMap(destination);
-                    };
-                    suggestionList.appendChild(suggestionItem);
-                });
+
+// Load incidents from localStorage and re-add markers
+    function loadIncidentsFromStorage() {
+        const data = localStorage.getItem('barangayIncidents');
+        if (data) {
+            barangayIncidents = JSON.parse(data);
+            for (const barangayName in barangayIncidents) {
+                if (barangayIncidents[barangayName].length > 0) {
+                    // Use the most recent incident for marker info
+                    const latest = barangayIncidents[barangayName][0];
+                    addIncidentMarker(
+                        latest.incidentNumber,
+                        barangayName,
+                        '', // status (if needed)
+                        latest.totalPeople,
+                        latest.emergencyType
+                    );
+                }
             }
         }
+    }
+
 
         // Initialize the map on page load
         window.onload = initializeMap;
     </script>
 
+
 </body>
 
+
 </html>
- 

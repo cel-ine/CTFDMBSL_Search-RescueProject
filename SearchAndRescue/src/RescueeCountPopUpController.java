@@ -25,9 +25,11 @@ public class RescueeCountPopUpController {
         this.dialogStage = dialogStage;
     }
 
+    private String emergencyStatus;
 
     public void setActiveIncidentsTable(ActiveIncidentsTable activeIncidentsTable) {
         this.activeIncidentsTable = activeIncidentsTable;
+        this.emergencyStatus = activeIncidentsTable.getEmergencyStatus();
     }
 
     public boolean isSaveClicked() {
@@ -53,6 +55,14 @@ public class RescueeCountPopUpController {
     }
 
     private void handleSave() {
+    if ("DISPATCHED".equalsIgnoreCase(emergencyStatus)) {
+        Alert alert = new Alert(AlertType.ERROR);
+        alert.setTitle("Edit Not Allowed");
+        alert.setHeaderText("Cannot Edit Rescuee Count");
+        alert.setContentText("You cannot update any informations if the rescue is DISPATCHED.");
+        alert.showAndWait();
+        return;
+    }
         try {
             
             children = Integer.parseInt(childrenTF.getText());
@@ -79,6 +89,8 @@ public class RescueeCountPopUpController {
             alert.setTitle("Invalid Input");
             alert.setHeaderText("Please enter valid numeric values.");
             alert.setContentText("Make sure all fields contain non-negative numbers.");
+            Stage alertStage = (Stage) alert.getDialogPane().getScene().getWindow();
+            alertStage.getIcons().add(new javafx.scene.image.Image(getClass().getResourceAsStream("pasigLogo.jpg")));
             alert.showAndWait();
         }
     }

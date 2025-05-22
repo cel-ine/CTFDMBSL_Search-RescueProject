@@ -273,7 +273,6 @@ public class DatabaseHandler {
         return -1;
     }
     
-    
 
     public static int getBarangayIDFromName(String name) {
         String query = "SELECT barangayID FROM Barangay WHERE barangayName = ?";
@@ -416,7 +415,6 @@ public class DatabaseHandler {
     return null;
 }
 
-
     // VALIDATION TO AVOID DISPATCHING THE SAME INCIDENT
     public static boolean isAlreadyDispatched(String incidentNumber) {
     String query = "SELECT emergencyStatus FROM Emergency WHERE incidentNumber = ?";
@@ -438,7 +436,7 @@ public class DatabaseHandler {
     //WHEN THE TABLE (emergency status col) IS UPDATED TO DISPATCHED, IT WILL BE ADDED TO HISTORY TABLE
     public static boolean isAlreadyInHistory(String incidentNumber) {
         String query = "SELECT COUNT(*) FROM History WHERE incidentNumber = ?";
-        try (Connection conn = getConnection();
+        try (Connection conn = getConnection(); 
             PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, incidentNumber);
             ResultSet rs = stmt.executeQuery();
@@ -603,7 +601,7 @@ public class DatabaseHandler {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return -1; // Not found
+        return -1;
     }
 
 

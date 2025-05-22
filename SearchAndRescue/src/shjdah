@@ -1,0 +1,107 @@
+
+
+TabPaneController.java (add these methods)
+  // ++++++++
+    
+ // 🚨🚨🚨 DISPATCH BUTTON
+    @FXML
+    private void handleDispatchButtonClick() {
+        ActiveIncidentsTable selectedIncident = activeIncidentsTable.getSelectionModel().getSelectedItem();
+
+
+        if (selectedIncident == null) {
+            showAlert("No Incident Selected", "Please select an incident to dispatch.");
+            return;
+        }
+
+
+        String incidentNumber = selectedIncident.getIncidentNumber();
+        String barangayName = selectedIncident.getBarangayLocation();
+        int barangayID = DatabaseHandler.getBarangayIDFromName(barangayName);
+
+
+        if (barangayID == -1) {
+            showAlert("Invalid Barangay", "The selected Barangay could not be found.");
+            return;
+        }
+
+
+        if (DatabaseHandler.isAlreadyDispatched(incidentNumber)) {
+            showAlert("Already Dispatched", "This incident has already been dispatched.");
+            return;
+        }
+
+
+        Integer historyID = DatabaseHandler.insertToHistory(incidentNumber, barangayID);
+        if (historyID != null) {
+            activeIncidentsTable.getItems().remove(selectedIncident);
+            showAlert("Dispatch Successful", "Incident dispatched and recorded in history.");
+            loadHistoryTable();
+
+
+            refreshIncidentsTable();
+            removeIncidentFromMap(incidentNumber); // MAP dispatch
+
+
+        } else {
+            showAlert("Dispatch Failed", "An error occurred while dispatching the incident.");
+        }
+    }
+
+
+addRescueController.java
+   @FXML
+    private void handleAddRescue() {
+        String firstName = firstNameTF.getText();
+        String lastName = lastNameTF.getText();
+        LocalDate date = dateDP.getValue();
+
+
+        String type = emergencyTypeCombo.getValue();
+        String severity = mapSeverity(severitySlider.getValue());
+        String status = "QUEUED"; // default status
+        int barangayID = DatabaseHandler.getBarangayIDFromName(barangayLocationCombo.getValue());
+        int children = Integer.parseInt(numOfChildTF.getText());
+        int adults = Integer.parseInt(numOfAdultsTF.getText());
+        int seniors = Integer.parseInt(numOfSeniorsTF.getText());
+
+
+        PeopleCount person = new PeopleCount(firstName, lastName, children, adults, seniors);
+        int peopleID = DatabaseHandler.insertPeople(person);
+
+
+        if (peopleID != -1) {
+            String incidentNumber = DatabaseHandler.generateIncidentNumberFromDB();
+
+
+            Emergency emergency = new Emergency(incidentNumber, barangayID, type, severity, person.getMemberCount(),
+                    status, date, peopleID);
+
+
+            boolean success = DatabaseHandler.insertEmergency(emergency);
+            if (success) {
+                System.out.println("Rescue successfully recorded.");
+                if (tabPaneController != null) {
+                    tabPaneController.refreshIncidentsTable();
+
+
+                    // ADD MARKER
+                    tabPaneController.addIncidentMarkerToMap(
+                            incidentNumber,
+                            barangayLocationCombo.getValue(),
+                            status,
+                            children + adults + seniors, // total people to show
+                            emergencyTypeCombo.getValue() // emergency type
+                    );
+
+
+                }
+            } else {
+                System.out.println("Failed to insert emergency.");
+            }
+        } else {
+            System.out.println("Failed to insert people data.");
+        }
+    }
+
+

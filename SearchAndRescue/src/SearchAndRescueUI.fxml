@@ -14,14 +14,14 @@
 <?import javafx.scene.text.Text?>
 <?import javafx.scene.web.WebView?>
 
-<AnchorPane fx:id="rootPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1366.0" style="-fx-background-color: #003067;" stylesheets="@style.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="TabPaneController">
+<AnchorPane fx:id="rootPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1366.0" style="-fx-background-color: #062a68;" stylesheets="@style.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="TabPaneController">
    <children>
-      <Label layoutX="429.0" layoutY="14.0" prefHeight="53.0" prefWidth="534.0" text="City of Pasig Search and Rescue Team" textFill="WHITE">
+      <Label layoutX="429.0" layoutY="14.0" prefHeight="53.0" prefWidth="534.0" style="-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 4, 0.2, 1, 1);;" text="City of Pasig Search and Rescue Team" textFill="WHITE">
          <font>
             <Font name="Segoe UI Bold" size="30.0" />
          </font>
       </Label>
-      <Label layoutX="398.0" layoutY="59.0" text="City Of Pasig Rescue Emergency Disaster, 102 C. Raymundo Ave, Pasig, 1600 Kalakhang Maynila" textFill="WHITE">
+      <Label layoutX="398.0" layoutY="59.0" style="-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 4, 0.2, 1, 1);;" text="City Of Pasig Rescue Emergency Disaster, 102 C. Raymundo Ave, Pasig, 1600 Kalakhang Maynila" textFill="WHITE">
          <font>
             <Font name="Segoe UI Italic" size="14.0" />
          </font>
@@ -31,32 +31,32 @@
         <tabs>
           <Tab text="Home">
                <content>
-                  <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="623.0" prefWidth="1343.0" style="-fx-background-color: white;">
+                  <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="623.0" prefWidth="1343.0" style="-fx-background-color: white; -fx-effect: innershadow(gaussian, rgba(170, 170, 170, 0.5), 5, 0.0, 2, 2);">
                      <children>
-                        <HBox layoutY="9.0" prefHeight="29.0" prefWidth="1343.0" style="-fx-border-color: lightgrey;">
+                        <HBox layoutX="6.0" layoutY="14.0" prefHeight="34.0" prefWidth="1330.0">
                            <children>
-                              <AnchorPane prefHeight="0.0" prefWidth="447.0">
+                              <AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="0.0" prefWidth="440.0" style="-fx-border-color: lightgrey; -fx-background-color: white;">
                                  <children>
-                                    <Text fx:id="txtDate" layoutX="151.0" layoutY="21.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Live date">
+                                    <Text fx:id="txtDate" layoutX="113.0" layoutY="24.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 4, 0.2, 1, 1);;" text="Live date">
                                        <font>
-                                          <Font name="Segoe UI" size="18.0" />
+                                          <Font name="Segoe UI Bold" size="18.0" />
                                        </font>
                                     </Text>
                                  </children>
                               </AnchorPane>
-                              <AnchorPane prefHeight="52.0" prefWidth="447.6">
+                              <AnchorPane prefHeight="52.0" prefWidth="440.0" style="-fx-border-color: lightgrey;">
                                  <children>
-                                    <Text fx:id="counterText" layoutX="95.0" layoutY="21.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Daily total incidents: (Counter)">
+                                    <Text fx:id="counterText" layoutX="99.0" layoutY="24.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 4, 0.2, 1, 1);;" text="Daily total incidents: (Counter)">
                                        <font>
-                                          <Font name="Segoe UI" size="18.0" />
+                                          <Font name="Segoe UI Italic" size="18.0" />
                                        </font></Text>
                                  </children>
                               </AnchorPane>
-                              <AnchorPane prefHeight="52.0" prefWidth="447.6" style="-fx-background-color: lightgrey;">
+                              <AnchorPane prefHeight="30.0" prefWidth="440.0" style="-fx-border-color: lightgrey;">
                                  <children>
-                                    <Text fx:id="txtTime" layoutX="188.0" layoutY="22.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Live time">
+                                    <Text fx:id="txtTime" layoutX="184.0" layoutY="24.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 4, 0.2, 1, 1);;" text="Live time">
                                        <font>
-                                          <Font name="Segoe UI" size="18.0" />
+                                          <Font name="Segoe UI Bold" size="18.0" />
                                        </font>
                                     </Text>
                                  </children>
@@ -65,9 +65,9 @@
                         </HBox>
                         <StackPane fx:id="webViewPane" layoutX="2.0" layoutY="61.0" prefHeight="560.0" prefWidth="842.0" style="-fx-background-color: white; -fx-border-color: grey; -fx-background-radius: 8px; -fx-border-radius: 8px;">
                            <children>
-                              <WebView fx:id="emergencyLocationMap" prefHeight="563.0" prefWidth="840.0" />
+                              <WebView fx:id="emergencyLocationMap" prefHeight="563.0" prefWidth="840.0" style="-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 15, 0.2, 0, 4);" />
                            </children></StackPane>
-                        <TableView fx:id="brgyDescriptionTable" layoutX="847.0" layoutY="61.0" prefHeight="294.0" prefWidth="479.0">
+                        <TableView fx:id="brgyDescriptionTable" layoutX="847.0" layoutY="61.0" prefHeight="294.0" prefWidth="479.0" style="-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 15, 0.2, 0, 4);">
                           <columns>
                             <TableColumn fx:id="brgyNameCol2" prefWidth="109.5999755859375" text="Barangay" />
                             <TableColumn fx:id="brgyCaptCol" prefWidth="132.00006103515625" text="Barangay Capt." />
@@ -75,7 +75,7 @@
                               <TableColumn fx:id="brgyPopulationCol" prefWidth="109.066650390625" text="Population" />
                           </columns>
                         </TableView>
-                        <TableView fx:id="brgyTable" layoutX="848.0" layoutY="359.0" prefHeight="260.0" prefWidth="479.0">
+                        <TableView fx:id="brgyTable" layoutX="848.0" layoutY="359.0" prefHeight="260.0" prefWidth="479.0" style="-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 15, 0.2, 0, 4);">
                           <columns>
                             <TableColumn fx:id="brgyNameCol" prefWidth="152.79998779296875" text="Barangay" />
                             <TableColumn fx:id="brgyDistanceCol" prefWidth="157.5999755859375" text="Distance" />
@@ -88,9 +88,9 @@
             </Tab>
             <Tab text="Active Incidents">
               <content>
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="626.0" prefWidth="1350.0" style="-fx-background-color: white;">
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="626.0" prefWidth="1350.0" style="-fx-background-color: white; -fx-effect: innershadow(gaussian, rgba(170, 170, 170, 0.5), 5, 0.0, 2, 2);">
                      <children>
-                        <TableView fx:id="activeIncidentsTable" layoutX="1.0" layoutY="66.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="1327.0" stylesheets="@style.css">
+                        <TableView fx:id="activeIncidentsTable" layoutX="1.0" layoutY="66.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="1327.0" style="-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 15, 0.2, 0, 4);" stylesheets="@style.css">
                           <columns>
                             <TableColumn fx:id="emergencyTypeCol" prefWidth="137.0" text="Type" />
                             <TableColumn fx:id="emergencyStatusCol" minWidth="0.0" prefWidth="167.0" text="Status" />
@@ -102,13 +102,28 @@
                               <TableColumn fx:id="numOfRescueeCol" minWidth="0.0" prefWidth="133.86669921875" text="Number of Rescuee" />
                           </columns>
                         </TableView>
-                        <Button fx:id="addRescueButton" layoutX="564.0" layoutY="583.0" mnemonicParsing="false" onAction="#openAddRescuePopUp" prefHeight="26.0" prefWidth="95.0" text="Add Rescue" />
-                        <Button fx:id="dispatchButton" layoutX="680.0" layoutY="583.0" mnemonicParsing="false" onAction="#handleDispatchButtonClick" text="Dispatch" />
-                        <Button fx:id="saveButton" layoutX="1171.0" layoutY="31.0" mnemonicParsing="false" onAction="#handleSaveButton" prefHeight="24.0" prefWidth="90.0" text="Save Changes" />
-                        <Button fx:id="editButton" layoutX="1118.0" layoutY="31.0" mnemonicParsing="false" onAction="#handleEditButtonClick" prefHeight="24.0" prefWidth="48.0" text="Edit" />
-                        <Button fx:id="cancelBTN" layoutX="1266.0" layoutY="31.0" mnemonicParsing="false" onAction="#handleEditButtonClick" prefHeight="25.0" prefWidth="54.0" text="Cancel" />
-                        <TextField fx:id="searchTF" layoutX="109.0" layoutY="30.0" prefHeight="25.0" prefWidth="281.0" promptText="Emergency type, status, severity, location" />
-                        <Label layoutX="14.0" layoutY="35.0" text="Filter table by:">
+                        <Button fx:id="addRescueButton" layoutX="564.0" layoutY="583.0" mnemonicParsing="false" onAction="#openAddRescuePopUp" prefHeight="26.0" prefWidth="95.0" style="-fx-background-color: #062a68; -fx-border-color: white; -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 8, 0.2, 0, 4);" text="Add Rescue" textFill="WHITE">
+                           <font>
+                              <Font name="Segoe UI Bold" size="12.0" />
+                           </font></Button>
+                        <Button fx:id="dispatchButton" layoutX="680.0" layoutY="583.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#handleDispatchButtonClick" prefHeight="26.0" prefWidth="73.0" style="-fx-background-color: #cc0000; -fx-border-color: white; -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 8, 0.2, 0, 4);" text="Dispatch" textFill="WHITE">
+                           <font>
+                              <Font name="Segoe UI Bold" size="12.0" />
+                           </font></Button>
+                        <Button fx:id="saveButton" layoutX="1147.0" layoutY="31.0" mnemonicParsing="false" onAction="#handleSaveButton" prefHeight="25.0" prefWidth="98.0" style="-fx-background-color: white; -fx-border-color: lightgrey; -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 8, 0.2, 0, 4);" text="Save Changes" textFill="#003067">
+                           <font>
+                              <Font name="Segoe UI Bold" size="12.0" />
+                           </font></Button>
+                        <Button fx:id="editButton" layoutX="1094.0" layoutY="31.0" mnemonicParsing="false" onAction="#handleEditButtonClick" prefHeight="24.0" prefWidth="46.0" style="-fx-background-color: white; -fx-border-color: lightgrey; -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 8, 0.2, 0, 4);" text="Edit" textFill="#003067">
+                           <font>
+                              <Font name="Segoe UI Bold" size="12.0" />
+                           </font></Button>
+                        <Button fx:id="cancelBTN" layoutX="1251.0" layoutY="31.0" mnemonicParsing="false" onAction="#handleCancelButton" prefHeight="25.0" prefWidth="56.0" style="-fx-background-color: white; -fx-border-color: lightgrey; -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 8, 0.2, 0, 4);" text="Cancel" textFill="#003067">
+                           <font>
+                              <Font name="Segoe UI Bold" size="12.0" />
+                           </font></Button>
+                        <TextField fx:id="searchTF" layoutX="109.0" layoutY="30.0" prefHeight="25.0" prefWidth="281.0" promptText="Emergency type, status, severity, location" style="-fx-effect: innershadow(gaussian, rgba(170, 170, 170, 0.5), 5, 0.0, 2, 2);" />
+                        <Label layoutX="14.0" layoutY="35.0" style="-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 4, 0.2, 1, 1);;" text="Filter table by:">
                            <font>
                               <Font name="Segoe UI Bold" size="12.0" />
                            </font>
@@ -120,9 +135,9 @@
                <content>
                   <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="200.0">
                      <children>
-                        <AnchorPane layoutY="-1.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="627.0" prefWidth="1344.0" style="-fx-background-color: white;">
+                        <AnchorPane layoutY="-1.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="627.0" prefWidth="1344.0" style="-fx-background-color: white; -fx-effect: innershadow(gaussian, rgba(170, 170, 170, 0.5), 5, 0.0, 2, 2);">
                            <children>
-                              <TableView fx:id="historyTable" layoutX="1.0" layoutY="67.0" prefHeight="500.0" prefWidth="1326.0">
+                              <TableView fx:id="historyTable" layoutX="1.0" layoutY="67.0" prefHeight="500.0" prefWidth="1326.0" style="-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 15, 0.2, 0, 4);">
                                 <columns>
                                     <TableColumn fx:id="incidentReport" minWidth="0.0" prefWidth="58.0" text="Report" />
                                   <TableColumn fx:id="emTypeCol" prefWidth="174.0" text="Emergency Type" />
@@ -130,14 +145,17 @@
                                     <TableColumn fx:id="incidentNumHCol" prefWidth="197.333251953125" text="Incident Number" />
                                     <TableColumn fx:id="dispatchedTimeCol" minWidth="0.0" prefWidth="239.0" text="Dispatched time" />
                                     <TableColumn fx:id="brgyLocCol" prefWidth="172.0" text="Location" />
-                                    <TableColumn fx:id="nameCol" minWidth="0.0" prefWidth="182.933349609375" text="Reported by: (FN + LN)" />
-                                    <TableColumn fx:id="numOfRescueeHCol" prefWidth="125.86669921875" text="Number of Rescuee" />
+                                    <TableColumn fx:id="nameCol" minWidth="0.0" prefWidth="172.0" text="Reported by:" />
+                                    <TableColumn fx:id="numOfRescueeHCol" prefWidth="137.0" text="Number of Rescuee" />
                                 </columns>
                               </TableView>
-                              <Button fx:id="deleteBTN" layoutX="647.0" layoutY="580.0" mnemonicParsing="false" onAction="#handleDeleteHistory" text="Delete" />
-                              <Label layoutX="1035.0" layoutY="30.0" prefHeight="28.0" prefWidth="282.0" text="Click the ➕/📝 under 'Report' to view or add details." />
-                              <TextField fx:id="historySearchTF" layoutX="105.0" layoutY="31.0" prefHeight="25.0" prefWidth="281.0" promptText="Emergency type, severity, incident #, location" />
-                              <Label layoutX="10.0" layoutY="36.0" text="Filter table by:">
+                              <Button fx:id="deleteBTN" layoutX="647.0" layoutY="580.0" mnemonicParsing="false" onAction="#handleDeleteHistory" prefHeight="26.0" style="-fx-background-color: #cc0000; -fx-border-color: white; -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 8, 0.2, 0, 4);" text="Delete" textFill="WHITE">
+                                 <font>
+                                    <Font name="Segoe UI Bold" size="12.0" />
+                                 </font></Button>
+                              <Label layoutX="1035.0" layoutY="30.0" prefHeight="28.0" prefWidth="282.0" style="-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 4, 0.2, 1, 1);" text="Click the ➕/📝 under 'Report' to view or add details." />
+                              <TextField fx:id="historySearchTF" layoutX="105.0" layoutY="31.0" prefHeight="25.0" prefWidth="281.0" promptText="Emergency type, severity, incident #, location" style="-fx-effect: innershadow(gaussian, rgba(170, 170, 170, 0.5), 5, 0.0, 2, 2);" />
+                              <Label layoutX="10.0" layoutY="36.0" style="-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 4, 0.2, 1, 1);" text="Filter table by:">
                                  <font>
                                     <Font name="Segoe UI Bold" size="12.0" />
                                  </font>
