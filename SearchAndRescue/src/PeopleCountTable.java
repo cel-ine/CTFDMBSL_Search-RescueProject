@@ -1,26 +1,25 @@
-public class PeopleCount {
+public class PeopleCountTable {
     private int peopleID;
     private int memberCount;
-    private String firstName;
-    private String lastName;
+    private String address;
+    private String contactNum;
     private int numOfChildren;
     private int numOfAdults;
     private int numOfSeniors;
 
     // constructor
-    public PeopleCount(String firstName, String lastName, int numOfChildren, int numOfAdults, int numOfSeniors) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.numOfChildren = numOfChildren;
+    public PeopleCountTable(String address, String contactNum, int numOfChildren, int numOfAdults, int numOfSeniors) {
+        this.address = address;
+        this.contactNum = contactNum;
         this.numOfAdults = numOfAdults;
         this.numOfSeniors = numOfSeniors;
         this.memberCount = numOfChildren + numOfAdults + numOfSeniors;
     }
 
     // getters
+    public String getAddress () { return address; }
+    public String getContactNum () { return contactNum; }
     public int getMemberCount() { return memberCount; }
-    public String getFirstName() { return firstName; }
-    public String getLastName() { return lastName; }
     public int getNumOfChildren() { return numOfChildren; }
     public int getNumOfAdults() { return numOfAdults; }
     public int getNumOfSeniors() { return numOfSeniors; }

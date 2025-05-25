@@ -63,23 +63,23 @@
                               </AnchorPane>
                            </children>
                         </HBox>
-                        <StackPane fx:id="webViewPane" layoutX="2.0" layoutY="61.0" prefHeight="560.0" prefWidth="842.0" style="-fx-background-color: white; -fx-border-color: grey; -fx-background-radius: 8px; -fx-border-radius: 8px;">
+                        <StackPane fx:id="webViewPane" layoutX="2.0" layoutY="61.0" prefHeight="560.0" prefWidth="872.0" style="-fx-background-color: white; -fx-border-color: grey; -fx-background-radius: 8px; -fx-border-radius: 8px;">
                            <children>
-                              <WebView fx:id="emergencyLocationMap" prefHeight="563.0" prefWidth="840.0" style="-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 15, 0.2, 0, 4);" />
+                              <WebView fx:id="emergencyLocationMap" prefHeight="558.0" prefWidth="908.0" style="-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 15, 0.2, 0, 4);" />
                            </children></StackPane>
-                        <TableView fx:id="brgyDescriptionTable" layoutX="847.0" layoutY="61.0" prefHeight="294.0" prefWidth="479.0" style="-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 15, 0.2, 0, 4);">
+                        <TableView fx:id="brgyDescriptionTable" layoutX="878.0" layoutY="61.0" prefHeight="294.0" prefWidth="448.0" style="-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 15, 0.2, 0, 4);">
                           <columns>
-                            <TableColumn fx:id="brgyNameCol2" prefWidth="109.5999755859375" text="Barangay" />
-                            <TableColumn fx:id="brgyCaptCol" prefWidth="132.00006103515625" text="Barangay Capt." />
-                              <TableColumn fx:id="brgyHazardCol" prefWidth="124.800048828125" text="Hazard Prone" />
-                              <TableColumn fx:id="brgyPopulationCol" prefWidth="109.066650390625" text="Population" />
+                            <TableColumn fx:id="brgyNameCol2" prefWidth="95.20001220703125" text="Barangay" />
+                            <TableColumn fx:id="brgyCaptCol" prefWidth="139.20001220703125" text="Barangay Capt." />
+                              <TableColumn fx:id="brgyHazardCol" prefWidth="115.199951171875" text="Hazard Prone" />
+                              <TableColumn fx:id="brgyPopulationCol" minWidth="0.0" prefWidth="89.5999755859375" text="Population" />
                           </columns>
                         </TableView>
-                        <TableView fx:id="brgyTable" layoutX="848.0" layoutY="359.0" prefHeight="260.0" prefWidth="479.0" style="-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 15, 0.2, 0, 4);">
+                        <TableView fx:id="brgyTable" layoutX="877.0" layoutY="359.0" prefHeight="260.0" prefWidth="450.0" style="-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 15, 0.2, 0, 4);">
                           <columns>
-                            <TableColumn fx:id="brgyNameCol" prefWidth="152.79998779296875" text="Barangay" />
-                            <TableColumn fx:id="brgyDistanceCol" prefWidth="157.5999755859375" text="Distance" />
-                              <TableColumn fx:id="brgyRescueCountCol" prefWidth="160.0" text="Rescue Count" />
+                            <TableColumn fx:id="brgyNameCol" prefWidth="158.40008544921875" text="Barangay" />
+                            <TableColumn fx:id="brgyDistanceCol" prefWidth="181.599853515625" text="Distance" />
+                              <TableColumn fx:id="brgyRescueCountCol" prefWidth="103.2000732421875" text="Rescue Count" />
                           </columns>
                         </TableView>
                      </children>
@@ -92,14 +92,16 @@
                      <children>
                         <TableView fx:id="activeIncidentsTable" layoutX="1.0" layoutY="66.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="1327.0" style="-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 15, 0.2, 0, 4);" stylesheets="@style.css">
                           <columns>
-                            <TableColumn fx:id="emergencyTypeCol" prefWidth="137.0" text="Type" />
-                            <TableColumn fx:id="emergencyStatusCol" minWidth="0.0" prefWidth="167.0" text="Status" />
-                              <TableColumn fx:id="emergencySeverityCol" prefWidth="162.0" text="Severity" />
-                              <TableColumn fx:id="incidentNumCol" minWidth="0.0" prefWidth="170.0" text="Incident Number" />
-                              <TableColumn fx:id="timeCreatedCol" minWidth="0.0" prefWidth="191.0" text="Date Issued" />
-                              <TableColumn fx:id="locationCol" minWidth="0.0" prefWidth="180.0" text="Location" />
-                              <TableColumn fx:id="rescueeNameCol" minWidth="0.0" prefWidth="178.4000244140625" text="Reported by (FN - LN)" />
-                              <TableColumn fx:id="numOfRescueeCol" minWidth="0.0" prefWidth="133.86669921875" text="Number of Rescuee" />
+                            <TableColumn fx:id="emergencyTypeCol" prefWidth="90.0" text="Type" />
+                            <TableColumn fx:id="emergencyStatusCol" minWidth="0.0" prefWidth="130.66665649414062" text="Status" />
+                              <TableColumn fx:id="emergencySeverityCol" prefWidth="124.0" text="Severity" />
+                              <TableColumn fx:id="incidentNumCol" minWidth="0.0" prefWidth="195.0" text="Incident Number" />
+                              <TableColumn fx:id="timeCreatedCol" minWidth="0.0" prefWidth="144.66668701171875" text="Date Issued" />
+                              <TableColumn fx:id="locationCol" minWidth="0.0" prefWidth="134.33331298828125" text="Barangay" />
+                              <TableColumn fx:id="personInChargeCol" minWidth="0.0" prefWidth="166.33331298828125" text="Person in Charge" />
+                              <TableColumn fx:id="numOfRescueeCol" minWidth="0.0" prefWidth="93.0" text="# of Rescuee" />
+                              <TableColumn fx:id="addressCol" prefWidth="123.6666259765625" text="Address" />
+                              <TableColumn fx:id="contactNumCol" prefWidth="119.0" text="Contact #" />
                           </columns>
                         </TableView>
                         <Button fx:id="addRescueButton" layoutX="564.0" layoutY="583.0" mnemonicParsing="false" onAction="#openAddRescuePopUp" prefHeight="26.0" prefWidth="95.0" style="-fx-background-color: #062a68; -fx-border-color: white; -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 8, 0.2, 0, 4);" text="Add Rescue" textFill="WHITE">
@@ -140,13 +142,15 @@
                               <TableView fx:id="historyTable" layoutX="1.0" layoutY="67.0" prefHeight="500.0" prefWidth="1326.0" style="-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 15, 0.2, 0, 4);">
                                 <columns>
                                     <TableColumn fx:id="incidentReport" minWidth="0.0" prefWidth="58.0" text="Report" />
-                                  <TableColumn fx:id="emTypeCol" prefWidth="174.0" text="Emergency Type" />
-                                  <TableColumn fx:id="emSevCol" minWidth="0.0" prefWidth="168.26673889160156" text="Emergency Severity" />
-                                    <TableColumn fx:id="incidentNumHCol" prefWidth="197.333251953125" text="Incident Number" />
-                                    <TableColumn fx:id="dispatchedTimeCol" minWidth="0.0" prefWidth="239.0" text="Dispatched time" />
-                                    <TableColumn fx:id="brgyLocCol" prefWidth="172.0" text="Location" />
-                                    <TableColumn fx:id="nameCol" minWidth="0.0" prefWidth="172.0" text="Reported by:" />
-                                    <TableColumn fx:id="numOfRescueeHCol" prefWidth="137.0" text="Number of Rescuee" />
+                                  <TableColumn fx:id="emTypeCol" prefWidth="117.33332824707031" text="Emergency Type" />
+                                  <TableColumn fx:id="emSevCol" minWidth="0.0" prefWidth="139.0" text="Emergency Severity" />
+                                    <TableColumn fx:id="incidentNumHCol" prefWidth="173.33334350585938" text="Incident Number" />
+                                    <TableColumn fx:id="dispatchedTimeCol" minWidth="0.0" prefWidth="159.6666259765625" text="Dispatched time" />
+                                    <TableColumn fx:id="brgyLocCol" prefWidth="135.6666259765625" text="Barangay" />
+                                    <TableColumn fx:id="nameCol" minWidth="0.0" prefWidth="176.66668701171875" text="Person in Charge" />
+                                    <TableColumn fx:id="numOfRescueeHCol" prefWidth="92.0" text="# of Rescuee" />
+                                    <TableColumn fx:id="addressHCol" prefWidth="151.0" text="Address" />
+                                    <TableColumn fx:id="contactNumHCol" prefWidth="116.0" text="Contact #" />
                                 </columns>
                               </TableView>
                               <Button fx:id="deleteBTN" layoutX="647.0" layoutY="580.0" mnemonicParsing="false" onAction="#handleDeleteHistory" prefHeight="26.0" style="-fx-background-color: #cc0000; -fx-border-color: white; -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 8, 0.2, 0, 4);" text="Delete" textFill="WHITE">

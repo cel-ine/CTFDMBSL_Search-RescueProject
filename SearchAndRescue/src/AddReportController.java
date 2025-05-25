@@ -18,6 +18,9 @@ public class AddReportController {
     @FXML private TextField seniorCount;
     @FXML private TextField incidentLoc;
     @FXML private TextField incidentReportWrittenBy;
+    @FXML private TextField reportAddressTF;
+    @FXML private TextField reportContactTF;
+    @FXML private TextField headRescue;
     @FXML private TextArea actionTaken;
     @FXML private TextArea remarks;
     
@@ -28,12 +31,14 @@ public class AddReportController {
     public void setHistoryData(HistoryTable history) {
     this.historyID = history.getHistoryID(); 
 
-    reporterName.setText(history.getRescueeNameHistory());
+    reporterName.setText(history.getPersonInChargeHistory());
     dateOfIncident.setText(history.getDispatchedTime().toString());
     incidentNum.setText(history.getIncidentNumHistory());
     incidentType.setText(history.getEmType());
     incidentSev.setText(history.getEmSeverity());
     incidentLoc.setText(history.getBarangayName());
+    reportAddressTF.setText(history.getAddressHistory());
+    reportContactTF.setText(history.getContactNumHistory());
 
     try {
         int[] counts = DBService.getPeopleCountsByIncidentNumber(history.getIncidentNumHistory());
@@ -52,6 +57,8 @@ public class AddReportController {
         incidentReportWrittenBy.setText(report.getReportWriter());
         remarks.setText(report.getReportRemarks());
         actionTaken.setText(report.getEmergencyActionTaken());
+        headRescue.setText(report.getHeadRescue());
+
         // incidentReportWrittenBy.setDisable(false);
         // remarks.setDisable(false);
         // actionTaken.setDisable(false);
@@ -60,6 +67,7 @@ public class AddReportController {
         incidentReportWrittenBy.clear();
         remarks.clear();
         actionTaken.clear();
+        headRescue.clear();
         // incidentReportWrittenBy.setDisable(true);
         // remarks.setDisable(true);
         // actionTaken.setDisable(true);
@@ -72,7 +80,22 @@ public class AddReportController {
         String writer = incidentReportWrittenBy.getText();
         String remarksText = remarks.getText();
         String action = actionTaken.getText();
+        String head = headRescue.getText();
 
+        if (writer == null || writer.trim().isEmpty() ||
+        remarksText == null || remarksText.trim().isEmpty() ||
+        action == null || action.trim().isEmpty() ||
+        head == null || head.trim().isEmpty()) {
+        javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.WARNING);
+        alert.setTitle("Missing Information");
+        alert.setHeaderText("Please fill in all required fields.");
+        alert.setContentText("Writer, Remarks, Action Taken, and Head Rescue must not be empty.");
+        Stage alertStage = (Stage) alert.getDialogPane().getScene().getWindow();
+        alertStage.getIcons().add(new Image(getClass().getResourceAsStream("pasigLogo.jpg")));
+        alert.showAndWait();
+        return;
+    }
+        
         EmergencyReport existingReport = DatabaseHandler.getReportByHistoryID(historyID);
         if (existingReport != null) {
             javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.WARNING);
@@ -87,7 +110,7 @@ public class AddReportController {
         }
 
         if (DatabaseHandler.historyIDExists(historyID)) {
-            DatabaseHandler.submitReport(historyID, writer, remarksText, action);
+            DatabaseHandler.submitReport(historyID, writer, remarksText, action, head);
 
             EmergencyReport report = DatabaseHandler.getReportByHistoryID(historyID);
             if (report != null) {

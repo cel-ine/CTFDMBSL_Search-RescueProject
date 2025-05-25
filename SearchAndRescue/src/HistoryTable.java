@@ -8,26 +8,28 @@ public class HistoryTable {
     private String incidentNumHistory;
     private LocalDateTime dispatchedTime;
     private String barangayName;
-    private String rescueeNameHistory;
+    private String personInChargeHistory;
     private String numOfRescueeHistory;
+    private String addressHistory;
+    private String contactNumHistory;
+    private String headRescue;
 
 
     public HistoryTable(String incidentReport, String emType, String emSeverity, String incidentNumHistory,
-                        LocalDateTime dispatchedTime, String barangayName, String rescueeNameHistory,
-                        String numOfRescueeHistory) {
+                        LocalDateTime dispatchedTime, String barangayName, String personInChargeHistory, String numOfRescueeHistory, String addressHistory, String contactNumHistory) {
         this.incidentReport = incidentReport;
         this.emType = emType;
         this.emSeverity = emSeverity;
         this.incidentNumHistory = incidentNumHistory;
         this.dispatchedTime = dispatchedTime;
         this.barangayName = barangayName;
-        this.rescueeNameHistory = rescueeNameHistory;
+        this.personInChargeHistory = personInChargeHistory;
         this.numOfRescueeHistory = numOfRescueeHistory;
-        
+        this.addressHistory = addressHistory;
+        this.contactNumHistory = contactNumHistory;
     }
     public HistoryTable(Integer historyID, String incidentReport, String emType, String emSeverity, String incidentNumHistory,
-                        LocalDateTime dispatchedTime, String barangayName, String rescueeNameHistory,
-                        String numOfRescueeHistory) {
+                        LocalDateTime dispatchedTime, String barangayName, String personInChargeHistory, String numOfRescueeHistory, String addressHistory, String contactNumHistory) {
         this.historyID = historyID;
         this.incidentReport = incidentReport;
         this.emType = emType;
@@ -35,14 +37,14 @@ public class HistoryTable {
         this.incidentNumHistory = incidentNumHistory;
         this.dispatchedTime = dispatchedTime;
         this.barangayName = barangayName;
-        this.rescueeNameHistory = rescueeNameHistory;
+        this.personInChargeHistory = personInChargeHistory;
         this.numOfRescueeHistory = numOfRescueeHistory;
-        
+        this.addressHistory = addressHistory;
+        this.contactNumHistory = contactNumHistory;
     }
 
 
     public HistoryTable() {
-        //TODO Auto-generated constructor stub
     }
 
     public Integer getHistoryID() {
@@ -93,17 +95,37 @@ public class HistoryTable {
         this.barangayName = barangayName;
     }
 
-    public String getRescueeNameHistory() {
-        return rescueeNameHistory;
-    }
-    public void setRescueeNameHistory(String rescueeNameHistory) {
-        this.rescueeNameHistory = rescueeNameHistory;
-    }
-
     public String getNumOfRescueeHistory() {
         return numOfRescueeHistory;
     }
     public void setNumOfRescueeHistory(String numOfRescueeHistory) {
         this.numOfRescueeHistory = numOfRescueeHistory;
+    }
+
+    public String getAddressHistory() {
+        return addressHistory;
+    }
+    public void setAddressHistory(String addressHistory) {
+        this.addressHistory = addressHistory;
+    }
+    public String getContactNumHistory() {
+        return contactNumHistory;
+    }
+    public void setContactNumHistory(String contactNumHistory) {
+        this.contactNumHistory = contactNumHistory;
+    }
+
+    public String getPersonInChargeHistory() {
+        return personInChargeHistory;
+    }
+    public void setPersonInChargeHistory (String personInChargeHistory) {
+        this.personInChargeHistory = personInChargeHistory;
+    }
+
+     public String getHeadRescue() {
+        return headRescue;
+    }
+    public void setHeadRescue (String headRescue) {
+        this.headRescue = headRescue;
     }
 }

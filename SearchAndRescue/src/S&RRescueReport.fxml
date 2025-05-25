@@ -7,11 +7,11 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="644.0" prefWidth="915.0" style="-fx-background-color: #062a68;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="AddReportController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="731.0" prefWidth="915.0" style="-fx-background-color: #062a68;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="AddReportController">
    <children>
-      <AnchorPane layoutX="22.0" layoutY="59.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="570.0" prefWidth="873.0" style="-fx-background-color: white; -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 15, 0.2, 0, 4);">
+      <AnchorPane layoutX="22.0" layoutY="59.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="656.0" prefWidth="874.0" style="-fx-background-color: white; -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 15, 0.2, 0, 4);">
          <children>
-            <AnchorPane layoutX="21.0" layoutY="7.0" prefHeight="26.0" prefWidth="831.0" style="-fx-background-color: #062a68; -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 8, 0.2, 0, 4);">
+            <AnchorPane layoutX="21.0" layoutY="25.0" prefHeight="26.0" prefWidth="831.0" style="-fx-background-color: #062a68; -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 8, 0.2, 0, 4);">
                <children>
                   <Label layoutX="360.0" layoutY="6.0" text="Rescue Information" textFill="WHITE">
                      <font>
@@ -20,129 +20,137 @@
                   </Label>
                </children>
             </AnchorPane>
-            <Label layoutX="56.0" layoutY="52.0" style="-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 4, 0.2, 1, 1);" text="Incident Reporter Name:">
+            <Label layoutX="469.0" layoutY="60.0" style="-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 4, 0.2, 1, 1);" text="Person in Charge (Brgy. Capt.)">
                <font>
                   <Font name="System Bold Italic" size="12.0" />
                </font>
             </Label>
-            <Label layoutX="451.0" layoutY="52.0" style="-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 4, 0.2, 1, 1);" text="Incident Type:">
+            <Label layoutX="475.0" layoutY="225.0" style="-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 4, 0.2, 1, 1);" text="Incident Type:">
                <font>
                   <Font name="System Bold Italic" size="12.0" />
                </font>
             </Label>
-            <TextField fx:id="reporterName" editable="false" layoutX="54.0" layoutY="70.0" prefHeight="26.0" prefWidth="369.0" style="-fx-effect: innershadow(gaussian, rgba(170, 170, 170, 0.5), 5, 0.0, 2, 2);" />
-            <TextField fx:id="incidentType" editable="false" layoutX="451.0" layoutY="70.0" prefHeight="26.0" prefWidth="370.0" style="-fx-effect: innershadow(gaussian, rgba(170, 170, 170, 0.5), 5, 0.0, 2, 2);" />
-            <Label layoutX="53.0" layoutY="107.0" style="-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 4, 0.2, 1, 1);" text="Date of Incident:">
+            <TextField fx:id="reporterName" editable="false" layoutX="469.0" layoutY="78.0" prefHeight="26.0" prefWidth="337.0" style="-fx-effect: innershadow(gaussian, rgba(170, 170, 170, 0.5), 5, 0.0, 2, 2);" />
+            <TextField fx:id="incidentType" editable="false" layoutX="469.0" layoutY="246.0" prefHeight="26.0" prefWidth="338.0" style="-fx-effect: innershadow(gaussian, rgba(170, 170, 170, 0.5), 5, 0.0, 2, 2);" />
+            <Label layoutX="469.0" layoutY="115.0" style="-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 4, 0.2, 1, 1);" text="Date of Incident:">
                <font>
                   <Font name="System Bold Italic" size="12.0" />
                </font>
             </Label>
-            <TextField fx:id="dateOfIncident" editable="false" layoutX="54.0" layoutY="123.0" prefHeight="26.0" prefWidth="370.0" style="-fx-effect: innershadow(gaussian, rgba(170, 170, 170, 0.5), 5, 0.0, 2, 2);" />
-            <Label layoutX="451.0" layoutY="107.0" style="-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 4, 0.2, 1, 1);" text="Incident Severity:">
+            <TextField fx:id="dateOfIncident" editable="false" layoutX="469.0" layoutY="135.0" prefHeight="26.0" prefWidth="338.0" style="-fx-effect: innershadow(gaussian, rgba(170, 170, 170, 0.5), 5, 0.0, 2, 2);" />
+            <Label layoutX="65.0" layoutY="225.0" style="-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 4, 0.2, 1, 1);" text="Incident Severity:">
                <font>
                   <Font name="System Bold Italic" size="12.0" />
                </font>
             </Label>
-            <TextField fx:id="incidentSev" editable="false" layoutX="451.0" layoutY="123.0" prefHeight="26.0" prefWidth="370.0" style="-fx-effect: innershadow(gaussian, rgba(170, 170, 170, 0.5), 5, 0.0, 2, 2);" />
-            <Label layoutX="452.0" layoutY="162.0" style="-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 4, 0.2, 1, 1);" text="Barangay Location:">
+            <TextField fx:id="incidentSev" editable="false" layoutX="65.0" layoutY="246.0" prefHeight="26.0" prefWidth="338.0" style="-fx-effect: innershadow(gaussian, rgba(170, 170, 170, 0.5), 5, 0.0, 2, 2);" />
+            <Label layoutX="67.0" layoutY="60.0" style="-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 4, 0.2, 1, 1);" text="Barangay Location:">
                <font>
                   <Font name="System Bold Italic" size="12.0" />
                </font>
             </Label>
-            <TextField fx:id="incidentLoc" editable="false" layoutX="452.0" layoutY="180.0" prefHeight="26.0" prefWidth="174.0" style="-fx-effect: innershadow(gaussian, rgba(170, 170, 170, 0.5), 5, 0.0, 2, 2);" />
-            <Label layoutX="54.0" layoutY="162.0" style="-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 4, 0.2, 1, 1);" text="Incident #:">
+            <TextField fx:id="incidentLoc" editable="false" layoutX="67.0" layoutY="78.0" prefHeight="26.0" prefWidth="338.0" style="-fx-effect: innershadow(gaussian, rgba(170, 170, 170, 0.5), 5, 0.0, 2, 2);" />
+            <Label layoutX="469.0" layoutY="169.0" style="-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 4, 0.2, 1, 1);" text="Incident #:">
                <font>
                   <Font name="System Bold Italic" size="12.0" />
                </font>
             </Label>
-            <TextField fx:id="incidentNum" editable="false" layoutX="53.0" layoutY="180.0" prefHeight="26.0" prefWidth="370.0" style="-fx-effect: innershadow(gaussian, rgba(170, 170, 170, 0.5), 5, 0.0, 2, 2);" />
-            <AnchorPane layoutX="21.0" layoutY="228.0" prefHeight="26.0" prefWidth="831.0" style="-fx-background-color: #062a68; -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 8, 0.2, 0, 4);">
+            <TextField fx:id="incidentNum" editable="false" layoutX="469.0" layoutY="189.0" prefHeight="26.0" prefWidth="338.0" style="-fx-effect: innershadow(gaussian, rgba(170, 170, 170, 0.5), 5, 0.0, 2, 2);" />
+            <TextArea fx:id="actionTaken" layoutX="458.0" layoutY="415.0" prefHeight="100.0" prefWidth="380.0" promptText="&quot;What actions were taken (e.g., 'Rescue team deployed; area secured.')&quot;" style="-fx-effect: innershadow(gaussian, rgba(170, 170, 170, 0.5), 5, 0.0, 2, 2);">
+               <font>
+                  <Font name="System Italic" size="12.0" />
+               </font></TextArea>
+            <Label layoutX="462.0" layoutY="395.0" style="-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 4, 0.2, 1, 1);" text="Action Taken:*">
+               <font>
+                  <Font name="System Bold Italic" size="12.0" />
+               </font>
+            </Label>
+            <TextArea fx:id="remarks" layoutX="45.0" layoutY="475.0" prefHeight="100.0" prefWidth="380.0" promptText="&quot;What happened and what was observed (e.g., 'Floodwater knee-deep; residents evacuated.')&quot;" style="-fx-effect: innershadow(gaussian, rgba(170, 170, 170, 0.5), 5, 0.0, 2, 2);">
+               <font>
+                  <Font name="System Italic" size="12.0" />
+               </font></TextArea>
+            <Label layoutX="48.0" layoutY="454.0" style="-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 4, 0.2, 1, 1);" text="Remarks:*">
+               <font>
+                  <Font name="System Bold Italic" size="12.0" />
+               </font>
+            </Label>
+            <Button fx:id="submitBTN" layoutX="393.0" layoutY="607.0" mnemonicParsing="false" onAction="#handleSubmit" style="-fx-background-color: white; -fx-border-color: lightgrey; -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 8, 0.2, 0, 4);" text="Submit Report">
+               <font>
+                  <Font name="Segoe UI Bold" size="12.0" />
+               </font></Button>
+            <Label layoutX="65.0" layoutY="290.0" prefHeight="18.0" prefWidth="130.0" style="-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 4, 0.2, 1, 1);" text="Detailed # of Rescuee:">
+               <font>
+                  <Font name="System Bold Italic" size="12.0" />
+               </font>
+            </Label>
+            <TextField fx:id="adultCount" editable="false" layoutX="85.0" layoutY="313.0" prefHeight="26.0" prefWidth="53.0" promptText="Adults" style="-fx-effect: innershadow(gaussian, rgba(170, 170, 170, 0.5), 5, 0.0, 2, 2);">
+               <font>
+                  <Font size="10.0" />
+               </font>
+            </TextField>
+            <Label layoutX="464.0" layoutY="530.0" style="-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 4, 0.2, 1, 1);" text="Report Written by:*">
+               <font>
+                  <Font name="System Bold Italic" size="12.0" />
+               </font>
+            </Label>
+            <TextField fx:id="incidentReportWrittenBy" layoutX="464.0" layoutY="548.0" prefHeight="26.0" prefWidth="270.0" promptText="Position, FN, LN" style="-fx-effect: innershadow(gaussian, rgba(170, 170, 170, 0.5), 5, 0.0, 2, 2);" />
+            <TextField fx:id="childrenCount" editable="false" layoutX="156.0" layoutY="313.0" prefHeight="26.0" prefWidth="53.0" promptText="Children" style="-fx-effect: innershadow(gaussian, rgba(170, 170, 170, 0.5), 5, 0.0, 2, 2);">
+               <font>
+                  <Font size="10.0" />
+               </font>
+            </TextField>
+            <TextField fx:id="seniorCount" editable="false" layoutX="228.0" layoutY="313.0" prefHeight="26.0" prefWidth="54.0" promptText="Seniors" style="-fx-effect: innershadow(gaussian, rgba(170, 170, 170, 0.5), 5, 0.0, 2, 2);">
+               <font>
+                  <Font size="10.0" />
+               </font>
+            </TextField>
+            <Label layoutX="69.0" layoutY="317.0" prefHeight="18.0" prefWidth="17.0" text="A:">
+               <font>
+                  <Font name="System Italic" size="12.0" />
+               </font>
+            </Label>
+            <Label layoutX="142.0" layoutY="317.0" prefHeight="18.0" prefWidth="18.0" text="C:">
+               <font>
+                  <Font name="System Italic" size="12.0" />
+               </font>
+            </Label>
+            <Label layoutX="215.0" layoutY="317.0" prefHeight="18.0" prefWidth="17.0" text="S:">
+               <font>
+                  <Font name="System Italic" size="12.0" />
+               </font>
+            </Label>
+            <Label layoutX="718.0" layoutY="624.0" text="* indicates required fields.">
+               <font>
+                  <Font name="Segoe UI Italic" size="12.0" />
+               </font>
+            </Label>
+            <TextField fx:id="reportAddressTF" editable="false" layoutX="65.0" layoutY="135.0" prefHeight="26.0" prefWidth="338.0" style="-fx-effect: innershadow(gaussian, rgba(170, 170, 170, 0.5), 5, 0.0, 2, 2);" />
+            <Label layoutX="68.0" layoutY="115.0" style="-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 4, 0.2, 1, 1);" text="Address:">
+               <font>
+                  <Font name="System Bold Italic" size="12.0" />
+               </font>
+            </Label>
+            <TextField fx:id="reportContactTF" editable="false" layoutX="65.0" layoutY="189.0" prefHeight="26.0" prefWidth="338.0" style="-fx-effect: innershadow(gaussian, rgba(170, 170, 170, 0.5), 5, 0.0, 2, 2);" />
+            <Label layoutX="67.0" layoutY="169.0" style="-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 4, 0.2, 1, 1);" text="Contact Number:">
+               <font>
+                  <Font name="System Bold Italic" size="12.0" />
+               </font>
+            </Label>
+            <AnchorPane layoutX="26.0" layoutY="353.0" prefHeight="26.0" prefWidth="831.0" style="-fx-background-color: #062a68; -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 8, 0.2, 0, 4);">
                <children>
-                  <Label layoutX="351.0" layoutY="6.0" text="Description of Incident" textFill="WHITE">
+                  <Label layoutX="336.0" layoutY="5.0" text="Incident Report Information" textFill="WHITE">
                      <font>
                         <Font name="Segoe UI Bold" size="12.0" />
                      </font>
                   </Label>
                </children>
             </AnchorPane>
-            <TextArea fx:id="actionTaken" layoutX="338.0" layoutY="279.0" prefHeight="100.0" prefWidth="491.0" promptText="&quot;What actions were taken (e.g., 'Rescue team deployed; area secured.')&quot;" style="-fx-effect: innershadow(gaussian, rgba(170, 170, 170, 0.5), 5, 0.0, 2, 2);">
-               <font>
-                  <Font name="System Italic" size="12.0" />
-               </font></TextArea>
-            <Label layoutX="338.0" layoutY="261.0" style="-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 4, 0.2, 1, 1);" text="Action Taken:*">
+            <Label layoutX="48.0" layoutY="395.0" style="-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 4, 0.2, 1, 1);" text="Head Rescue:*">
                <font>
                   <Font name="System Bold Italic" size="12.0" />
                </font>
             </Label>
-            <TextArea fx:id="remarks" layoutX="338.0" layoutY="402.0" prefHeight="100.0" prefWidth="491.0" promptText="&quot;What happened and what was observed (e.g., 'Floodwater knee-deep; residents evacuated.')&quot;" style="-fx-effect: innershadow(gaussian, rgba(170, 170, 170, 0.5), 5, 0.0, 2, 2);">
-               <font>
-                  <Font name="System Italic" size="12.0" />
-               </font></TextArea>
-            <Label layoutX="338.0" layoutY="384.0" style="-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 4, 0.2, 1, 1);" text="Remarks:*">
-               <font>
-                  <Font name="System Bold Italic" size="12.0" />
-               </font>
-            </Label>
-            <Button fx:id="submitBTN" layoutX="366.0" layoutY="520.0" mnemonicParsing="false" onAction="#handleSubmit" style="-fx-background-color: white; -fx-border-color: lightgrey; -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 8, 0.2, 0, 4);" text="Submit Report">
-               <font>
-                  <Font name="Segoe UI Bold" size="12.0" />
-               </font></Button>
-            <Label layoutX="48.0" layoutY="354.0" prefHeight="18.0" prefWidth="130.0" style="-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 4, 0.2, 1, 1);" text="Detailed # of Rescuee:">
-               <font>
-                  <Font name="System Bold Italic" size="12.0" />
-               </font>
-            </Label>
-            <TextField fx:id="adultCount" editable="false" layoutX="68.0" layoutY="377.0" prefHeight="26.0" prefWidth="53.0" promptText="Adults" style="-fx-effect: innershadow(gaussian, rgba(170, 170, 170, 0.5), 5, 0.0, 2, 2);">
-               <font>
-                  <Font size="10.0" />
-               </font>
-            </TextField>
-            <Label layoutX="48.0" layoutY="430.0" style="-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 4, 0.2, 1, 1);" text="Report Written by:*">
-               <font>
-                  <Font name="System Bold Italic" size="12.0" />
-               </font>
-            </Label>
-            <TextField fx:id="incidentReportWrittenBy" layoutX="48.0" layoutY="448.0" prefHeight="26.0" prefWidth="269.0" promptText="Position, FN, LN" style="-fx-effect: innershadow(gaussian, rgba(170, 170, 170, 0.5), 5, 0.0, 2, 2);" />
-            <TextField fx:id="childrenCount" editable="false" layoutX="139.0" layoutY="377.0" prefHeight="26.0" prefWidth="53.0" promptText="Children" style="-fx-effect: innershadow(gaussian, rgba(170, 170, 170, 0.5), 5, 0.0, 2, 2);">
-               <font>
-                  <Font size="10.0" />
-               </font>
-            </TextField>
-            <TextField fx:id="seniorCount" editable="false" layoutX="215.0" layoutY="378.0" prefHeight="26.0" prefWidth="53.0" promptText="Seniors" style="-fx-effect: innershadow(gaussian, rgba(170, 170, 170, 0.5), 5, 0.0, 2, 2);">
-               <font>
-                  <Font size="10.0" />
-               </font>
-            </TextField>
-            <Label layoutX="52.0" layoutY="381.0" prefHeight="18.0" prefWidth="17.0" text="A:">
-               <font>
-                  <Font name="System Italic" size="12.0" />
-               </font>
-            </Label>
-            <Label layoutX="125.0" layoutY="381.0" prefHeight="18.0" prefWidth="18.0" text="C:">
-               <font>
-                  <Font name="System Italic" size="12.0" />
-               </font>
-            </Label>
-            <Label layoutX="198.0" layoutY="381.0" prefHeight="18.0" prefWidth="17.0" text="S:">
-               <font>
-                  <Font name="System Italic" size="12.0" />
-               </font>
-            </Label>
-            <Label layoutX="718.0" layoutY="525.0" text="* indicates required fields.">
-               <font>
-                  <Font name="Segoe UI Italic" size="12.0" />
-               </font>
-            </Label>
-            <Label layoutX="52.0" layoutY="269.0" style="-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 4, 0.2, 1, 1);" text="Rescue Report">
-               <font>
-                  <Font name="Segoe UI Black" size="14.0" />
-               </font>
-            </Label>
-            <Label layoutX="52.0" layoutY="289.0" style="-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 4, 0.2, 1, 1);" text="Fill out the following details.">
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </Label>
+            <TextField fx:id="headRescue" layoutX="45.0" layoutY="415.0" prefHeight="26.0" prefWidth="269.0" promptText="Position, FN, LN" style="-fx-effect: innershadow(gaussian, rgba(170, 170, 170, 0.5), 5, 0.0, 2, 2);" />
          </children>
       </AnchorPane>
       <Label layoutX="21.0" layoutY="8.0" style="-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 5, 0.0, 2, 2);" text="Incident Report" textFill="WHITE">

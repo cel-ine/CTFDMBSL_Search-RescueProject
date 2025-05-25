@@ -64,8 +64,11 @@ public class TabPaneController {
     @FXML TableColumn <ActiveIncidentsTable, String> incidentNumCol;
     @FXML TableColumn <ActiveIncidentsTable, LocalDate> timeCreatedCol;
     @FXML TableColumn <ActiveIncidentsTable, String> locationCol;
-    @FXML TableColumn <ActiveIncidentsTable, String> rescueeNameCol;
+    @FXML TableColumn <ActiveIncidentsTable, String> personInChargeCol;
     @FXML TableColumn <ActiveIncidentsTable, Integer> numOfRescueeCol;
+    @FXML TableColumn <ActiveIncidentsTable, String> addressCol;
+    @FXML TableColumn <ActiveIncidentsTable, Integer> contactNumCol;
+
     private ObservableList<ActiveIncidentsTable> incidentsList = FXCollections.observableArrayList();
 
     //🗂️🗂️🗂️ INCIDENT REPORT & HISTORY TAB
@@ -80,6 +83,8 @@ public class TabPaneController {
     @FXML TableColumn <HistoryTable, String> brgyLocCol;
     @FXML TableColumn <HistoryTable, String> nameCol;
     @FXML TableColumn <HistoryTable, String> numOfRescueeHCol;
+    @FXML TableColumn <HistoryTable, String> addressHCol;
+    @FXML TableColumn <HistoryTable, String> contactNumHCol;
     private ObservableList<HistoryTable> historyList = FXCollections.observableArrayList();
 
 
@@ -115,8 +120,12 @@ public class TabPaneController {
         incidentNumCol.setCellValueFactory(new PropertyValueFactory<>("incidentNumber"));
         timeCreatedCol.setCellValueFactory(new PropertyValueFactory<>("dateIssued"));
         locationCol.setCellValueFactory(new PropertyValueFactory<>("barangayLocation"));
-        rescueeNameCol.setCellValueFactory(new PropertyValueFactory<>("rescueeName"));
+        personInChargeCol.setCellValueFactory(new PropertyValueFactory<>("personInCharge"));
         numOfRescueeCol.setCellValueFactory(new PropertyValueFactory<>("numOfRescuee"));
+        addressCol.setCellValueFactory(new PropertyValueFactory<>("address"));
+        contactNumCol.setCellValueFactory(new PropertyValueFactory<>("contactNum"));
+
+
         searchTF.textProperty().addListener((observable, oldValue, newValue) -> filterActiveIncidentsTable(newValue));
 
         refreshIncidentsTable();
@@ -129,9 +138,12 @@ public class TabPaneController {
         incidentNumHCol.setCellValueFactory(new PropertyValueFactory<>("incidentNumHistory"));
         dispatchedTimeCol.setCellValueFactory(new PropertyValueFactory<>("dispatchedTime"));
         brgyLocCol.setCellValueFactory(new PropertyValueFactory<>("barangayName"));
-        nameCol.setCellValueFactory(new PropertyValueFactory<>("rescueeNameHistory"));
+        nameCol.setCellValueFactory(new PropertyValueFactory<>("personInChargeHistory"));
         numOfRescueeHCol.setCellValueFactory(new PropertyValueFactory<>("numOfRescueeHistory"));
-        incidentReport.setCellValueFactory(new PropertyValueFactory<>("incidentReport"));
+        addressHCol.setCellValueFactory(new PropertyValueFactory<>("addressHistory"));
+        contactNumHCol.setCellValueFactory(new PropertyValueFactory<>("contactNumHistory"));
+
+
         historySearchTF.textProperty().addListener((observable, oldValue, newValue) -> filterHistoryTable(newValue));
         loadHistoryTable();
 
@@ -278,7 +290,7 @@ public class TabPaneController {
 
     @FXML
     private void handleEditButtonClick() { //EDIT BUTTON - FOR ACTIVE INCIDENTS TABLE. ONCE CLICKED, SOME OF THE CELLS BECOME EDITABLE
-        Label messageLabel = new Label("You are now in editing mode. Click the cells you want to modify except for Severity, Incident#, Date Issued.");
+        Label messageLabel = new Label("You are now in editing mode. You can only Edit Emergency Status and Severity.");
         messageLabel.setStyle("-fx-background-color: rgba(0, 0, 0, 0.7); -fx-text-fill: white; -fx-padding: 10px;");
         
         messageLabel.setMaxWidth(800);  
@@ -299,9 +311,7 @@ public class TabPaneController {
         activeIncidentsTable.setEditable(true);
         TableEditor.makeActiveIncidentsTableEditable(
             emergencyTypeCol,
-            emergencyStatusCol,
-            locationCol,
-            rescueeNameCol
+            emergencyStatusCol
         );
     }
 
@@ -338,9 +348,6 @@ public class TabPaneController {
                 seniors = previousCounts[2];
             }
 
-            String[] nameParts = incident.getRescueeName().split(" ", 2);
-            String firstName = nameParts.length > 0 ? nameParts[0] : "";
-            String lastName = nameParts.length > 1 ? nameParts[1] : "";
 
             int numOfRescuee = children + adults + seniors;
 
@@ -350,8 +357,6 @@ public class TabPaneController {
                 emergencyStatus,
                 emergencySeverity,
                 barangayLocation,
-                firstName,
-                lastName,
                 numOfRescuee,
                 children,
                 adults,

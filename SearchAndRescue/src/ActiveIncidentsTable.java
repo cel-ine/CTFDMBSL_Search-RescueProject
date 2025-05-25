@@ -9,15 +9,18 @@ public class ActiveIncidentsTable {
     private StringProperty incidentNumber;
     private ObjectProperty<LocalDate> dateIssued;
     private StringProperty barangayLocation;
-    private StringProperty rescueeName;
     private IntegerProperty numOfRescuee;
     private IntegerProperty children;
     private IntegerProperty adults;
     private IntegerProperty seniors;
+    private StringProperty personInCharge;
+    private StringProperty address;
+    private StringProperty contactNum;
+
 
     public ActiveIncidentsTable(String emergencyType, String emergencyStatus, String emergencySeverity,
-                                String incidentNumber, LocalDate dateIssued, String barangayLocation,
-                                String rescueeName, int numOfRescuee, Integer children, Integer adults, Integer seniors) {
+                                String incidentNumber, LocalDate dateIssued, String barangayLocation, String personInCharge, int numOfRescuee, Integer children, Integer adults, Integer seniors, 
+                                String address, String contactNum) {
 
         this.emergencyType = new SimpleStringProperty(emergencyType);
         this.emergencyStatus = new SimpleStringProperty(emergencyStatus);
@@ -25,18 +28,22 @@ public class ActiveIncidentsTable {
         this.incidentNumber = new SimpleStringProperty(incidentNumber);
         this.dateIssued = new SimpleObjectProperty<>(dateIssued);
         this.barangayLocation = new SimpleStringProperty(barangayLocation);
-        this.rescueeName = new SimpleStringProperty(rescueeName);
         this.numOfRescuee = new SimpleIntegerProperty(numOfRescuee);
 
         this.children = new SimpleIntegerProperty(children != null ? children : 0);
         this.adults = new SimpleIntegerProperty(adults != null ? adults : 0);
         this.seniors = new SimpleIntegerProperty(seniors != null ? seniors : 0);
+        this.personInCharge = new SimpleStringProperty (personInCharge); 
+        this.address = new SimpleStringProperty(address);
+        this.contactNum = new SimpleStringProperty(contactNum);
+
+
     }
 
     
     public ActiveIncidentsTable(String emergencyType, String emergencyStatus, String emergencySeverity,
                                 String incidentNumber, LocalDate dateIssued, String barangayLocation,
-                                String rescueeName, Integer numOfRescuee) {
+                                Integer numOfRescuee) {
 
         this.emergencyType = new SimpleStringProperty(emergencyType);
         this.emergencyStatus = new SimpleStringProperty(emergencyStatus);
@@ -44,7 +51,6 @@ public class ActiveIncidentsTable {
         this.incidentNumber = new SimpleStringProperty(incidentNumber);
         this.dateIssued = new SimpleObjectProperty<>(dateIssued);
         this.barangayLocation = new SimpleStringProperty(barangayLocation);
-        this.rescueeName = new SimpleStringProperty(rescueeName);
         this.numOfRescuee = new SimpleIntegerProperty(numOfRescuee);
 
         this.children = new SimpleIntegerProperty(0);
@@ -111,16 +117,6 @@ public class ActiveIncidentsTable {
         return barangayLocation; 
     }
 
-    public String getRescueeName() { 
-        return rescueeName.get(); 
-    }
-    public void setRescueeName(String value) { 
-        rescueeName.set(value); 
-    }
-    public StringProperty rescueeNameProperty() { 
-        return rescueeName; 
-    }
-
     public int getNumOfRescuee() { 
         return numOfRescuee.get(); 
     }
@@ -153,5 +149,36 @@ public class ActiveIncidentsTable {
     }
     public void setSeniors(int value) { 
         seniors.set(value); 
+    }
+
+    public String getAddress() { 
+        return address.get(); 
+    }
+    public void setAddress(String value) { 
+        address.set(value); 
+    }
+    public StringProperty addressProperty() { 
+        return address; 
+    }
+
+
+    public String getContactNum() { 
+        return contactNum.get(); 
+    }
+    public void setContactNum(String value) { 
+        contactNum.set(value); 
+    }
+    public StringProperty contactNumProperty() { 
+        return contactNum; 
+    }
+
+    public String getPersonInCharge() { 
+        return personInCharge.get(); 
+    }
+    public void setPersonInCharge(String value) { 
+        personInCharge.set(value); 
+    }
+    public StringProperty personInChargeProperty() { 
+        return personInCharge; 
     }
 }

@@ -11,11 +11,10 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 public class addRescueController {
-    @FXML TextField firstNameTF, lastNameTF;
     @FXML DatePicker dateDP;
     @FXML ComboBox<String> barangayLocationCombo, emergencyTypeCombo;
     @FXML Slider severitySlider;
-    @FXML TextField numOfRescueeTF, numOfChildTF, numOfAdultsTF, numOfSeniorsTF;
+    @FXML TextField addressTF, contactNumTF, personInChargeTF, numOfRescueeTF, numOfChildTF, numOfAdultsTF, numOfSeniorsTF;
     @FXML Button addRescueBTN;
     
     private TabPaneController tabPaneController; 
@@ -31,32 +30,50 @@ public class addRescueController {
             barangayNames.add(barangay.getBarangayName());
         }
         barangayLocationCombo.setItems(barangayNames);
-        emergencyTypeCombo.getItems().addAll("Flood", "Fire", "Earthquake", "Landslide");
+        emergencyTypeCombo.getItems().addAll("Flood", "Earthquake", "Landslide");
+
+        // Add this listener:
+        barangayLocationCombo.valueProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal != null && !newVal.trim().isEmpty()) {
+                String captain = DatabaseHandler.getBarangayCaptainByBarangayName(newVal);
+                personInChargeTF.setText(captain != null ? captain : "");
+            } else {
+                personInChargeTF.clear();
+            }
+        });
     }
 
     @FXML
     private void handleAddRescue() {
-        String firstName = firstNameTF.getText();
-        String lastName = lastNameTF.getText();
         LocalDate date = dateDP.getValue();
-       
+        String personInCharge = personInChargeTF.getText();
+        String address = addressTF.getText();
+        String contactNum = contactNumTF.getText().trim(); // treat as String!
         String barangayName = barangayLocationCombo.getValue();
         String type = emergencyTypeCombo.getValue();
         String severity = mapSeverity(severitySlider.getValue());
 
-        if (firstName == null || firstName.trim().isEmpty() ||
-            lastName == null || lastName.trim().isEmpty() ||
-            date == null ||
+        // Validate required fields
+        if (date == null ||
             barangayName == null || barangayName.trim().isEmpty() ||
             type == null || type.trim().isEmpty() ||
+            address == null || address.trim().isEmpty() ||
+            contactNum == null || contactNum.trim().isEmpty() ||
             numOfChildTF.getText().trim().isEmpty() ||
             numOfAdultsTF.getText().trim().isEmpty() ||
             numOfSeniorsTF.getText().trim().isEmpty()) {
             showAlert("Missing Information", "Please fill in all required fields.");
             return;
         }
+        if (!contactNum.matches("09\\d{9}")) {
+        showAlert("Invalid Contact Number", "Contact number must be a valid 11-digit PH mobile number (e.g., 09XXXXXXXXX).");
+        return;
+    }
 
-        int barangayID = DatabaseHandler.getBarangayIDFromName(barangayName);
+        if (!date.equals(LocalDate.now())) {
+        showAlert("Invalid", "Only today's date is allowed.");
+        return;
+    }
 
         int children, adults, seniors;
         try {
@@ -64,7 +81,7 @@ public class addRescueController {
             adults = Integer.parseInt(numOfAdultsTF.getText());
             seniors = Integer.parseInt(numOfSeniorsTF.getText());
             if (children < 0 || adults < 0 || seniors < 0) {
-                showAlert("Invalid Input", "Number of children, adults, and seniors must be non-negative.");
+                showAlert("Invalid Input", "Numbers must be non-negative.");
                 return;
             }
         } catch (NumberFormatException e) {
@@ -72,37 +89,54 @@ public class addRescueController {
             return;
         }
 
-    String status = "QUEUED"; 
+        int barangayID = DatabaseHandler.getBarangayIDFromName(barangayName);
 
-    PeopleCount person = new PeopleCount(firstName, lastName, children, adults, seniors);
-    int peopleID = DatabaseHandler.insertPeople(person);
+        // Optional: Duplicate check (uncomment if you have implemented isDuplicateRescue)
+        // if (DatabaseHandler.isDuplicateRescue(personInCharge, address, barangayID)) {
+        //     showAlert("Duplicate Entry", "A rescue with the same person in charge, address, and barangay already exists.");
+        //     return;
+        // }
 
-    if (peopleID != -1) {
-        String incidentNumber = DatabaseHandler.generateIncidentNumberFromDB(); 
-        Emergency emergency = new Emergency(incidentNumber, barangayID, type, severity, person.getMemberCount(), status, date, peopleID);
+        String status = "QUEUED";
 
-        boolean success = DatabaseHandler.insertEmergency(emergency);
-        if (success) {
-            showAlert("Success", "Rescue successfully recorded.");
-            if (tabPaneController != null) {
-                tabPaneController.refreshIncidentsTable(); 
+        // Make sure your PeopleCountTable and insertPeople use String for contactNum!
+        PeopleCountTable person = new PeopleCountTable(address, contactNum, children, adults, seniors);
+        int peopleID = DatabaseHandler.insertPeople(person);
 
-                // ADD MARKER
+        if (peopleID != -1) {
+            String incidentNumber = DatabaseHandler.generateIncidentNumberFromDB();
+            Emergency emergency = new Emergency(
+                incidentNumber,
+                barangayID,
+                type,
+                severity,
+                children + adults + seniors, // total rescuees
+                status,
+                date,
+                peopleID
+            );
+
+            boolean success = DatabaseHandler.insertEmergency(emergency);
+            if (success) {
+                showAlert("Success", "Rescue successfully recorded.");
+                if (tabPaneController != null) {
+                    tabPaneController.refreshIncidentsTable();
+                    // Add marker to map
                     tabPaneController.addIncidentMarkerToMap(
-                            incidentNumber,
-                            barangayLocationCombo.getValue(),
-                            status,
-                            children + adults + seniors, // total people to show
-                            emergencyTypeCombo.getValue() // emergency type
+                        incidentNumber,
+                        barangayName,
+                        status,
+                        children + adults + seniors,
+                        type
                     );
-        }            
+                }
+            } else {
+                showAlert("Error", "Failed to insert emergency.");
+            }
         } else {
-            showAlert("Error", "Failed to insert emergency.");
+            showAlert("Error", "Failed to insert people data.");
         }
-    } else {
-        showAlert("Error", "Failed to insert people data.");
     }
-}
 
     private String mapSeverity(double value) {
         int rounded = (int) Math.round(value);

@@ -17,9 +17,9 @@ public class TableEditor {
 
     public static void makeActiveIncidentsTableEditable(
         TableColumn <ActiveIncidentsTable, String> emergencyTypeCol, //combobox
-        TableColumn <ActiveIncidentsTable, String> emergencyStatusCol, //combobox
-        TableColumn <ActiveIncidentsTable, String> locationCol, //combobox
-        TableColumn <ActiveIncidentsTable, String> rescueeNameCol) {
+        TableColumn <ActiveIncidentsTable, String> emergencyStatusCol) { //combobox
+        //TableColumn <ActiveIncidentsTable, String> locationCol) { //combobox
+        // TableColumn <ActiveIncidentsTable, String> rescueeNameCol) {
     
     ObservableList<BarangayTable> barangayTableList = DBService.getAllBarangayName();
 
@@ -46,21 +46,21 @@ public class TableEditor {
         editedIncidentTable.add(incident);   
      });
 
-     locationCol.setCellFactory(ComboBoxTableCell.forTableColumn(barangayNames));
-     locationCol.setOnEditCommit(event -> {
-         ActiveIncidentsTable incident = event.getRowValue();
-         String newBarangayName = event.getNewValue();
-         incident.setBarangayLocation(newBarangayName);
-         editedIncidentTable.add(incident);
-     });
+    //  locationCol.setCellFactory(ComboBoxTableCell.forTableColumn(barangayNames));
+    //  locationCol.setOnEditCommit(event -> {
+    //      ActiveIncidentsTable incident = event.getRowValue();
+    //      String newBarangayName = event.getNewValue();
+    //      incident.setBarangayLocation(newBarangayName);
+    //      editedIncidentTable.add(incident);
+    //  });
 
-     rescueeNameCol.setCellFactory(TextFieldTableCell.forTableColumn());
-     rescueeNameCol.setOnEditCommit(event -> {
-         ActiveIncidentsTable incident = event.getRowValue();
-         String newRescueeName = event.getNewValue();
-         incident.setRescueeName(newRescueeName);
-         editedIncidentTable.add(incident);   
-     });
+    //  rescueeNameCol.setCellFactory(TextFieldTableCell.forTableColumn());
+    //  rescueeNameCol.setOnEditCommit(event -> {
+    //      ActiveIncidentsTable incident = event.getRowValue();
+    //      String newRescueeName = event.getNewValue();
+    //      incident.setRescueeName(newRescueeName);
+    //      editedIncidentTable.add(incident);   
+    //  });
 
     // numOfRescueeCol.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
     // numOfRescueeCol.setOnEditCommit(event -> {
