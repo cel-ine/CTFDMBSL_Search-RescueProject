@@ -92,23 +92,24 @@
                      <children>
                         <TableView fx:id="activeIncidentsTable" layoutX="1.0" layoutY="66.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="1327.0" style="-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 15, 0.2, 0, 4);" stylesheets="@style.css">
                           <columns>
-                            <TableColumn fx:id="emergencyTypeCol" prefWidth="90.0" text="Type" />
-                            <TableColumn fx:id="emergencyStatusCol" minWidth="0.0" prefWidth="130.66665649414062" text="Status" />
-                              <TableColumn fx:id="emergencySeverityCol" prefWidth="124.0" text="Severity" />
-                              <TableColumn fx:id="incidentNumCol" minWidth="0.0" prefWidth="195.0" text="Incident Number" />
-                              <TableColumn fx:id="timeCreatedCol" minWidth="0.0" prefWidth="144.66668701171875" text="Date Issued" />
-                              <TableColumn fx:id="locationCol" minWidth="0.0" prefWidth="134.33331298828125" text="Barangay" />
-                              <TableColumn fx:id="personInChargeCol" minWidth="0.0" prefWidth="166.33331298828125" text="Person in Charge" />
-                              <TableColumn fx:id="numOfRescueeCol" minWidth="0.0" prefWidth="93.0" text="# of Rescuee" />
-                              <TableColumn fx:id="addressCol" prefWidth="123.6666259765625" text="Address" />
-                              <TableColumn fx:id="contactNumCol" prefWidth="119.0" text="Contact #" />
+                            <TableColumn fx:id="emergencyTypeCol" prefWidth="81.0" text="Type" />
+                            <TableColumn fx:id="emergencyStatusCol" minWidth="0.0" prefWidth="140.0" text="Status" />
+                              <TableColumn fx:id="emergencySeverityCol" prefWidth="72.5333251953125" text="Severity" />
+                              <TableColumn fx:id="incidentNumCol" minWidth="0.0" prefWidth="157.86669921875" text="Incident Number" />
+                              <TableColumn fx:id="timeCreatedCol" minWidth="0.0" prefWidth="134.13330078125" text="Date Issued" />
+                              <TableColumn fx:id="locationCol" minWidth="0.0" prefWidth="105.86669921875" text="Barangay" />
+                              <TableColumn fx:id="personInChargeCol" minWidth="0.0" prefWidth="156.53326416015625" text="Person in Charge" />
+                              <TableColumn fx:id="numOfRescueeCol" minWidth="0.0" prefWidth="91.20001220703125" text="# of Rescuee" />
+                              <TableColumn fx:id="addressCol" prefWidth="142.13330078125" text="Address" />
+                              <TableColumn fx:id="contactNumCol" prefWidth="106.9332275390625" text="Contact #" />
+                              <TableColumn fx:id="officerInChargeCol" prefWidth="128.2666015625" text="Officer in Charge" />
                           </columns>
                         </TableView>
                         <Button fx:id="addRescueButton" layoutX="564.0" layoutY="583.0" mnemonicParsing="false" onAction="#openAddRescuePopUp" prefHeight="26.0" prefWidth="95.0" style="-fx-background-color: #062a68; -fx-border-color: white; -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 8, 0.2, 0, 4);" text="Add Rescue" textFill="WHITE">
                            <font>
                               <Font name="Segoe UI Bold" size="12.0" />
                            </font></Button>
-                        <Button fx:id="dispatchButton" layoutX="680.0" layoutY="583.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#handleDispatchButtonClick" prefHeight="26.0" prefWidth="73.0" style="-fx-background-color: #cc0000; -fx-border-color: white; -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 8, 0.2, 0, 4);" text="Dispatch" textFill="WHITE">
+                        <Button fx:id="completedButton" layoutX="680.0" layoutY="583.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#handleRescueCompletedButtonClick" prefHeight="26.0" prefWidth="123.0" style="-fx-background-color: #cc0000; -fx-border-color: white; -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 8, 0.2, 0, 4);" text="Rescue Completed" textFill="WHITE">
                            <font>
                               <Font name="Segoe UI Bold" size="12.0" />
                            </font></Button>
@@ -142,15 +143,16 @@
                               <TableView fx:id="historyTable" layoutX="1.0" layoutY="67.0" prefHeight="500.0" prefWidth="1326.0" style="-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 15, 0.2, 0, 4);">
                                 <columns>
                                     <TableColumn fx:id="incidentReport" minWidth="0.0" prefWidth="58.0" text="Report" />
-                                  <TableColumn fx:id="emTypeCol" prefWidth="117.33332824707031" text="Emergency Type" />
-                                  <TableColumn fx:id="emSevCol" minWidth="0.0" prefWidth="139.0" text="Emergency Severity" />
-                                    <TableColumn fx:id="incidentNumHCol" prefWidth="173.33334350585938" text="Incident Number" />
-                                    <TableColumn fx:id="dispatchedTimeCol" minWidth="0.0" prefWidth="159.6666259765625" text="Dispatched time" />
-                                    <TableColumn fx:id="brgyLocCol" prefWidth="135.6666259765625" text="Barangay" />
-                                    <TableColumn fx:id="nameCol" minWidth="0.0" prefWidth="176.66668701171875" text="Person in Charge" />
-                                    <TableColumn fx:id="numOfRescueeHCol" prefWidth="92.0" text="# of Rescuee" />
-                                    <TableColumn fx:id="addressHCol" prefWidth="151.0" text="Address" />
-                                    <TableColumn fx:id="contactNumHCol" prefWidth="116.0" text="Contact #" />
+                                  <TableColumn fx:id="emTypeCol" prefWidth="133.0" text="Emergency Type" />
+                                  <TableColumn fx:id="emSevCol" minWidth="0.0" prefWidth="87.0" text="Severity" />
+                                    <TableColumn fx:id="incidentNumHCol" minWidth="0.0" prefWidth="151.0" text="Incident Number" />
+                                    <TableColumn fx:id="dispatchedTimeCol" minWidth="0.0" prefWidth="132.0" text="Completed time" />
+                                    <TableColumn fx:id="brgyLocCol" prefWidth="122.0" text="Barangay" />
+                                    <TableColumn fx:id="nameCol" minWidth="0.0" prefWidth="139.0" text="Person in Charge" />
+                                    <TableColumn fx:id="numOfRescueeHCol" prefWidth="107.0" text="# of Rescuee" />
+                                    <TableColumn fx:id="addressHCol" prefWidth="147.0" text="Address" />
+                                    <TableColumn fx:id="contactNumHCol" prefWidth="100.0" text="Contact #" />
+                                    <TableColumn fx:id="officerInChargeHistoryCol" prefWidth="145.0" text="Officer in Charge" />
                                 </columns>
                               </TableView>
                               <Button fx:id="deleteBTN" layoutX="647.0" layoutY="580.0" mnemonicParsing="false" onAction="#handleDeleteHistory" prefHeight="26.0" style="-fx-background-color: #cc0000; -fx-border-color: white; -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 8, 0.2, 0, 4);" text="Delete" textFill="WHITE">

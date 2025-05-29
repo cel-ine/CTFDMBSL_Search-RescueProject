@@ -167,7 +167,7 @@ public class DatabaseHandler {
         String query = """
             SELECT e.incidentNumber, e.emergencyType, e.emergencyStatus, 
             e.dateIssued, b.barangayName, 
-            p.address, p.contactNum,
+            p.address, p.contactNum, officerInCharge,
             (p.numOfChildren + p.numOfAdults + p.numOfSeniors) AS totalRescuees,
             p.numOfChildren, p.numOfAdults, p.numOfSeniors,
             e.emergencySeverity,
@@ -197,11 +197,13 @@ public class DatabaseHandler {
                 int totalRescuees = rs.getInt("totalRescuees");
                 String address = rs.getString ("address");
                 String contactNum = rs.getString ("contactNum");
+                String officerInCharge = rs.getString ("officerInCharge");
+
     
                 // Create the ActiveIncidentsTable object
                 ActiveIncidentsTable incident = new ActiveIncidentsTable(
                     emergencyType, emergencyStatus, emergencySeverity, incidentNumber, dateIssued,
-                    barangayLocation, personInCharge, totalRescuees, children, adults, seniors, address, contactNum
+                    barangayLocation, personInCharge, totalRescuees, children, adults, seniors, address, contactNum, officerInCharge
                 );
     
                 // Add to the list of incidents
@@ -276,7 +278,7 @@ public class DatabaseHandler {
     }
 
     public static int insertPeople(PeopleCountTable person) {
-        String query = "INSERT INTO PeopleDetails (address, contactNum, numOfChildren, numOfAdults, numOfSeniors) VALUES (?, ?, ?, ?, ?)";
+        String query = "INSERT INTO PeopleDetails (address, contactNum, numOfChildren, numOfAdults, numOfSeniors, officerInCharge) VALUES (?, ?, ?, ?, ?, ?)";
         try (Connection conn = getConnection();
              PreparedStatement pstmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
             pstmt.setString (1, person.getAddress());
@@ -284,6 +286,8 @@ public class DatabaseHandler {
             pstmt.setInt(3, person.getNumOfChildren());
             pstmt.setInt(4, person.getNumOfAdults());
             pstmt.setInt(5, person.getNumOfSeniors());
+            pstmt.setString(2, person.getContactNum());
+
     
             pstmt.executeUpdate();
             ResultSet rs = pstmt.getGeneratedKeys();
@@ -411,7 +415,7 @@ public class DatabaseHandler {
                e.incidentNumber, h.dispatchTimestamp, b.barangayName,
                bd.barangayCaptain AS personInCharge,
                (p.numOfChildren + p.numOfAdults + p.numOfSeniors) AS totalRescuees,
-               p.address, p.contactNum
+               p.address, p.contactNum, p.officerInCharge
         FROM History h
         JOIN Emergency e ON h.incidentNumber = e.incidentNumber
         JOIN PeopleDetails p ON e.peopleID = p.peopleID
@@ -437,10 +441,11 @@ public class DatabaseHandler {
             String totalRescuees = String.valueOf(result.getInt("totalRescuees"));
             String address = result.getString("address");
             String contactNum = result.getString("contactNum");
+            String officerInCharge = result.getString("officerInCharge");
 
             historyList.add(new HistoryTable(
                 historyID, incidentReport, emType, emSeverity, incidentNum,
-                dispatchedTime, barangayName, personInCharge, totalRescuees, address, contactNum
+                dispatchedTime, barangayName, personInCharge, totalRescuees, address, contactNum, officerInCharge
             ));
         }
 
@@ -452,7 +457,7 @@ public class DatabaseHandler {
 }
 
     public static Integer insertToHistory(String incidentNumber, int barangayID) {
-    String updateStatusQuery = "UPDATE Emergency SET emergencyStatus = 'DISPATCHED' WHERE incidentNumber = ?";
+    String updateStatusQuery = "UPDATE Emergency SET emergencyStatus = 'COMPLETED' WHERE incidentNumber = ?";
     String insertHistoryQuery = "INSERT INTO History (incidentNumber, barangayID, dispatchTimestamp) VALUES (?, ?, NOW())";
 
     try (Connection conn = getConnection();
@@ -480,7 +485,7 @@ public class DatabaseHandler {
 }
 
     // VALIDATION TO AVOID DISPATCHING THE SAME INCIDENT
-    public static boolean isAlreadyDispatched(String incidentNumber) {
+    public static boolean isAlreadyCompleted(String incidentNumber) {
     String query = "SELECT emergencyStatus FROM Emergency WHERE incidentNumber = ?";
     try (Connection conn = getConnection();
          PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -490,7 +495,7 @@ public class DatabaseHandler {
 
         if (rs.next()) {
             String status = rs.getString("emergencyStatus");
-            return "DISPATCHED".equalsIgnoreCase(status);
+            return "COMPLETED".equalsIgnoreCase(status);
         }
     } catch (SQLException e) {
         e.printStackTrace();
@@ -580,15 +585,14 @@ public class DatabaseHandler {
         return null;
     }
     //FOR ADDING RESCUE REPORT 
-    public static void submitReport(int historyID, String writer, String remarks, String action, String head) {
+    public static void submitReport(int historyID, String writer, String remarks, String action) {
     String sql = """
         INSERT INTO EmergencyReport (historyID, reportWriter, reportRemarks, emergencyActionTaken, headRescue)
         VALUES (?, ?, ?, ?, ?)
         ON DUPLICATE KEY UPDATE
             reportWriter = VALUES(reportWriter),
             reportRemarks = VALUES(reportRemarks),
-            emergencyActionTaken = VALUES(emergencyActionTaken),
-            headRescue = VALUES(headRescue)
+            emergencyActionTaken = VALUES(emergencyActionTaken)
         """;
     try (Connection conn = getConnection();
          PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -596,7 +600,6 @@ public class DatabaseHandler {
         stmt.setString(2, writer);
         stmt.setString(3, remarks);
         stmt.setString(4, action);
-        stmt.setString(5, head);
 
         stmt.executeUpdate();
     } catch (SQLException e) {

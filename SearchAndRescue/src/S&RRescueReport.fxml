@@ -145,12 +145,12 @@
                   </Label>
                </children>
             </AnchorPane>
-            <Label layoutX="48.0" layoutY="395.0" style="-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 4, 0.2, 1, 1);" text="Head Rescue:*">
+            <Label layoutX="48.0" layoutY="395.0" style="-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 4, 0.2, 1, 1);" text="Officer in Charge:">
                <font>
                   <Font name="System Bold Italic" size="12.0" />
                </font>
             </Label>
-            <TextField fx:id="headRescue" layoutX="45.0" layoutY="415.0" prefHeight="26.0" prefWidth="269.0" promptText="Position, FN, LN" style="-fx-effect: innershadow(gaussian, rgba(170, 170, 170, 0.5), 5, 0.0, 2, 2);" />
+            <TextField fx:id="headRescueTF" layoutX="48.0" layoutY="415.0" prefHeight="26.0" prefWidth="269.0" promptText="OIC" style="-fx-effect: innershadow(gaussian, rgba(170, 170, 170, 0.5), 5, 0.0, 2, 2);" />
          </children>
       </AnchorPane>
       <Label layoutX="21.0" layoutY="8.0" style="-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 5, 0.0, 2, 2);" text="Incident Report" textFill="WHITE">

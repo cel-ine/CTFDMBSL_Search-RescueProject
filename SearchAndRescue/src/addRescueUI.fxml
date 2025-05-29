@@ -28,10 +28,10 @@
                <font>
                   <Font name="Segoe UI Bold" size="12.0" />
                </font></Button>
-            <ComboBox fx:id="emergencyTypeCombo" editable="true" layoutX="504.0" layoutY="297.0" prefHeight="30.0" prefWidth="246.0" promptText="-Please select-" style="-fx-effect: innershadow(gaussian, rgba(170, 170, 170, 0.5), 5, 0.0, 2, 2);" />
+            <ComboBox fx:id="emergencyTypeCombo" editable="true" layoutX="504.0" layoutY="362.0" prefHeight="30.0" prefWidth="246.0" promptText="-Please select-" style="-fx-effect: innershadow(gaussian, rgba(170, 170, 170, 0.5), 5, 0.0, 2, 2);" />
             <ComboBox fx:id="barangayLocationCombo" editable="true" layoutX="107.0" layoutY="152.0" prefHeight="30.0" prefWidth="246.0" promptText="Barangay" style="-fx-effect: innershadow(gaussian, rgba(170, 170, 170, 0.5), 5, 0.0, 2, 2);" />
             <TextField fx:id="personInChargeTF" layoutX="504.0" layoutY="152.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="246.0" promptText="Brgy. Capt." style="-fx-effect: innershadow(gaussian, rgba(170, 170, 170, 0.5), 5, 0.0, 2, 2);" />
-            <Label layoutX="506.0" layoutY="352.0" style="-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 4, 0.2, 1, 1);" text="Date of Incident:">
+            <Label layoutX="506.0" layoutY="417.0" style="-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 4, 0.2, 1, 1);" text="Date of Incident:">
                <font>
                   <Font name="Segoe UI Bold" size="14.0" />
                </font>
@@ -44,13 +44,13 @@
             <TextField fx:id="numOfAdultsTF" layoutX="109.0" layoutY="297.0" prefHeight="30.0" prefWidth="137.0" promptText="No. of Adults" style="-fx-effect: innershadow(gaussian, rgba(170, 170, 170, 0.5), 5, 0.0, 2, 2);" />
             <TextField fx:id="numOfChildTF" layoutX="257.0" layoutY="297.0" prefHeight="30.0" prefWidth="138.0" promptText="No. of Children" style="-fx-effect: innershadow(gaussian, rgba(170, 170, 170, 0.5), 5, 0.0, 2, 2);" />
             <TextField fx:id="numOfSeniorsTF" layoutX="108.0" layoutY="337.0" prefHeight="30.0" prefWidth="138.0" promptText="No. of Seniors" style="-fx-effect: innershadow(gaussian, rgba(170, 170, 170, 0.5), 5, 0.0, 2, 2);" />
-            <DatePicker fx:id="dateDP" layoutX="506.0" layoutY="382.0" prefHeight="26.0" prefWidth="202.0" style="-fx-effect: innershadow(gaussian, rgba(170, 170, 170, 0.5), 5, 0.0, 2, 2);" />
+            <DatePicker fx:id="dateDP" layoutX="506.0" layoutY="447.0" prefHeight="26.0" prefWidth="202.0" style="-fx-effect: innershadow(gaussian, rgba(170, 170, 170, 0.5), 5, 0.0, 2, 2);" />
             <Label layoutX="107.0" layoutY="130.0" style="-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 4, 0.2, 1, 1);" text="Location:">
                <font>
                   <Font name="Segoe UI Bold" size="14.0" />
                </font>
             </Label>
-            <Label layoutX="504.0" layoutY="271.0" style="-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 4, 0.2, 1, 1);" text="Type of Emergency:">
+            <Label layoutX="504.0" layoutY="336.0" style="-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 4, 0.2, 1, 1);" text="Type of Emergency:">
                <font>
                   <Font name="Segoe UI Bold" size="14.0" />
                </font>
@@ -96,6 +96,12 @@
                </font>
             </Label>
             <TextField fx:id="contactNumTF" layoutX="504.0" layoutY="225.0" prefHeight="30.0" prefWidth="246.0" promptText="11 digit phone number" />
+            <Label layoutX="505.0" layoutY="269.0" style="-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 4, 0.2, 1, 1);" text="Officer in Charge:">
+               <font>
+                  <Font name="Segoe UI Bold" size="14.0" />
+               </font>
+            </Label>
+            <ComboBox fx:id="officerInChargeCombo" editable="true" layoutX="504.0" layoutY="297.0" prefHeight="25.0" prefWidth="246.0" promptText="-Please select-" />
          </children>
       </AnchorPane>
    </children>

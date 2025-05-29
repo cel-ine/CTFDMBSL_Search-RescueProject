@@ -20,7 +20,7 @@ public class AddReportController {
     @FXML private TextField incidentReportWrittenBy;
     @FXML private TextField reportAddressTF;
     @FXML private TextField reportContactTF;
-    @FXML private TextField headRescue;
+    @FXML private TextField headRescueTF;
     @FXML private TextArea actionTaken;
     @FXML private TextArea remarks;
     
@@ -39,6 +39,7 @@ public class AddReportController {
     incidentLoc.setText(history.getBarangayName());
     reportAddressTF.setText(history.getAddressHistory());
     reportContactTF.setText(history.getContactNumHistory());
+    headRescueTF.setText(history.getOfficerInChargeHistory());
 
     try {
         int[] counts = DBService.getPeopleCountsByIncidentNumber(history.getIncidentNumHistory());
@@ -57,20 +58,12 @@ public class AddReportController {
         incidentReportWrittenBy.setText(report.getReportWriter());
         remarks.setText(report.getReportRemarks());
         actionTaken.setText(report.getEmergencyActionTaken());
-        headRescue.setText(report.getHeadRescue());
-
-        // incidentReportWrittenBy.setDisable(false);
-        // remarks.setDisable(false);
-        // actionTaken.setDisable(false);
+       
         
     } else {
         incidentReportWrittenBy.clear();
         remarks.clear();
         actionTaken.clear();
-        headRescue.clear();
-        // incidentReportWrittenBy.setDisable(true);
-        // remarks.setDisable(true);
-        // actionTaken.setDisable(true);
     }
 }
     @FXML 
@@ -80,12 +73,11 @@ public class AddReportController {
         String writer = incidentReportWrittenBy.getText();
         String remarksText = remarks.getText();
         String action = actionTaken.getText();
-        String head = headRescue.getText();
+    
 
         if (writer == null || writer.trim().isEmpty() ||
         remarksText == null || remarksText.trim().isEmpty() ||
-        action == null || action.trim().isEmpty() ||
-        head == null || head.trim().isEmpty()) {
+        action == null || action.trim().isEmpty()) {
         javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.WARNING);
         alert.setTitle("Missing Information");
         alert.setHeaderText("Please fill in all required fields.");
@@ -110,7 +102,7 @@ public class AddReportController {
         }
 
         if (DatabaseHandler.historyIDExists(historyID)) {
-            DatabaseHandler.submitReport(historyID, writer, remarksText, action, head);
+            DatabaseHandler.submitReport(historyID, writer, remarksText, action);
 
             EmergencyReport report = DatabaseHandler.getReportByHistoryID(historyID);
             if (report != null) {

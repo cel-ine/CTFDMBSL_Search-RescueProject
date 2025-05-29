@@ -16,11 +16,12 @@ public class ActiveIncidentsTable {
     private StringProperty personInCharge;
     private StringProperty address;
     private StringProperty contactNum;
+    private StringProperty officerInCharge;
 
 
     public ActiveIncidentsTable(String emergencyType, String emergencyStatus, String emergencySeverity,
                                 String incidentNumber, LocalDate dateIssued, String barangayLocation, String personInCharge, int numOfRescuee, Integer children, Integer adults, Integer seniors, 
-                                String address, String contactNum) {
+                                String address, String contactNum, String officerInCharge) {
 
         this.emergencyType = new SimpleStringProperty(emergencyType);
         this.emergencyStatus = new SimpleStringProperty(emergencyStatus);
@@ -36,6 +37,7 @@ public class ActiveIncidentsTable {
         this.personInCharge = new SimpleStringProperty (personInCharge); 
         this.address = new SimpleStringProperty(address);
         this.contactNum = new SimpleStringProperty(contactNum);
+        this.officerInCharge = new SimpleStringProperty(officerInCharge);
 
 
     }
@@ -180,5 +182,15 @@ public class ActiveIncidentsTable {
     }
     public StringProperty personInChargeProperty() { 
         return personInCharge; 
+    }
+
+    public String getOfficerInCharge() { 
+        return officerInCharge.get(); 
+    }
+    public void setofficerInCharge(String value) { 
+        officerInCharge.set(value); 
+    }
+    public StringProperty officerInChargeProperty() { 
+        return officerInCharge; 
     }
 }

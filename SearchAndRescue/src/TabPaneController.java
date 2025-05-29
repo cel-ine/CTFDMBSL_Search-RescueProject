@@ -57,7 +57,7 @@ public class TabPaneController {
     //🚨🚨🚨 ACTIVE INCIDENTS TAB
     @FXML TextField searchTF;
     @FXML TableView <ActiveIncidentsTable> activeIncidentsTable;
-    @FXML Button editButton, saveButton, addRescueButton, dispatchButton, cancelBTN;
+    @FXML Button editButton, saveButton, addRescueButton, completedButton, cancelBTN;
     @FXML TableColumn <ActiveIncidentsTable, String> emergencyTypeCol;
     @FXML TableColumn <ActiveIncidentsTable, String> emergencyStatusCol;
     @FXML TableColumn <ActiveIncidentsTable, String> emergencySeverityCol;
@@ -68,6 +68,7 @@ public class TabPaneController {
     @FXML TableColumn <ActiveIncidentsTable, Integer> numOfRescueeCol;
     @FXML TableColumn <ActiveIncidentsTable, String> addressCol;
     @FXML TableColumn <ActiveIncidentsTable, Integer> contactNumCol;
+    @FXML TableColumn <ActiveIncidentsTable, String> officerInChargeCol;
 
     private ObservableList<ActiveIncidentsTable> incidentsList = FXCollections.observableArrayList();
 
@@ -85,6 +86,7 @@ public class TabPaneController {
     @FXML TableColumn <HistoryTable, String> numOfRescueeHCol;
     @FXML TableColumn <HistoryTable, String> addressHCol;
     @FXML TableColumn <HistoryTable, String> contactNumHCol;
+    @FXML TableColumn <HistoryTable, String> officerInChargeHistoryCol;
     private ObservableList<HistoryTable> historyList = FXCollections.observableArrayList();
 
 
@@ -124,7 +126,7 @@ public class TabPaneController {
         numOfRescueeCol.setCellValueFactory(new PropertyValueFactory<>("numOfRescuee"));
         addressCol.setCellValueFactory(new PropertyValueFactory<>("address"));
         contactNumCol.setCellValueFactory(new PropertyValueFactory<>("contactNum"));
-
+        officerInChargeCol.setCellValueFactory(new PropertyValueFactory<>("officerInCharge"));
 
         searchTF.textProperty().addListener((observable, oldValue, newValue) -> filterActiveIncidentsTable(newValue));
 
@@ -142,6 +144,7 @@ public class TabPaneController {
         numOfRescueeHCol.setCellValueFactory(new PropertyValueFactory<>("numOfRescueeHistory"));
         addressHCol.setCellValueFactory(new PropertyValueFactory<>("addressHistory"));
         contactNumHCol.setCellValueFactory(new PropertyValueFactory<>("contactNumHistory"));
+        officerInChargeHistoryCol.setCellValueFactory(new PropertyValueFactory<>("officerInChargeHistory"));
 
 
         historySearchTF.textProperty().addListener((observable, oldValue, newValue) -> filterHistoryTable(newValue));
@@ -327,7 +330,7 @@ public class TabPaneController {
             String incidentNumber = incident.getIncidentNumber();
             String emergencyStatus = incident.getEmergencyStatus();
 
-            if ("DISPATCHED".equalsIgnoreCase(emergencyStatus) && DatabaseHandler.isAlreadyInHistory(incidentNumber)) {
+            if ("COMPLETED".equalsIgnoreCase(emergencyStatus) && DatabaseHandler.isAlreadyInHistory(incidentNumber)) {
                 blockedIncidents.append(incidentNumber).append("\n");
                 blockedCount++;
                 continue;
@@ -365,7 +368,7 @@ public class TabPaneController {
 
             int barangayID = DatabaseHandler.getBarangayIDFromName(barangayLocation);
 
-            if (emergencyStatus.equalsIgnoreCase("DISPATCHED")) {
+            if (emergencyStatus.equalsIgnoreCase("COMPLETED")) {
                 if (!DatabaseHandler.isAlreadyInHistory(incidentNumber)) {
                     Integer historyID = DatabaseHandler.insertToHistory(incidentNumber, barangayID);
                     if (historyID != null) {
@@ -384,7 +387,7 @@ public class TabPaneController {
         if (blockedCount == totalToSave) {
             showAlert(
                 "Edit Not Allowed",
-                "You cannot edit any information for the following emergencies that are already DISPATCHED and in the history:\n\n" + blockedIncidents
+                "You cannot edit any information for the following emergencies that is already marked completed and in the history:\n\n" + blockedIncidents
             );
             TableEditor.getEditedRows().clear();
             return;
@@ -393,7 +396,7 @@ public class TabPaneController {
         if (blockedIncidents.length() > 0) {
             showAlert(
                 "Edit Not Allowed",
-                "You cannot edit any information for the following emergencies that are already DISPATCHED and in the history:\n\n" + blockedIncidents
+                "You cannot edit any information for the following emergencies that are already marked as completed and in the history:\n\n" + blockedIncidents
             );
         }
 
@@ -466,17 +469,17 @@ public class TabPaneController {
   
     //🚨🚨🚨 DISPATCH BUTTON
     @FXML
-    private void handleDispatchButtonClick() {
+    private void handleRescueCompletedButtonClick() {
         ActiveIncidentsTable selectedIncident = activeIncidentsTable.getSelectionModel().getSelectedItem();
 
         if (selectedIncident == null) {
-            showAlert("No Incident Selected", "Please select an incident to dispatch.");
+            showAlert("No Incident Selected", "Please select an incident to mark as completed.");
             return;
         }
         Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
-        confirm.setTitle("Confirm Dispatch");
+        confirm.setTitle("Confirm");
         confirm.setHeaderText(null);
-        confirm.setContentText("Are you sure you want to dispatch this incident?");
+        confirm.setContentText("Are you sure you want to mark this this incident as completed?");
         Stage alertStage = (Stage) confirm.getDialogPane().getScene().getWindow();
         alertStage.getIcons().add(new javafx.scene.image.Image(getClass().getResourceAsStream("pasigLogo.jpg")));
         if (confirm.showAndWait().orElse(ButtonType.CANCEL) != ButtonType.OK) {
@@ -492,21 +495,21 @@ public class TabPaneController {
             return;
         }
 
-        if (DatabaseHandler.isAlreadyDispatched(incidentNumber)) {
-            showAlert("Already Dispatched", "This incident has already been dispatched.");
+        if (DatabaseHandler.isAlreadyCompleted(incidentNumber)) {
+            showAlert("Already marked Complete", "This incident has already been completed.");
             return;
         }
 
         Integer historyID = DatabaseHandler.insertToHistory(incidentNumber, barangayID);
         if (historyID != null) {
             activeIncidentsTable.getItems().remove(selectedIncident);
-            showAlert("Dispatch Successful", "Incident dispatched and recorded in history.");
+            showAlert("Incident completed", "Incident is marked as complete and recorded in history.");
             loadHistoryTable();
             refreshIncidentsTable();
-            removeIncidentFromMap(incidentNumber); // MAP dispatch
+            removeIncidentFromMap(incidentNumber);
 
         } else {
-            showAlert("Dispatch Failed", "An error occurred while dispatching the incident.");
+            showAlert("Marking as complete Failed", "An error occurred while marking the incident.");
         }
     }
     public void removeIncidentFromMap(String incidentNumber) {
@@ -620,11 +623,11 @@ public class TabPaneController {
                     
                 if (item.equalsIgnoreCase("QUEUED")) {
                     setStyle("-fx-background-color: #ba0f0f; -fx-text-fill: white; -fx-background-insets: 4 2");
-                } else if (item.equalsIgnoreCase("ENROUTE")) {
+                } else if (item.equalsIgnoreCase("DISPATCHED")) {
                     setStyle("-fx-background-color: #FFA500; -fx-text-fill: white; -fx-background-insets: 4 2");
                 } else if (item.equalsIgnoreCase("ON SCENE")) {
                     setStyle("-fx-background-color: #1368bd; -fx-text-fill: white; -fx-background-insets: 4 2");
-                } else if (item.equalsIgnoreCase("DISPATCHED")) {
+                } else if (item.equalsIgnoreCase("COMPLETED")) {
                     setStyle("-fx-background-color: #21b111; -fx-text-fill: white; -fx-background-insets: 4 2");
                 } else {
                     setStyle(""); // Default style
@@ -649,11 +652,11 @@ public class TabPaneController {
 
                 if (status.equalsIgnoreCase("QUEUED")) {
                     setStyle("-fx-text-fill: #ba0f0f; -fx-font-weight: bold;");
-                } else if (status.equalsIgnoreCase("ENROUTE")) {
+                } else if (status.equalsIgnoreCase("DISPATCHED")) {
                     setStyle("-fx-text-fill: #FFA500; -fx-font-weight: bold;");
                 } else if (status.equalsIgnoreCase("ON SCENE")) {
                     setStyle("-fx-text-fill: #1368bd; -fx-font-weight: bold;");
-                } else if (status.equalsIgnoreCase("DISPATCHED")) {
+                } else if (status.equalsIgnoreCase("COMPLETED")) {
                     setStyle("-fx-text-fill: #21b111; -fx-font-weight: bold;");
                 } else {
                     setStyle("-fx-text-fill: black;");

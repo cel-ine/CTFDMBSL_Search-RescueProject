@@ -29,7 +29,7 @@ public class TableEditor {
     
     }
      
-    emergencyTypeCol.setCellFactory(ComboBoxTableCell.forTableColumn("Fire", "Flood", "Earthquake", "Landslide"));    
+    emergencyTypeCol.setCellFactory(ComboBoxTableCell.forTableColumn("Flood", "Earthquake", "Landslide"));    
     emergencyTypeCol.setOnEditCommit(event -> {
         ActiveIncidentsTable incident = event.getRowValue();
         String newEmergencyType = event.getNewValue();
@@ -38,7 +38,7 @@ public class TableEditor {
 
      });
 
-     emergencyStatusCol.setCellFactory(ComboBoxTableCell.forTableColumn("ENROUTE", "ON SCENE", "QUEUED"));
+     emergencyStatusCol.setCellFactory(ComboBoxTableCell.forTableColumn("QUEUED", "DISPATCHED", "ON SCENE"));
      emergencyStatusCol.setOnEditCommit(event -> {
         ActiveIncidentsTable incident = event.getRowValue();
         String newEmergencyStatus = event.getNewValue();

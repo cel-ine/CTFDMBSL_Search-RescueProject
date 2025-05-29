@@ -12,7 +12,7 @@ import javafx.stage.Stage;
 
 public class addRescueController {
     @FXML DatePicker dateDP;
-    @FXML ComboBox<String> barangayLocationCombo, emergencyTypeCombo;
+    @FXML ComboBox<String> barangayLocationCombo, emergencyTypeCombo, officerInChargeCombo;
     @FXML Slider severitySlider;
     @FXML TextField addressTF, contactNumTF, personInChargeTF, numOfRescueeTF, numOfChildTF, numOfAdultsTF, numOfSeniorsTF;
     @FXML Button addRescueBTN;
@@ -24,6 +24,51 @@ public class addRescueController {
     }
     @FXML 
     public void initialize() {
+        ObservableList<String> officerList = FXCollections.observableArrayList(
+            "Capt. Antonio Rivera",
+            "Insp. Carla Mendoza",
+            "Lt. Joel Santos",
+            "Engr. Melissa Cruz",
+            "Sgt. Ramon de la Peña",
+            "Cpt. Liza Tan",
+            "Maj. Dennis Alonzo",
+            "Dir. Clarisse Uy",
+            "Lt. Col. Martin Aquino",
+            "Engr. Paolo Lim",
+            "FO1 Nathaniel Ruiz",
+            "FO2 Jeanette Malvar",
+            "FO3 Edgar Sevilla",
+            "Cpt. Rea Domingo",
+            "Lt. Ariel Gomez",
+            "FO1 Ivy dela Cruz",
+            "Sgt. Francis Alviar",
+            "Engr. Mico Santos",
+            "Insp. Danica Soriano",
+            "Cpt. James Bautista",
+            "Lt. Katrina Ong",
+            "FO1 Josephine Ramos",
+            "FO2 Carl Reyes",
+            "FO3 Bianca Salazar",
+            "Sgt. Louie Tan",
+            "Lt. Gen. Rodel Valdez",
+            "Maj. Karen Estrella",
+            "FO1 Alex Navarro",
+            "FO2 Ella Buenaventura",
+            "Capt. Vic dela Rosa",
+            "Lt. Nicole Ramirez",
+            "Engr. Sean Alvarez",
+            "Insp. Bea Manalo",
+            "FO3 Dominic Fernandez",
+            "Sgt. Ricky Corpuz",
+            "FO1 Marjorie Gomez",
+            "Cpt. Daniel Yulo",
+            "Lt. Lea Santiago",
+            "FO2 Rico Manansala",
+            "Insp. Angela Cruz"
+        );
+
+        officerInChargeCombo.setItems(officerList);
+
         ObservableList<BarangayTable> barangayList = DBService.getAllBarangayName();
         ObservableList<String> barangayNames = FXCollections.observableArrayList();
         for (BarangayTable barangay : barangayList) {
@@ -52,13 +97,14 @@ public class addRescueController {
         String barangayName = barangayLocationCombo.getValue();
         String type = emergencyTypeCombo.getValue();
         String severity = mapSeverity(severitySlider.getValue());
+        String officerInCharge = officerInChargeCombo.getValue(); 
 
         // Validate required fields
         if (date == null ||
             barangayName == null || barangayName.trim().isEmpty() ||
             type == null || type.trim().isEmpty() ||
             address == null || address.trim().isEmpty() ||
-            contactNum == null || contactNum.trim().isEmpty() ||
+            contactNum == null || contactNum.trim().isEmpty() || officerInCharge == null || 
             numOfChildTF.getText().trim().isEmpty() ||
             numOfAdultsTF.getText().trim().isEmpty() ||
             numOfSeniorsTF.getText().trim().isEmpty()) {
@@ -91,16 +137,9 @@ public class addRescueController {
 
         int barangayID = DatabaseHandler.getBarangayIDFromName(barangayName);
 
-        // Optional: Duplicate check (uncomment if you have implemented isDuplicateRescue)
-        // if (DatabaseHandler.isDuplicateRescue(personInCharge, address, barangayID)) {
-        //     showAlert("Duplicate Entry", "A rescue with the same person in charge, address, and barangay already exists.");
-        //     return;
-        // }
-
         String status = "QUEUED";
 
-        // Make sure your PeopleCountTable and insertPeople use String for contactNum!
-        PeopleCountTable person = new PeopleCountTable(address, contactNum, children, adults, seniors);
+        PeopleCountTable person = new PeopleCountTable(address, contactNum, children, adults, seniors, officerInCharge);
         int peopleID = DatabaseHandler.insertPeople(person);
 
         if (peopleID != -1) {
@@ -149,6 +188,7 @@ public class addRescueController {
             default -> "Low";
         };
     }
+
     private void showAlert(String title, String message) {
     javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.WARNING);
     alert.setTitle(title);
