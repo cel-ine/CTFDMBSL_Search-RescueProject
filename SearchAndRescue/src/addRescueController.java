@@ -1,7 +1,9 @@
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -67,7 +69,35 @@ public class addRescueController {
             "Insp. Angela Cruz"
         );
 
-        officerInChargeCombo.setItems(officerList);
+       
+    ObservableList<String> busyOfficers = DatabaseHandler.getBusyOfficers();
+    ObservableList<String> availableOfficers = FXCollections.observableArrayList();
+
+    for (String officer : officerList) {
+        if (!busyOfficers.contains(officer)) {
+            availableOfficers.add(officer);
+        }
+    }
+
+    officerInChargeCombo.setItems(availableOfficers);
+
+    officerInChargeCombo.setEditable(true);
+
+    FilteredList<String> filteredOfficers = new FilteredList<>(availableOfficers, p -> true);
+    officerInChargeCombo.setItems(filteredOfficers);
+
+    officerInChargeCombo.getEditor().textProperty().addListener((obs, oldValue, newValue) -> {
+        final String selected = officerInChargeCombo.getSelectionModel().getSelectedItem();
+        if (selected == null || !selected.equals(officerInChargeCombo.getEditor().getText())) {
+            filteredOfficers.setPredicate(item -> {
+                if (newValue == null || newValue.isEmpty()) {
+                    return true;
+                }
+                String lowerCaseFilter = newValue.toLowerCase();
+                return item.toLowerCase().contains(lowerCaseFilter);
+            });
+        }
+    });
 
         ObservableList<BarangayTable> barangayList = DBService.getAllBarangayName();
         ObservableList<String> barangayNames = FXCollections.observableArrayList();
@@ -151,7 +181,7 @@ public class addRescueController {
                 severity,
                 children + adults + seniors, // total rescuees
                 status,
-                date,
+                LocalDateTime.now(),
                 peopleID
             );
 
@@ -188,7 +218,7 @@ public class addRescueController {
             default -> "Low";
         };
     }
-
+  
     private void showAlert(String title, String message) {
     javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.WARNING);
     alert.setTitle(title);

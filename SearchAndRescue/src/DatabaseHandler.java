@@ -188,7 +188,7 @@ public class DatabaseHandler {
                 String emergencyStatus = rs.getString("emergencyStatus");
                 String emergencySeverity = rs.getString("emergencySeverity"); 
                 String incidentNumber = rs.getString("incidentNumber");
-                LocalDate dateIssued = rs.getDate("dateIssued").toLocalDate();
+                LocalDateTime dateIssued = rs.getTimestamp("dateIssued").toLocalDateTime();
                 String barangayLocation = rs.getString("barangayName");
                 String personInCharge = rs.getString ("personInCharge");
                 int children = rs.getInt("numOfChildren");
@@ -267,7 +267,7 @@ public class DatabaseHandler {
                 pstmt.setString(4, emergency.getSeverity());
                 pstmt.setInt(5, emergency.getRescueCount());
                 pstmt.setString(6, emergency.getStatus());
-                pstmt.setDate(7, java.sql.Date.valueOf(emergency.getDateIssued()));
+                pstmt.setTimestamp(7, java.sql.Timestamp.valueOf(emergency.getDateIssued()));                
                 pstmt.setInt(8, emergency.getPeopleID());
 
             return pstmt.executeUpdate() > 0;
@@ -286,7 +286,8 @@ public class DatabaseHandler {
             pstmt.setInt(3, person.getNumOfChildren());
             pstmt.setInt(4, person.getNumOfAdults());
             pstmt.setInt(5, person.getNumOfSeniors());
-            pstmt.setString(2, person.getContactNum());
+            pstmt.setString(6, person.getofficerInCharge());
+
 
     
             pstmt.executeUpdate();
@@ -314,6 +315,26 @@ public class DatabaseHandler {
             e.printStackTrace();
         }
         return -1;
+    }
+
+    public static ObservableList<String> getBusyOfficers() { //FOR GETTING THE OFFICERS IN CHARGE THAT IS CURRENTLY BUSY (status is not yet 'completed')
+        ObservableList<String> busyList = FXCollections.observableArrayList();
+        String query = "SELECT DISTINCT officerInCharge FROM PeopleDetails pd " +
+                    "JOIN Emergency e ON pd.peopleID = e.peopleID " +
+                    "WHERE e.emergencyStatus != 'Completed' AND officerInCharge IS NOT NULL";
+
+        try (Connection conn = DatabaseHandler.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(query);
+            ResultSet rs = stmt.executeQuery()) {
+            
+            while (rs.next()) {
+                busyList.add(rs.getString("officerInCharge"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return busyList;
     }
 
     // ⚔️⚔️⚔️ UPDATE ACTIVE INCIDENT

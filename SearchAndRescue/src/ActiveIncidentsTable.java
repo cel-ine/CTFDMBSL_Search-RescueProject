@@ -1,5 +1,6 @@
 import javafx.beans.property.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class ActiveIncidentsTable {
 
@@ -7,7 +8,7 @@ public class ActiveIncidentsTable {
     private StringProperty emergencyStatus;
     private StringProperty emergencySeverity;
     private StringProperty incidentNumber;
-    private ObjectProperty<LocalDate> dateIssued;
+    private ObjectProperty<LocalDateTime> dateIssued;
     private StringProperty barangayLocation;
     private IntegerProperty numOfRescuee;
     private IntegerProperty children;
@@ -20,7 +21,7 @@ public class ActiveIncidentsTable {
 
 
     public ActiveIncidentsTable(String emergencyType, String emergencyStatus, String emergencySeverity,
-                                String incidentNumber, LocalDate dateIssued, String barangayLocation, String personInCharge, int numOfRescuee, Integer children, Integer adults, Integer seniors, 
+                                String incidentNumber, LocalDateTime dateIssued, String barangayLocation, String personInCharge, int numOfRescuee, Integer children, Integer adults, Integer seniors, 
                                 String address, String contactNum, String officerInCharge) {
 
         this.emergencyType = new SimpleStringProperty(emergencyType);
@@ -44,7 +45,7 @@ public class ActiveIncidentsTable {
 
     
     public ActiveIncidentsTable(String emergencyType, String emergencyStatus, String emergencySeverity,
-                                String incidentNumber, LocalDate dateIssued, String barangayLocation,
+                                String incidentNumber, LocalDateTime dateIssued, String barangayLocation,
                                 Integer numOfRescuee) {
 
         this.emergencyType = new SimpleStringProperty(emergencyType);
@@ -99,13 +100,13 @@ public class ActiveIncidentsTable {
         return incidentNumber; 
     }
 
-    public LocalDate getDateIssued() { 
+    public LocalDateTime getDateIssued() { 
         return dateIssued.get(); 
     }
-    public void setDateIssued(LocalDate value) { 
+    public void setDateIssued(LocalDateTime value) { 
         dateIssued.set(value); 
     }
-    public ObjectProperty<LocalDate> dateIssuedProperty() { 
+    public ObjectProperty<LocalDateTime> dateIssuedProperty() { 
         return dateIssued; 
     }
 

@@ -1,4 +1,5 @@
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class Emergency {
     private String incidentNumber;
@@ -7,10 +8,10 @@ public class Emergency {
     private String severity;
     private int rescueCount;
     private String status;
-    private LocalDate dateIssued;
+    private LocalDateTime dateIssued;
     private int peopleID;
 
-    public Emergency(String incidentNumber, int barangayID, String emergencyType, String severity, int rescueCount, String status, LocalDate dateIssued, int peopleID) {
+    public Emergency(String incidentNumber, int barangayID, String emergencyType, String severity, int rescueCount, String status, LocalDateTime dateIssued, int peopleID) {
         this.incidentNumber = incidentNumber;
         this.barangayID = barangayID;
         this.emergencyType = emergencyType;
@@ -45,7 +46,7 @@ public class Emergency {
     public String getStatus() { 
         return status; }
     
-    public LocalDate getDateIssued() { 
+    public LocalDateTime getDateIssued() { 
         return dateIssued; }
     
     public int getPeopleID() { 
