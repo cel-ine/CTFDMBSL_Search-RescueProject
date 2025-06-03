@@ -13,6 +13,7 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 public class addRescueController {
+    private Stage dialogStage;
     @FXML DatePicker dateDP;
     @FXML ComboBox<String> barangayLocationCombo, emergencyTypeCombo, officerInChargeCombo;
     @FXML Slider severitySlider;
@@ -107,7 +108,6 @@ public class addRescueController {
         barangayLocationCombo.setItems(barangayNames);
         emergencyTypeCombo.getItems().addAll("Flood", "Earthquake", "Landslide");
 
-        // Add this listener:
         barangayLocationCombo.valueProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal != null && !newVal.trim().isEmpty()) {
                 String captain = DatabaseHandler.getBarangayCaptainByBarangayName(newVal);
@@ -123,13 +123,12 @@ public class addRescueController {
         LocalDate date = dateDP.getValue();
         String personInCharge = personInChargeTF.getText();
         String address = addressTF.getText();
-        String contactNum = contactNumTF.getText().trim(); // treat as String!
+        String contactNum = contactNumTF.getText().trim(); 
         String barangayName = barangayLocationCombo.getValue();
         String type = emergencyTypeCombo.getValue();
         String severity = mapSeverity(severitySlider.getValue());
         String officerInCharge = officerInChargeCombo.getValue(); 
 
-        // Validate required fields
         if (date == null ||
             barangayName == null || barangayName.trim().isEmpty() ||
             type == null || type.trim().isEmpty() ||
@@ -199,6 +198,9 @@ public class addRescueController {
                         type
                     );
                 }
+                if (dialogStage != null) {
+                dialogStage.close();
+        }
             } else {
                 showAlert("Error", "Failed to insert emergency.");
             }
@@ -228,4 +230,7 @@ public class addRescueController {
     alertStage.getIcons().add(new javafx.scene.image.Image(getClass().getResourceAsStream("pasigLogo.jpg")));
     alert.showAndWait();
     }
+    public void setDialogStage(Stage dialogStage) {
+    this.dialogStage = dialogStage;
+}
 }

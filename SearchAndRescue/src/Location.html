@@ -76,7 +76,7 @@
 
 
         var incidentMarkers = {}; // Store markers by incident number
-        var barangayIncidents = {};
+        var barangayActiveIncidents = {};
 
 
 
@@ -125,7 +125,7 @@
         };
 
 
-        var incidentRoutes = {}; // Store routes by incident number
+          var incidentRoutes = {}; // Store routes by incident number
 
 
              // Initialize the map
@@ -154,19 +154,19 @@
 
  
         function addIncidentMarker(incidentNumber, barangayName, status, totalPeople, emergencyType) {
-            if (!barangayIncidents[barangayName]) {
-                barangayIncidents[barangayName] = [];
+            if (!barangayActiveIncidents[barangayName]) {
+                barangayActiveIncidents[barangayName] = [];
             }
 
 
             // Remove previous entry for this incident if it exists (prevents duplicates)
-            barangayIncidents[barangayName] = barangayIncidents[barangayName].filter(
+            barangayActiveIncidents[barangayName] = barangayActiveIncidents[barangayName].filter(
                 inc => inc.incidentNumber !== incidentNumber
             );
 
 
             // Add new incident at the start (most recent on top)
-            barangayIncidents[barangayName].unshift({
+            barangayActiveIncidents[barangayName].unshift({
                 incidentNumber: incidentNumber,
                 totalPeople: totalPeople,
                 emergencyType: emergencyType
@@ -190,8 +190,8 @@
 
             // Build popup text using an unordered list
             var popupText = "<strong>" + barangayName + "</strong><br><ul>" +
-                barangayIncidents[barangayName].map(function(inc, idx) {
-                    return "<li><strong>#" + (barangayIncidents[barangayName].length - idx) + "</strong> - " +
+                barangayActiveIncidents[barangayName].map(function(inc, idx) {
+                    return "<li><strong>#" + (barangayActiveIncidents[barangayName].length - idx) + "</strong> - " +
                         "Total People: " + inc.totalPeople + ", Emergency: " + inc.emergencyType + "</li>";
                 }).join("") + "</ul>";
 
@@ -240,8 +240,8 @@
     function removeIncidentFromMap(incidentNumber) {
             console.log("Removing incident:", incidentNumber);
            
-            for (const barangay in barangayIncidents) {
-                const incidents = barangayIncidents[barangay];
+            for (const barangay in barangayActiveIncidents) {
+                const incidents = barangayActiveIncidents[barangay];
                 const index = incidents.findIndex(inc => inc.incidentNumber === incidentNumber);
 
 
@@ -359,19 +359,19 @@
 
         // Save incidents to localStorage
     function saveIncidentsToStorage() {
-        localStorage.setItem('barangayIncidents', JSON.stringify(barangayIncidents));
+        localStorage.setItem('barangayActiveIncidents', JSON.stringify(barangayActiveIncidents));
     }
-
+    
 
 // Load incidents from localStorage and re-add markers
     function loadIncidentsFromStorage() {
-        const data = localStorage.getItem('barangayIncidents');
+        const data = localStorage.getItem('barangayActiveIncidents');
         if (data) {
-            barangayIncidents = JSON.parse(data);
-            for (const barangayName in barangayIncidents) {
-                if (barangayIncidents[barangayName].length > 0) {
+            barangayActiveIncidents = JSON.parse(data);
+            for (const barangayName in barangayActiveIncidents) {
+                if (barangayActiveIncidents[barangayName].length > 0) {
                     // Use the most recent incident for marker info
-                    const latest = barangayIncidents[barangayName][0];
+                    const latest = barangayActiveIncidents[barangayName][0];
                     addIncidentMarker(
                         latest.incidentNumber,
                         barangayName,

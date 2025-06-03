@@ -268,6 +268,7 @@ public class TabPaneController {
             AddRescueController.setTabPaneController(this);
 
             Stage stage = new Stage();
+            AddRescueController.setDialogStage(stage); 
             stage.setScene(new Scene(root));
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setTitle("Add new rescue");
@@ -277,6 +278,7 @@ public class TabPaneController {
             e.printStackTrace();
         }
     }
+    // MAP
     public void addIncidentMarkerToMap(String incidentNumber, String barangayName, String status, int totalPeople,
             String emergencyType) {
         Platform.runLater(() -> {
@@ -502,7 +504,7 @@ public class TabPaneController {
 
         Integer historyID = DatabaseHandler.insertToHistory(incidentNumber, barangayID);
         if (historyID != null) {
-            activeIncidentsTable.getItems().remove(selectedIncident);
+            incidentsList.remove(selectedIncident);            
             showAlert("Incident completed", "Incident is marked as complete and recorded in history.");
             loadHistoryTable();
             refreshIncidentsTable();
@@ -537,7 +539,6 @@ public class TabPaneController {
             Parent root = loader.load();
             AddReportController controller = loader.getController();
             controller.setHistoryData(selectedHistory);
-            
             Stage stage = new Stage();
             stage.setTitle("Incident Details");
             stage.setScene(new Scene(root));

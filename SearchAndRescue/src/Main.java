@@ -9,7 +9,7 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("SearchAndRescueUI.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("S&RLogin.fxml"));
             Parent root = loader.load();
             primaryStage.setTitle("Pasig SaR System");
             primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("pasigLogo.jpg")));

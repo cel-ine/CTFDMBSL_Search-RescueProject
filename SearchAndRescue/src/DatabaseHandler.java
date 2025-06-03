@@ -13,7 +13,7 @@ public class DatabaseHandler {
     private static DatabaseHandler handler = null;
     private static Connection connection = null;
 
-    private static final String DB_URL = "jdbc:mysql://127.0.0.1:3306/NewSearchRescue?useSSL=false&serverTimezone=Asia/Manila";
+    private static final String DB_URL = "jdbc:mysql://127.0.0.1:3306/FinalSearchAndRescueDB?useSSL=false&serverTimezone=Asia/Manila";
     private static final String USER = "root";
     private static final String PASSWORD = "ilovecompsci"; 
 
@@ -138,17 +138,15 @@ public class DatabaseHandler {
 
         return barangayDescList;
     }
+
     //COUNTER
     public static int getActiveIncidentCountByStatusAndDate(String status, LocalDate date) {
     int count = 0;
-    String query = "SELECT COUNT(*) FROM Emergency WHERE emergencyStatus = ? AND dateIssued = ?";
-    
-    try (Connection conn =  getConnection();
+    String query = "SELECT COUNT(*) FROM Emergency WHERE emergencyStatus = ? AND DATE(dateIssued) = ?";
+    try (Connection conn = getConnection();
          PreparedStatement stmt = conn.prepareStatement(query)) {
-         
-        stmt.setString(1, status);  
-        stmt.setDate(2, java.sql.Date.valueOf(date)); 
-        
+        stmt.setString(1, status);
+        stmt.setString(2, date.toString()); // yyyy-MM-dd
         ResultSet rs = stmt.executeQuery();
         if (rs.next()) {
             count = rs.getInt(1);
@@ -156,7 +154,6 @@ public class DatabaseHandler {
     } catch (SQLException e) {
         e.printStackTrace();
     }
-
     return count;
 }
 
@@ -608,8 +605,8 @@ public class DatabaseHandler {
     //FOR ADDING RESCUE REPORT 
     public static void submitReport(int historyID, String writer, String remarks, String action) {
     String sql = """
-        INSERT INTO EmergencyReport (historyID, reportWriter, reportRemarks, emergencyActionTaken, headRescue)
-        VALUES (?, ?, ?, ?, ?)
+        INSERT INTO EmergencyReport (historyID, reportWriter, reportRemarks, emergencyActionTaken)
+        VALUES (?, ?, ?, ?)
         ON DUPLICATE KEY UPDATE
             reportWriter = VALUES(reportWriter),
             reportRemarks = VALUES(reportRemarks),

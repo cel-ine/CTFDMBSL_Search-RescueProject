@@ -88,17 +88,20 @@ public class AddReportController {
         return;
     }
         
-        EmergencyReport existingReport = DatabaseHandler.getReportByHistoryID(historyID);
-        if (existingReport != null) {
-            javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.WARNING);
-            alert.setTitle("Report Exists");
-            alert.setHeaderText("A report for this incident already exists.");
-            alert.setContentText("You cannot submit another report for this incident.");
-            alert.setTitle("Pasig SaR System");
-            Stage alertStage = (Stage) alert.getDialogPane().getScene().getWindow();
-            alertStage.getIcons().add(new Image(getClass().getResourceAsStream("pasigLogo.jpg")));
-            alert.showAndWait();
-            return; 
+    EmergencyReport existingReport = DatabaseHandler.getReportByHistoryID(historyID);
+    if (existingReport != null) {
+        javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.WARNING);
+        alert.setTitle("Report Exists");
+        alert.setHeaderText("A report for this incident already exists.");
+        alert.setContentText("You cannot submit another report for this incident.");
+        alert.setTitle("Pasig SaR System");
+        Stage alertStage = (Stage) alert.getDialogPane().getScene().getWindow();
+        alertStage.getIcons().add(new Image(getClass().getResourceAsStream("pasigLogo.jpg")));
+        alert.showAndWait();
+        incidentReportWrittenBy.setText(existingReport.getReportWriter());
+        remarks.setText(existingReport.getReportRemarks());
+        actionTaken.setText(existingReport.getEmergencyActionTaken());
+        return; 
         }
 
         if (DatabaseHandler.historyIDExists(historyID)) {
