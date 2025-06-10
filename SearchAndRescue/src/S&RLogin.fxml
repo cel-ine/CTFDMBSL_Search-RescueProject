@@ -16,7 +16,7 @@
             <Image url="@res/LOGIN%20BG%20UPDATED.jpg" />
          </image>
       </ImageView>
-      <TextField fx:id="usernameTF" layoutX="554.0" layoutY="359.0" prefHeight="51.0" prefWidth="280.0" promptText="username" style="-fx-effect: innershadow(gaussian, rgba(170, 170, 170, 0.5), 5, 0.0, 2, 2);">
+      <TextField fx:id="usernameTF" layoutX="554.0" layoutY="359.0" prefHeight="39.0" prefWidth="280.0" promptText="username" style="-fx-effect: innershadow(gaussian, rgba(170, 170, 170, 0.5), 5, 0.0, 2, 2);">
          <font>
             <Font size="18.0" />
          </font>
@@ -31,7 +31,7 @@
             <Font name="Segoe UI Semibold" size="18.0" />
          </font>
       </Label>
-      <PasswordField fx:id="pinPassField" layoutX="552.0" layoutY="455.0" prefHeight="52.0" prefWidth="280.0" promptText="4-digit Pin" style="-fx-effect: innershadow(gaussian, rgba(170, 170, 170, 0.5), 5, 0.0, 2, 2);">
+      <PasswordField fx:id="pinPassField" layoutX="552.0" layoutY="455.0" prefHeight="20.0" prefWidth="280.0" promptText="4-digit Pin" style="-fx-effect: innershadow(gaussian, rgba(170, 170, 170, 0.5), 5, 0.0, 2, 2);">
          <font>
             <Font size="18.0" />
          </font>
@@ -45,7 +45,7 @@
             </ImageView>
          </children>
       </AnchorPane>
-      <Button fx:id="loginButton" layoutX="641.0" layoutY="609.0" mnemonicParsing="false" onAction="#LoginButtonHandler" prefHeight="20.0" prefWidth="106.0" style="-fx-background-color: white; -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 8, 0.2, 0, 4); -fx-border-color: lightgrey;" text="Login">
+      <Button fx:id="loginButton" layoutX="641.0" layoutY="591.0" mnemonicParsing="false" onAction="#LoginButtonHandler" prefHeight="20.0" prefWidth="106.0" style="-fx-background-color: white; -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 8, 0.2, 0, 4); -fx-border-color: lightgrey;" text="Login">
          <font>
             <Font name="System Bold" size="18.0" />
          </font>

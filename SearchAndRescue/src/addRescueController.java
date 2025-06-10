@@ -159,6 +159,10 @@ public class addRescueController {
                 showAlert("Invalid Input", "Numbers must be non-negative.");
                 return;
             }
+             if (children == 0 && adults == 0 && seniors == 0) {
+                showAlert("Invalid Input", "Can't add a rescue with 0 rescuee number.");
+                return;
+            }
         } catch (NumberFormatException e) {
             showAlert("Invalid Input", "Please enter valid numbers for children, adults, and seniors.");
             return;

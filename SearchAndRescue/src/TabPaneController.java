@@ -330,14 +330,15 @@ public class TabPaneController {
 
         for (ActiveIncidentsTable incident : TableEditor.getEditedRows()) {
             String incidentNumber = incident.getIncidentNumber();
-            String emergencyStatus = incident.getEmergencyStatus();
 
-            if ("COMPLETED".equalsIgnoreCase(emergencyStatus) && DatabaseHandler.isAlreadyInHistory(incidentNumber)) {
+            // Block ALL edits if already in history
+            if (DatabaseHandler.isAlreadyInHistory(incidentNumber)) {
                 blockedIncidents.append(incidentNumber).append("\n");
                 blockedCount++;
                 continue;
             }
 
+            String emergencyStatus = incident.getEmergencyStatus();
             String emergencyType = incident.getEmergencyType();
             String emergencySeverity = incident.getEmergencySeverity();
             String barangayLocation = incident.getBarangayLocation();
@@ -352,7 +353,6 @@ public class TabPaneController {
                 adults = previousCounts[1];
                 seniors = previousCounts[2];
             }
-
 
             int numOfRescuee = children + adults + seniors;
 
@@ -371,11 +371,9 @@ public class TabPaneController {
             int barangayID = DatabaseHandler.getBarangayIDFromName(barangayLocation);
 
             if (emergencyStatus.equalsIgnoreCase("COMPLETED")) {
-                if (!DatabaseHandler.isAlreadyInHistory(incidentNumber)) {
-                    Integer historyID = DatabaseHandler.insertToHistory(incidentNumber, barangayID);
-                    if (historyID != null) {
-                        System.out.println("Inserted into history with ID: " + historyID);
-                    }
+                Integer historyID = DatabaseHandler.insertToHistory(incidentNumber, barangayID);
+                if (historyID != null) {
+                    System.out.println("Inserted into history with ID: " + historyID);
                 }
             } else {
                 if (DatabaseHandler.isAlreadyInHistory(incidentNumber)) {
@@ -403,7 +401,7 @@ public class TabPaneController {
         }
 
         if (anySaved) {
-            Label messageLabel = new Label("Changes have been saved successfully!");
+            Label messageLabel = new Label("Changes has been saved successfully!");
             messageLabel.setStyle("-fx-background-color: rgba(0, 0, 0, 0.7); -fx-text-fill: white; -fx-padding: 10px;");
             messageLabel.setMaxWidth(800);
             messageLabel.setMaxHeight(50);

@@ -76,12 +76,13 @@ public class AddReportController {
     
 
         if (writer == null || writer.trim().isEmpty() ||
+        !writer.matches("^[A-Za-z]+,\\s+[A-Za-z]+\\s+[A-Za-z]+$") ||
         remarksText == null || remarksText.trim().isEmpty() ||
         action == null || action.trim().isEmpty()) {
         javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.WARNING);
         alert.setTitle("Missing Information");
         alert.setHeaderText("Please fill in all required fields.");
-        alert.setContentText("Writer, Remarks, Action Taken, and Head Rescue must not be empty.");
+        alert.setContentText("Writer, Remarks, Action Taken, and Head Rescue must not be empty. And Writer must be in the format 'Position, FN LN'.");
         Stage alertStage = (Stage) alert.getDialogPane().getScene().getWindow();
         alertStage.getIcons().add(new Image(getClass().getResourceAsStream("pasigLogo.jpg")));
         alert.showAndWait();
