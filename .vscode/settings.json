@@ -9,5 +9,6 @@
         "d:\\jar files\\javafx.swing.jar",
         "d:\\jar files\\javafx.web.jar",
         "d:\\jar files\\javafx-swt.jar"
-    ]
+    ],
+    "java.debug.settings.onBuildFailureProceed": true
 }
